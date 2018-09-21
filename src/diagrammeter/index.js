@@ -1,6 +1,8 @@
 
 import Two from 'two.js';
 
+import * as geometry from '../geometry/geometry.js';
+
 
 export default class DiagramMeter {
     constructor( canvas, width = 400, height = 400 ){
@@ -17,9 +19,27 @@ export default class DiagramMeter {
     }
 
     initPosition(){
+        let tmp;
         this.cx = this.width / 2;
         this.cy = this.height / 2;
+        this.cpoint = { x: this.cx, y: this.cy }
         this.radius = this.width / 2 / 2;
+        this.sradius = this.radius - 14;
+
+        this.startAngle = 135;
+        this.endAngle = 45;
+        this.endAngle = geometry.fixEndAngle( this.startAngle, this.endAngle );
+
+        tmp = geometry.distanceAngleToPoint( this.radius, this.startAngle );
+        this.startPoint = geometry.pointPlus( this.cpoint, tmp );
+
+        tmp = geometry.distanceAngleToPoint( this.radius, this.endAngle );
+        this.endPoint = geometry.pointPlus( this.cpoint, tmp );
+
+        tmp = geometry.distanceAngleToPoint( this.radius, this.endAngle - this.startAngle );
+        this.topPoint = geometry.pointPlus( this.cpoint, tmp );
+        //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
+        //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
     }
 
     init(){
@@ -36,7 +56,11 @@ export default class DiagramMeter {
     }
 
     draw(){
-        console.log( 'this.draw', Date.now() );
+
+        console.log( this );
+        this.debugPoint( this.startPoint.x, this.startPoint.y );
+        this.debugPoint( this.endPoint.x, this.endPoint.y );
+        this.debugPoint( this.topPoint.x, this.topPoint.y );
 
         let center = this.two.makeCircle( this.cx, this.cy, 25 ); 
         center.fill = '#ff800000';
@@ -50,17 +74,59 @@ export default class DiagramMeter {
             fill: '#ffffff'
             , size: 12
         } );
-        console.log( textNum );
 
 
+        this.drawOut();
 
         this.two.update();
 
     }
 
+    drawOut(){
+
+        let ar = [ this.startPoint.x, this.startPoint.y ];
+        let tmp, tmppoint;
+
+        for( let i = this.startAngle; i <= this.endAngle; i++ ){
+            tmp = geometry.distanceAngleToPoint( this.radius, i );
+            tmppoint = geometry.pointPlus( this.cpoint, tmp );
+            ar.push( tmppoint.x, tmppoint.y );
+        }
+
+        for( let i = this.endAngle; i >= this.startAngle; i-- ){
+            tmp = geometry.distanceAngleToPoint( this.sradius, i );
+            tmppoint = geometry.pointPlus( this.cpoint, tmp );
+            ar.push( tmppoint.x, tmppoint.y );
+        }
+
+        ar.push( false );
+
+        var linearGradient = this.two.makeLinearGradient(
+          -this.width, this.height/2
+          , this.width, this.height/2
+          , new Two.Stop(0, 'rgb(89,150,189)')
+          , new Two.Stop(.3, 'rgb(90,149,189)')
+          , new Two.Stop(.5, 'rgb(221,180,96)')
+          , new Two.Stop(.6, 'rgb(170,82,35)')
+          , new Two.Stop(.8, 'rgb(189,108,49)')
+          , new Two.Stop(1, 'rgb(216,154,76)')
+        );
+
+        let path = this.two.makePath.apply( this.two, ar );  
+        path.stroke = '#00000000';
+        path.fill = linearGradient;
+        console.log( path );
+
+    }
+
     drawDemo(){
         console.log( 'this.drawDemo', Date.now() );
+    }
 
+    debugPoint( x, y ){
+        let point = this.two.makeCircle( x, y, 5 ); 
+        point.fill = '#ffff00';
+        point.stroke = '#ff0000';
     }
 
 
