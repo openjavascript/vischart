@@ -41,7 +41,9 @@ var DiagramMeter = function () {
     _createClass(DiagramMeter, [{
         key: 'initPosition',
         value: function initPosition() {
-            var tmp = void 0;
+            var tmp = void 0,
+                tmppoint = void 0;
+
             this.cx = this.width / 2;
             this.cy = this.height / 2;
             this.cpoint = { x: this.cx, y: this.cy };
@@ -51,6 +53,11 @@ var DiagramMeter = function () {
             this.startAngle = 135;
             this.endAngle = 45;
             this.endAngle = geometry.fixEndAngle(this.startAngle, this.endAngle);
+
+            this.availableAngle = this.endAngle - this.startAngle;
+            this.totalpart = 30;
+
+            this.partAngle = this.availableAngle / this.totalpart;
 
             tmp = geometry.distanceAngleToPoint(this.radius, this.startAngle);
             this.startPoint = geometry.pointPlus(this.cpoint, tmp);
@@ -62,6 +69,28 @@ var DiagramMeter = function () {
             this.topPoint = geometry.pointPlus(this.cpoint, tmp);
             //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
             //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
+
+            //计算圆环坐标
+            this.outpos = [this.startPoint.x, this.startPoint.y];
+            for (var i = this.startAngle; i <= this.endAngle; i++) {
+                tmp = geometry.distanceAngleToPoint(this.radius, i);
+                tmppoint = geometry.pointPlus(this.cpoint, tmp);
+                this.outpos.push(tmppoint.x, tmppoint.y);
+            }
+            for (var _i = this.endAngle; _i >= this.startAngle; _i--) {
+                tmp = geometry.distanceAngleToPoint(this.sradius, _i);
+                tmppoint = geometry.pointPlus(this.cpoint, tmp);
+                this.outpos.push(tmppoint.x, tmppoint.y);
+            }
+            this.outpos.push(false);
+
+            //计算圆环分隔线
+            this.outline = [];
+            for (var _i2 = 0; _i2 < this.totalpart; _i2++) {
+                this.outline.push([_i2 * this.partAngle]);
+            }
+
+            console.log(this);
         }
     }, {
         key: 'init',
@@ -103,34 +132,18 @@ var DiagramMeter = function () {
 
             this.two.update();
         }
+
+        //画渐变
+
     }, {
         key: 'drawOut',
         value: function drawOut() {
 
-            var ar = [this.startPoint.x, this.startPoint.y];
-            var tmp = void 0,
-                tmppoint = void 0;
-
-            for (var i = this.startAngle; i <= this.endAngle; i++) {
-                tmp = geometry.distanceAngleToPoint(this.radius, i);
-                tmppoint = geometry.pointPlus(this.cpoint, tmp);
-                ar.push(tmppoint.x, tmppoint.y);
-            }
-
-            for (var _i = this.endAngle; _i >= this.startAngle; _i--) {
-                tmp = geometry.distanceAngleToPoint(this.sradius, _i);
-                tmppoint = geometry.pointPlus(this.cpoint, tmp);
-                ar.push(tmppoint.x, tmppoint.y);
-            }
-
-            ar.push(false);
-
             var linearGradient = this.two.makeLinearGradient(-this.width, this.height / 2, this.width, this.height / 2, new _two2.default.Stop(0, 'rgb(89,150,189)'), new _two2.default.Stop(.3, 'rgb(90,149,189)'), new _two2.default.Stop(.5, 'rgb(221,180,96)'), new _two2.default.Stop(.6, 'rgb(170,82,35)'), new _two2.default.Stop(.8, 'rgb(189,108,49)'), new _two2.default.Stop(1, 'rgb(216,154,76)'));
 
-            var path = this.two.makePath.apply(this.two, ar);
+            var path = this.two.makePath.apply(this.two, this.outpos);
             path.stroke = '#00000000';
             path.fill = linearGradient;
-            console.log(path);
         }
     }, {
         key: 'drawDemo',

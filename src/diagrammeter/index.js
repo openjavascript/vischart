@@ -19,7 +19,8 @@ export default class DiagramMeter {
     }
 
     initPosition(){
-        let tmp;
+        let tmp, tmppoint;
+
         this.cx = this.width / 2;
         this.cy = this.height / 2;
         this.cpoint = { x: this.cx, y: this.cy }
@@ -29,6 +30,11 @@ export default class DiagramMeter {
         this.startAngle = 135;
         this.endAngle = 45;
         this.endAngle = geometry.fixEndAngle( this.startAngle, this.endAngle );
+
+        this.availableAngle = this.endAngle - this.startAngle;
+        this.totalpart = 30;
+
+        this.partAngle = this.availableAngle / this.totalpart;
 
         tmp = geometry.distanceAngleToPoint( this.radius, this.startAngle );
         this.startPoint = geometry.pointPlus( this.cpoint, tmp );
@@ -40,6 +46,31 @@ export default class DiagramMeter {
         this.topPoint = geometry.pointPlus( this.cpoint, tmp );
         //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
         //this.endPoint = { x: this.cx + tmp.x, y: this.cy + tmp.y };
+
+        //计算圆环坐标
+        this.outpos = [ this.startPoint.x, this.startPoint.y ];
+        for( let i = this.startAngle; i <= this.endAngle; i++ ){
+            tmp = geometry.distanceAngleToPoint( this.radius, i );
+            tmppoint = geometry.pointPlus( this.cpoint, tmp );
+            this.outpos.push( tmppoint.x, tmppoint.y );
+        }
+        for( let i = this.endAngle; i >= this.startAngle; i-- ){
+            tmp = geometry.distanceAngleToPoint( this.sradius, i );
+            tmppoint = geometry.pointPlus( this.cpoint, tmp );
+            this.outpos.push( tmppoint.x, tmppoint.y );
+        }
+        this.outpos.push( false );
+
+        //计算圆环分隔线
+        this.outline = [];
+        for( let i = 0; i < this.totalpart; i++ ){
+            this.outline.push( [
+                i * this.partAngle
+            ]);
+        }
+
+        console.log( this );
+
     }
 
     init(){
@@ -82,24 +113,8 @@ export default class DiagramMeter {
 
     }
 
+    //画渐变
     drawOut(){
-
-        let ar = [ this.startPoint.x, this.startPoint.y ];
-        let tmp, tmppoint;
-
-        for( let i = this.startAngle; i <= this.endAngle; i++ ){
-            tmp = geometry.distanceAngleToPoint( this.radius, i );
-            tmppoint = geometry.pointPlus( this.cpoint, tmp );
-            ar.push( tmppoint.x, tmppoint.y );
-        }
-
-        for( let i = this.endAngle; i >= this.startAngle; i-- ){
-            tmp = geometry.distanceAngleToPoint( this.sradius, i );
-            tmppoint = geometry.pointPlus( this.cpoint, tmp );
-            ar.push( tmppoint.x, tmppoint.y );
-        }
-
-        ar.push( false );
 
         var linearGradient = this.two.makeLinearGradient(
           -this.width, this.height/2
@@ -112,11 +127,9 @@ export default class DiagramMeter {
           , new Two.Stop(1, 'rgb(216,154,76)')
         );
 
-        let path = this.two.makePath.apply( this.two, ar );  
+        let path = this.two.makePath.apply( this.two, this.outpos );  
         path.stroke = '#00000000';
         path.fill = linearGradient;
-        console.log( path );
-
     }
 
     drawDemo(){
