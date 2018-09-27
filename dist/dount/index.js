@@ -104,6 +104,8 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'tmpfunc',
         value: function tmpfunc() {
+            var _this3 = this;
+
             var tmp = void 0,
                 tmppoint = void 0;
 
@@ -114,7 +116,6 @@ var Dount = function (_VisChartBase) {
             if (this.countAngle >= this.endAngle) {
                 this.countAngle = 360;
                 this.isDone = 1;
-                console.log(this);
             }
             //this.countAngle = this.endAngle;
 
@@ -125,7 +126,6 @@ var Dount = function (_VisChartBase) {
             this.outline.push('M');
             for (var i = 0;; i += step) {
                 if (i >= this.countAngle) i = this.countAngle;
-                console.log(i);
 
                 tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, i);
                 this.outline.push([tmppoint.x, tmppoint.y].join(',') + ',');
@@ -145,8 +145,8 @@ var Dount = function (_VisChartBase) {
             //this.path.data = this.outline.join('');
             this.path.setData(this.outline.join(''));
             this.path.draw();
-            //this.layer.remove();
-            //this.stage.add(this.layer);
+            this.layer.remove();
+            this.stage.add(this.layer);
 
             /*
             let img = document.querySelector( '#dountInImg' );
@@ -158,7 +158,9 @@ var Dount = function (_VisChartBase) {
             );
             */
 
-            //window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+            window.requestAnimationFrame(function () {
+                _this3.tmpfunc();
+            });
         }
 
         /*

@@ -82,7 +82,6 @@ export default class Dount extends VisChartBase  {
         if( this.countAngle >= this.endAngle ){
             this.countAngle = 360;
             this.isDone = 1;
-            console.log( this );
         }
         //this.countAngle = this.endAngle;
 
@@ -93,7 +92,6 @@ export default class Dount extends VisChartBase  {
         this.outline.push( 'M' );
         for( let i = 0; ; i+= step  ){
             if( i >= this.countAngle ) i = this.countAngle;
-            console.log( i );
 
             tmppoint = tmp = geometry.distanceAngleToPoint( this.outRadius, i );
             this.outline.push( [ (tmppoint.x), (tmppoint.y)].join(',') + ',' );
@@ -113,8 +111,8 @@ export default class Dount extends VisChartBase  {
         //this.path.data = this.outline.join('');
         this.path.setData( this.outline.join('') );
         this.path.draw();
-        //this.layer.remove();
-        //this.stage.add(this.layer);
+        this.layer.remove();
+        this.stage.add(this.layer);
 
         /*
         let img = document.querySelector( '#dountInImg' );
@@ -126,7 +124,7 @@ export default class Dount extends VisChartBase  {
         );
         */
 
-        //window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+        window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
     }
 
 
