@@ -1135,6 +1135,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "http://registry.npm.taobao.org/kind-of/download/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
+konva@2.4.0:
+  version "2.4.0"
+  resolved "http://registry.npm.taobao.org/konva/download/konva-2.4.0.tgz#3df5925ba69439117bf6efc0907517b0b0107e21"
+
 lodash@^4.17.4:
   version "4.17.11"
   resolved "http://registry.npm.taobao.org/lodash/download/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
