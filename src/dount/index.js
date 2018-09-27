@@ -111,7 +111,6 @@ export default class Dount extends VisChartBase  {
         //this.path.data = this.outline.join('');
         this.path.setData( this.outline.join('') );
         this.path.draw();
-        this.layer.remove();
         this.stage.add(this.layer);
 
         /*
