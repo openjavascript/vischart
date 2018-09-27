@@ -77,10 +77,10 @@ export default class Dount extends VisChartBase  {
 
         if( this.isDone ) return;
 
-        this.countAngle += 5;
+        this.countAngle += 8;
 
         if( this.countAngle >= this.endAngle ){
-            this.countAngle = 361;
+            this.countAngle = 360;
             this.isDone = 1;
             console.log( this );
         }
@@ -88,17 +88,25 @@ export default class Dount extends VisChartBase  {
 
         this.outline = [];
 
-        let step = 0.5;
+        let step = 3;
 
         this.outline.push( 'M' );
-        for( let i = 0; i <=  this.countAngle; i+= step  ){
+        for( let i = 0; ; i+= step  ){
+            if( i >= this.countAngle ) i = this.countAngle;
+            console.log( i );
+
             tmppoint = tmp = geometry.distanceAngleToPoint( this.outRadius, i );
-            this.outline.push( [ Math.floor(tmppoint.x), Math.floor(tmppoint.y)].join(',') + ',' );
+            this.outline.push( [ (tmppoint.x), (tmppoint.y)].join(',') + ',' );
             if( i == 0 ) this.outline.push( 'L' );
+
+            if( i >= this.countAngle ) break;
         }
-        for( let i = this.countAngle; i >= 0; i-= step ){
+        for( let i = this.countAngle; ; i-= step ){
+            if( i <= 0 ) i = 0;
+
             tmppoint = tmp = geometry.distanceAngleToPoint( this.inRadius, i );
-            this.outline.push( [ Math.floor(tmppoint.x), Math.floor(tmppoint.y)].join(',') +',' );
+            this.outline.push( [ (tmppoint.x), (tmppoint.y)].join(',') +',' );
+            if( i == 0 ) break;
         }
         this.outline.push( 'z' );
 
@@ -118,7 +126,7 @@ export default class Dount extends VisChartBase  {
         );
         */
 
-        window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+        //window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
     }
 
 

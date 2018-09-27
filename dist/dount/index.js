@@ -104,17 +104,15 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'tmpfunc',
         value: function tmpfunc() {
-            var _this3 = this;
-
             var tmp = void 0,
                 tmppoint = void 0;
 
             if (this.isDone) return;
 
-            this.countAngle += 5;
+            this.countAngle += 8;
 
             if (this.countAngle >= this.endAngle) {
-                this.countAngle = 361;
+                this.countAngle = 360;
                 this.isDone = 1;
                 console.log(this);
             }
@@ -122,17 +120,25 @@ var Dount = function (_VisChartBase) {
 
             this.outline = [];
 
-            var step = 0.5;
+            var step = 3;
 
             this.outline.push('M');
-            for (var i = 0; i <= this.countAngle; i += step) {
+            for (var i = 0;; i += step) {
+                if (i >= this.countAngle) i = this.countAngle;
+                console.log(i);
+
                 tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, i);
-                this.outline.push([Math.floor(tmppoint.x), Math.floor(tmppoint.y)].join(',') + ',');
+                this.outline.push([tmppoint.x, tmppoint.y].join(',') + ',');
                 if (i == 0) this.outline.push('L');
+
+                if (i >= this.countAngle) break;
             }
-            for (var _i = this.countAngle; _i >= 0; _i -= step) {
+            for (var _i = this.countAngle;; _i -= step) {
+                if (_i <= 0) _i = 0;
+
                 tmppoint = tmp = geometry.distanceAngleToPoint(this.inRadius, _i);
-                this.outline.push([Math.floor(tmppoint.x), Math.floor(tmppoint.y)].join(',') + ',');
+                this.outline.push([tmppoint.x, tmppoint.y].join(',') + ',');
+                if (_i == 0) break;
             }
             this.outline.push('z');
 
@@ -152,9 +158,7 @@ var Dount = function (_VisChartBase) {
             );
             */
 
-            window.requestAnimationFrame(function () {
-                _this3.tmpfunc();
-            });
+            //window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
         }
 
         /*
