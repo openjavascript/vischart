@@ -53,7 +53,7 @@ var Dount = function (_VisChartBase) {
         _this.angleStep = 5;
 
         _this.textHeight = 26;
-        _this.lineOffset = 10;
+        _this.lineOffset = 30;
 
         _this.path = [];
 
@@ -158,6 +158,10 @@ var Dount = function (_VisChartBase) {
             window.requestAnimationFrame(function () {
                 _this2.animation();
             });
+
+            if (this.isDone) {
+                this.animationLine();
+            }
         }
     }, {
         key: 'initDataLayout',
@@ -166,6 +170,7 @@ var Dount = function (_VisChartBase) {
 
             this.layer = [];
             this.path = [];
+            this.line = [];
 
             this.data.data.map(function (val, key) {
                 var path = new _konva2.default.Path({
@@ -255,10 +260,36 @@ var Dount = function (_VisChartBase) {
             this.data.data.map(function (val, key) {
                 if (!key) {
                     val.startAngle = 0;
-                    return;
+                } else {
+                    val.startAngle = _this4.data.data[key - 1].endAngle;
                 }
-                val.startAngle = _this4.data.data[key - 1].endAngle;
+
+                val.midAngle = val.startAngle + (val.endAngle - val.startAngle) / 2;
+
+                val.lineStart = geometry.distanceAngleToPoint(_this4.outRadius, val.midAngle);
+                val.lineEnd = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
             });
+        }
+    }, {
+        key: 'animationLine',
+        value: function animationLine() {
+            console.log('animationLine', Date.now());
+
+            for (var i = 0; i < this.path.length; i++) {
+                var path = this.path[i];
+                var layer = this.layer[i];
+                var line = new _konva2.default.Line({
+                    x: this.cx,
+                    y: this.cy,
+                    points: [path.itemData.lineStart.x, path.itemData.lineStart.y, path.itemData.lineEnd.x, path.itemData.lineEnd.y],
+                    stroke: '#ffffff',
+                    strokeWidth: 2
+                });
+
+                layer.add(line);
+
+                this.stage.add(layer);
+            }
         }
     }, {
         key: 'calcLayoutPosition',

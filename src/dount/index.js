@@ -21,7 +21,7 @@ export default class Dount extends VisChartBase  {
         this.angleStep = 5;
 
         this.textHeight = 26;
-        this.lineOffset = 10;
+        this.lineOffset = 30;
 
         this.path = [];
 
@@ -107,6 +107,7 @@ export default class Dount extends VisChartBase  {
             item.pathData.push( 'z' );
 
             item.path.setData( item.pathData.join('') );
+
         }
         this.layer.map( ( val, key )=>{
             this.stage.add( val );
@@ -114,12 +115,17 @@ export default class Dount extends VisChartBase  {
         });
 
         window.requestAnimationFrame( ()=>{ this.animation() } );
+
+        if( this.isDone ){
+            this.animationLine();
+        }
     }
 
     initDataLayout(){
  
         this.layer = [];
         this.path = [];
+        this.line = [];
 
         this.data.data.map( ( val, key ) => {
             let path = new Konva.Path({
@@ -206,10 +212,35 @@ export default class Dount extends VisChartBase  {
         this.data.data.map( ( val, key ) => {
             if( !key ) {
                 val.startAngle = 0;
-                return;
+            }else{
+                val.startAngle = this.data.data[ key - 1].endAngle;
             }
-            val.startAngle = this.data.data[ key - 1].endAngle;
+
+            val.midAngle = val.startAngle + ( val.endAngle - val.startAngle ) / 2;
+
+            val.lineStart = geometry.distanceAngleToPoint( this.outRadius, val.midAngle );
+            val.lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLength, val.midAngle );
         })
+    }
+
+    animationLine(){
+        console.log( 'animationLine', Date.now() );
+
+        for( let i = 0; i < this.path.length; i++ ){
+            let path = this.path[i];
+            let layer = this.layer[ i ];
+            let line = new Konva.Line({
+              x: this.cx,
+              y: this.cy,
+              points: [ path.itemData.lineStart.x, path.itemData.lineStart.y, path.itemData.lineEnd.x, path.itemData.lineEnd.y ],
+              stroke: '#ffffff',
+              strokeWidth: 2
+            });
+
+            layer.add( line );
+
+            this.stage.add( layer );
+        }
     }
 
     calcLayoutPosition() {
