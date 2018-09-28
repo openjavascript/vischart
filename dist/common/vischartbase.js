@@ -34,6 +34,7 @@ var VisChartBase = function () {
 
         this.totalAngle = 360;
         this.angleOffset = 0;
+        this.countAngle = 0;
     }
 
     _createClass(VisChartBase, [{
@@ -73,6 +74,12 @@ var VisChartBase = function () {
         value: function setStage(stage) {
             this.stage = stage;
         }
+    }, {
+        key: 'reset',
+        value: function reset() {}
+    }, {
+        key: 'animation',
+        value: function animation() {}
     }]);
 
     return VisChartBase;

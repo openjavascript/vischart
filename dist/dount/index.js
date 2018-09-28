@@ -49,6 +49,8 @@ var Dount = function (_VisChartBase) {
         _this.outPercent = .50;
         _this.inPercent = .37;
 
+        _this.path = [];
+
         _this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
 
         _this.init();
@@ -75,12 +77,136 @@ var Dount = function (_VisChartBase) {
 
             console.log('dount update', this.data, this, utils);
 
+            this.animation();
+
+            return this;
+        }
+    }, {
+        key: 'reset',
+        value: function reset() {
+            this.path.map(function (val) {
+                val.pathData = [];
+            });
+        }
+    }, {
+        key: 'animation',
+        value: function animation() {
+            var _this2 = this;
+
+            if (this.isDone) return;
+
+            var tmp = void 0,
+                tmppoint = void 0,
+                step = 3;
+
+            this.countAngle += 8;
+
+            if (this.countAngle >= this.totalAngle) {
+                this.countAngle = 360;
+                this.isDone = 1;
+            }
+
+            this.reset();
+
+            for (var i = this.path.length - 1; i >= 0; i--) {
+                //for( let i = 0; i < this.path.length; i++ ){
+                //let i = 2;
+                var item = this.path[i];
+
+                //console.log( i, item );
+
+                var tmpAngle = this.countAngle;
+
+                if (tmpAngle >= item.itemData.endAngle) {
+                    tmpAngle = item.itemData.endAngle;
+                }
+
+                item.pathData.push('M');
+                for (var _i = 0;; _i += step) {
+                    if (_i >= tmpAngle) _i = tmpAngle;
+
+                    tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, _i);
+                    item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
+                    if (_i == 0) item.pathData.push('L');
+
+                    if (_i >= tmpAngle) break;
+                }
+                for (var _i2 = tmpAngle;; _i2 -= step) {
+                    if (_i2 <= 0) _i2 = 0;
+
+                    tmppoint = tmp = geometry.distanceAngleToPoint(this.inRadius, _i2);
+                    item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
+                    if (_i2 == 0) break;
+                }
+
+                item.pathData.push('z');
+
+                item.path.setData(item.pathData.join(''));
+            }
+            this.layer.map(function (val, key) {
+                _this2.stage.add(val);
+                val.setZIndex(_this2.layer.length - key);
+            });
+
+            window.requestAnimationFrame(function () {
+                _this2.animation();
+            });
+        }
+    }, {
+        key: 'initDataLayout',
+        value: function initDataLayout() {
+            var _this3 = this;
+
+            this.layer = [];
+            this.path = [];
+
+            this.data.data.map(function (val, key) {
+                var path = new _konva2.default.Path({
+                    x: _this3.cx,
+                    y: _this3.cy,
+                    strokeWidth: 0,
+                    stroke: '#ff000000',
+                    data: '',
+                    fill: _this3.colors[key % _this3.colors.length]
+                });
+
+                console.log(key % _this3.colors.length, _this3.colors[key % _this3.colors.length]);
+
+                var tmp = {
+                    path: path,
+                    pathData: [],
+                    itemData: val
+                };
+
+                _this3.path.push(tmp);
+
+                path.on('mouseenter', function (evt) {
+                    //console.log( 'path mouseenter', Date.now() );
+                });
+
+                path.on('mouseleave', function () {
+                    //console.log( 'path mouseleave', Date.now() );
+                });
+
+                var layer = new _konva2.default.Layer();
+                layer.add(path);
+
+                _this3.layer.push(layer);
+            });
+            this.layer.map(function (val, key) {
+                _this3.stage.add(val);
+            });
+
+            /*
+            window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+            */
+
             return this;
         }
     }, {
         key: 'calcDataPosition',
         value: function calcDataPosition() {
-            var _this2 = this;
+            var _this4 = this;
 
             if (!this.data) return;
 
@@ -97,7 +223,7 @@ var Dount = function (_VisChartBase) {
                 tmp = utils.parseFinance(tmp + val._percent);
                 val._totalPercent = tmp;
 
-                val.endAngle = _this2.totalAngle * val._totalPercent;
+                val.endAngle = _this4.totalAngle * val._totalPercent;
             });
 
             //修正浮点数精确度
@@ -115,7 +241,7 @@ var Dount = function (_VisChartBase) {
                     val.startAngle = 0;
                     return;
                 }
-                val.startAngle = _this2.data.data[key - 1].endAngle;
+                val.startAngle = _this4.data.data[key - 1].endAngle;
             });
         }
     }, {
@@ -127,93 +253,6 @@ var Dount = function (_VisChartBase) {
             this.inRadius = Math.ceil(this.inPercent * this.max / 2);
 
             return this;
-        }
-    }, {
-        key: 'initDataLayout',
-        value: function initDataLayout() {
-            var _this3 = this;
-
-            this.layer = new _konva2.default.Layer();
-            this.path = [];
-
-            this.data.data.map(function (val, key) {
-                var path = new _konva2.default.Path({
-                    x: _this3.cx,
-                    y: _this3.cy,
-                    strokeWidth: 0,
-                    stroke: '#ff000000',
-                    data: '',
-                    fill: _this3.colors[key % _this3.colors.length - 1]
-                });
-
-                path.on('mouseenter', function (evt) {
-                    //console.log( 'path mouseenter', Date.now() );
-                });
-
-                path.on('mouseleave', function () {
-                    //console.log( 'path mouseleave', Date.now() );
-                });
-
-                _this3.path.push(path);
-                _this3.layer.add(path);
-            });
-            this.stage.add(this.layer);
-
-            /*
-            window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
-            */
-
-            return this;
-        }
-    }, {
-        key: 'tmpfunc',
-        value: function tmpfunc() {
-            var _this4 = this;
-
-            var tmp = void 0,
-                tmppoint = void 0;
-
-            if (this.isDone) return;
-
-            this.countAngle += 8;
-
-            if (this.countAngle >= this.endAngle) {
-                this.countAngle = 360;
-                this.isDone = 1;
-            }
-            //this.countAngle = this.endAngle;
-
-            this.outline = [];
-
-            var step = 3;
-
-            this.outline.push('M');
-            for (var i = 0;; i += step) {
-                if (i >= this.countAngle) i = this.countAngle;
-
-                tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, i);
-                this.outline.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                if (i == 0) this.outline.push('L');
-
-                if (i >= this.countAngle) break;
-            }
-            for (var _i = this.countAngle;; _i -= step) {
-                if (_i <= 0) _i = 0;
-
-                tmppoint = tmp = geometry.distanceAngleToPoint(this.inRadius, _i);
-                this.outline.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                if (_i == 0) break;
-            }
-            this.outline.push('z');
-
-            //this.path.data = this.outline.join('');
-            this.path.setData(this.outline.join(''));
-            this.path.draw();
-            this.stage.add(this.layer);
-
-            window.requestAnimationFrame(function () {
-                _this4.tmpfunc();
-            });
         }
 
         /*

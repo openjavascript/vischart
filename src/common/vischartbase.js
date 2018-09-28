@@ -19,6 +19,7 @@ export default class VisChartBase {
 
         this.totalAngle = 360;
         this.angleOffset = 0;
+        this.countAngle = 0;
     }
 
     update( data ){
@@ -50,7 +51,12 @@ export default class VisChartBase {
     setStage( stage ){
         this.stage = stage;
     }
-    
+
+    reset(){
+    }
+
+    animation(){
+    }
 
 }
 

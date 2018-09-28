@@ -41,7 +41,7 @@ export default class VisChart extends VisChartBase {
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
-        console.log( ju );
+        //console.log( ju );
 
         this.stage.removeChildren();
 

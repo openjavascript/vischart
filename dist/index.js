@@ -81,7 +81,7 @@ var VisChart = function (_VisChartBase) {
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
-            console.log(_jsonUtilsx2.default);
+            //console.log( ju );
 
             this.stage.removeChildren();
 
