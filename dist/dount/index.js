@@ -100,6 +100,7 @@ var Dount = function (_VisChartBase) {
                 step = 3;
 
             this.countAngle += 8;
+            //this.countAngle += 350;
 
             if (this.countAngle >= this.totalAngle) {
                 this.countAngle = 360;
@@ -121,22 +122,24 @@ var Dount = function (_VisChartBase) {
                     tmpAngle = item.itemData.endAngle;
                 }
 
+                if (tmpAngle < item.itemData.startAngle) continue;
+
                 item.pathData.push('M');
-                for (var _i = 0;; _i += step) {
+                for (var _i = item.itemData.startAngle;; _i += step) {
                     if (_i >= tmpAngle) _i = tmpAngle;
 
                     tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, _i);
                     item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                    if (_i == 0) item.pathData.push('L');
+                    if (_i == item.itemData.startAngle) item.pathData.push('L');
 
                     if (_i >= tmpAngle) break;
                 }
                 for (var _i2 = tmpAngle;; _i2 -= step) {
-                    if (_i2 <= 0) _i2 = 0;
+                    if (_i2 <= item.itemData.startAngle) _i2 = item.itemData.startAngle;
 
                     tmppoint = tmp = geometry.distanceAngleToPoint(this.inRadius, _i2);
                     item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                    if (_i2 == 0) break;
+                    if (_i2 == item.itemData.startAngle) break;
                 }
 
                 item.pathData.push('z');

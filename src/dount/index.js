@@ -62,9 +62,10 @@ export default class Dount extends VisChartBase  {
     animation(){
         if( this.isDone ) return;
 
-        let tmp, tmppoint, step  = 3;
+        let tmp, tmppoint, step = 3;
 
         this.countAngle += 8;
+        //this.countAngle += 350;
 
         if( this.countAngle >= this.totalAngle ){
             this.countAngle = 360;
@@ -73,7 +74,6 @@ export default class Dount extends VisChartBase  {
 
         this.reset();
 
-        
         for( let i = this.path.length - 1; i >= 0; i-- ){
         //for( let i = 0; i < this.path.length; i++ ){
             //let i = 2;
@@ -87,22 +87,24 @@ export default class Dount extends VisChartBase  {
                 tmpAngle = item.itemData.endAngle;
             }
 
+            if( tmpAngle < item.itemData.startAngle ) continue;
+
             item.pathData.push( 'M' );
-            for( let i = 0; ; i+= step  ){
+            for( let i = item.itemData.startAngle; ; i+= step  ){
                 if( i >= tmpAngle ) i = tmpAngle;
 
                 tmppoint = tmp = geometry.distanceAngleToPoint( this.outRadius, i );
                 item.pathData.push( [ (tmppoint.x), (tmppoint.y)].join(',') + ',' );
-                if( i == 0 ) item.pathData.push( 'L' );
+                if( i == item.itemData.startAngle ) item.pathData.push( 'L' );
 
                 if( i >= tmpAngle ) break;
             }
             for( let i = tmpAngle; ; i-= step ){
-                if( i <= 0 ) i = 0;
+                if( i <= item.itemData.startAngle ) i = item.itemData.startAngle;
 
                 tmppoint = tmp = geometry.distanceAngleToPoint( this.inRadius, i );
                 item.pathData.push( [ (tmppoint.x), (tmppoint.y)].join(',') +',' );
-                if( i == 0 ) break;
+                if( i == item.itemData.startAngle ) break;
             }
 
             item.pathData.push( 'z' );
