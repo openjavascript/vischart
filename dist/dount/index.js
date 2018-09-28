@@ -146,31 +146,21 @@ var Dount = function (_VisChartBase) {
                     fill: _this3.colors[key % _this3.colors.length - 1]
                 });
 
+                path.on('mouseenter', function (evt) {
+                    //console.log( 'path mouseenter', Date.now() );
+                });
+
+                path.on('mouseleave', function () {
+                    //console.log( 'path mouseleave', Date.now() );
+                });
+
                 _this3.path.push(path);
                 _this3.layer.add(path);
             });
             this.stage.add(this.layer);
 
             /*
-             this.path = new Konva.Path({
-              x: this.cx,
-              y: this.cy,
-              strokeWidth: 0,
-              stroke: '#ff000000',
-              data: '',
-              fill: 'green'
-            });
-             this.path.on( 'mouseenter', function(){
-                console.log( 'path mouseenter', Date.now() );
-            });
-             this.path.on( 'mouseleave', function(){
-                console.log( 'path mouseleave', Date.now() );
-            });
-             // add the shape to the layer
-            this.layer.add( this.path);
-            this.stage.add(this.layer);
-             // add the layer to the stage
-              window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+            window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
             */
 
             return this;

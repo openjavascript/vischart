@@ -109,6 +109,14 @@ export default class Dount extends VisChartBase  {
               data: '',
               fill: this.colors[ key % this.colors.length - 1]
             });
+                
+            path.on( 'mouseenter', (evt)=>{
+                //console.log( 'path mouseenter', Date.now() );
+            });
+
+            path.on( 'mouseleave', ()=>{
+                //console.log( 'path mouseleave', Date.now() );
+            });
 
             this.path.push( path );
             this.layer.add( path );
@@ -116,31 +124,6 @@ export default class Dount extends VisChartBase  {
         this.stage.add( this.layer );
 
         /*
-
-        this.path = new Konva.Path({
-          x: this.cx,
-          y: this.cy,
-          strokeWidth: 0,
-          stroke: '#ff000000',
-          data: '',
-          fill: 'green'
-        });
-
-        this.path.on( 'mouseenter', function(){
-            console.log( 'path mouseenter', Date.now() );
-        });
-
-        this.path.on( 'mouseleave', function(){
-            console.log( 'path mouseleave', Date.now() );
-        });
-
-        // add the shape to the layer
-        this.layer.add( this.path);
-        this.stage.add(this.layer);
-
-        // add the layer to the stage
-
-
         window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
         */
        
