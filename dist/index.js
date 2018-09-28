@@ -81,19 +81,21 @@ var VisChart = function (_VisChartBase) {
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
+            console.log(_jsonUtilsx2.default);
+
             this.stage.removeChildren();
 
-            console.log('update data', data);
+            //console.log( 'update data', data );
 
             this.data.series.map(function (val, key) {
-                console.log(val, constant);
+                //console.log( val, constant );
                 switch (val.type) {
                     case constant.CHART_TYPE.dount:
                         {
-                            console.log('dount find');
+                            //console.log( 'dount find' );
 
                             var dount = new _index4.default(_this2.box, _this2.width, _this2.height);
-                            dount.update(val);
+                            dount.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
 
                             _this2.ins.push(dount);
 

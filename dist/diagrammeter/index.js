@@ -6,17 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _two = require('two.js');
-
-var _two2 = _interopRequireDefault(_two);
-
 var _geometry = require('../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -96,8 +90,8 @@ var DiagramMeter = function () {
         key: 'init',
         value: function init() {
             if (!this.canvas) return;
-            this.two = new _two2.default({
-                type: _two2.default.Types.canvas,
+            this.two = new Two({
+                type: Two.Types.canvas,
                 width: this.width,
                 height: this.height,
                 domElement: this.canvas
@@ -139,7 +133,7 @@ var DiagramMeter = function () {
         key: 'drawOut',
         value: function drawOut() {
 
-            var linearGradient = this.two.makeLinearGradient(-this.width, this.height / 2, this.width, this.height / 2, new _two2.default.Stop(0, 'rgb(89,150,189)'), new _two2.default.Stop(.3, 'rgb(90,149,189)'), new _two2.default.Stop(.5, 'rgb(221,180,96)'), new _two2.default.Stop(.6, 'rgb(170,82,35)'), new _two2.default.Stop(.8, 'rgb(189,108,49)'), new _two2.default.Stop(1, 'rgb(216,154,76)'));
+            var linearGradient = this.two.makeLinearGradient(-this.width, this.height / 2, this.width, this.height / 2, new Two.Stop(0, 'rgb(89,150,189)'), new Two.Stop(.3, 'rgb(90,149,189)'), new Two.Stop(.5, 'rgb(221,180,96)'), new Two.Stop(.6, 'rgb(170,82,35)'), new Two.Stop(.8, 'rgb(189,108,49)'), new Two.Stop(1, 'rgb(216,154,76)'));
 
             var path = this.two.makePath.apply(this.two, this.outpos);
             path.stroke = '#00000000';

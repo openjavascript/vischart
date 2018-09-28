@@ -6,10 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _konva = require('konva');
-
-var _konva2 = _interopRequireDefault(_konva);
-
 var _vischartbase = require('../common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
@@ -17,6 +13,18 @@ var _vischartbase2 = _interopRequireDefault(_vischartbase);
 var _geometry = require('../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
+
+var _konva = require('konva');
+
+var _konva2 = _interopRequireDefault(_konva);
+
+var _jsonUtilsx = require('json-utilsx');
+
+var _jsonUtilsx2 = _interopRequireDefault(_jsonUtilsx);
+
+var _utils = require('../common/utils.js');
+
+var utils = _interopRequireWildcard(_utils);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -41,21 +49,69 @@ var Dount = function (_VisChartBase) {
         _this.outPercent = .50;
         _this.inPercent = .37;
 
-        _this.iconPercent = .25;
-
-        _this.outline = [];
-
-        _this.startAngle = 0;
-        _this.endAngle = 360;
-        _this.countAngle = _this.startAngle;
-
         _this.init();
-
-        //console.log( this );
         return _this;
     }
 
     _createClass(Dount, [{
+        key: 'init',
+        value: function init() {
+            return this;
+        }
+    }, {
+        key: 'update',
+        value: function update(data, allData) {
+            this.data = data;
+            this.allData = allData;
+
+            if (!_jsonUtilsx2.default.jsonInData(this.data, 'data')) return;
+
+            this.calcTotal();
+
+            console.log('dount update', this.data, this, utils);
+
+            return this;
+        }
+    }, {
+        key: 'calcTotal',
+        value: function calcTotal() {
+            var _this2 = this;
+
+            var total = 0,
+                tmp = 0;
+
+            this.data.data.map(function (val) {
+                total += val.value;
+            });
+            this.total = total;
+
+            this.data.data.map(function (val) {
+                val._percent = utils.parseFinance(val.value / total);
+                tmp = utils.parseFinance(tmp + val._percent);
+                val._totalPercent = tmp;
+
+                val.endAngle = _this2.totalAngle * val._totalPercent;
+            });
+
+            //修正浮点数精确度
+            if (this.data.data.length) {
+                var item = this.data.data[this.data.data.length - 1];
+                tmp = tmp - item._percent;
+
+                item._percent = 1 - tmp;
+                item._totalPercent = 1;
+                item.endAngle = this.totalAngle;
+            }
+            //计算开始角度
+            this.data.data.map(function (val, key) {
+                if (!key) {
+                    val.startAngle = 0;
+                    return;
+                }
+                val.startAngle = _this2.data.data[key - 1].endAngle;
+            });
+        }
+    }, {
         key: 'calcLayoutPosition',
         value: function calcLayoutPosition() {
             //console.log( 'calcLayoutPosition', Date.now() );
@@ -105,7 +161,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'tmpfunc',
         value: function tmpfunc() {
-            var _this2 = this;
+            var _this3 = this;
 
             var tmp = void 0,
                 tmppoint = void 0;
@@ -149,7 +205,7 @@ var Dount = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this2.tmpfunc();
+                _this3.tmpfunc();
             });
         }
 

@@ -41,18 +41,20 @@ export default class VisChart extends VisChartBase {
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
+        console.log( ju );
+
         this.stage.removeChildren();
 
-        console.log( 'update data', data );
+        //console.log( 'update data', data );
 
         this.data.series.map( ( val, key ) => {
-            console.log( val, constant );
+            //console.log( val, constant );
             switch( val.type ){
                 case constant.CHART_TYPE.dount: {
-                    console.log( 'dount find' );
+                    //console.log( 'dount find' );
 
                     let dount = new Dount( this.box, this.width, this.height );
-                        dount.update( val );
+                        dount.update( ju.clone( val ), ju.clone( this.data ) );
 
                     this.ins.push( dount );
 

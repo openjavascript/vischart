@@ -1,5 +1,4 @@
 
-import Two from 'two.js';
 
 import * as geometry from '../geometry/geometry.js';
 

@@ -16,13 +16,13 @@ export default class VisChartBase {
         this.cx = this.max / 2;
         this.cy = this.max / 2;
         this.cpoint = { x: this.cx, y: this.cy };
+
+        this.totalAngle = 360;
+        this.angleOffset = 0;
     }
 
     update( data ){
         this.data = data;
-
-        this.calcDataPosition();
-        this.initDataLayout();
 
         return this;
     }

@@ -1111,9 +1111,9 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "http://registry.npm.taobao.org/jsesc/download/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
-json-utilsx@1.0.5:
-  version "1.0.5"
-  resolved "http://registry.npm.taobao.org/json-utilsx/download/json-utilsx-1.0.5.tgz#d8d2f8fa9c46a939e427671ab2e1a106b7f02dc8"
+json-utilsx@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/json-utilsx/-/json-utilsx-1.0.7.tgz#91833becf57b961ac674dcb791ec195482332819"
   dependencies:
     babel-cli "^6.26.0"
     babel-core "^6.26.3"
@@ -1754,10 +1754,6 @@ to-regex@^3.0.1, to-regex@^3.0.2:
 trim-right@^1.0.1:
   version "1.0.1"
   resolved "http://registry.npm.taobao.org/trim-right/download/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
-
-two.js@0.7.0-alpha.1:
-  version "0.7.0-alpha.1"
-  resolved "http://registry.npm.taobao.org/two.js/download/two.js-0.7.0-alpha.1.tgz#85a45ec22fd3e8d276796e0197e587719200a598"
 
 union-value@^1.0.0:
   version "1.0.0"

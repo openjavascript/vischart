@@ -1,8 +1,11 @@
 
-import Konva from 'konva';
-
 import VisChartBase from '../common/vischartbase.js';
 import * as geometry from '../geometry/geometry.js';
+
+import Konva from 'konva';
+import ju from 'json-utilsx';
+
+import * as utils from '../common/utils.js';
 
 
 export default class Dount extends VisChartBase  {
@@ -14,19 +17,59 @@ export default class Dount extends VisChartBase  {
         this.outPercent = .50;
         this.inPercent = .37;
 
-        this.iconPercent = .25;
-
-        this.outline = [];
-
-        this.startAngle = 0;
-        this.endAngle = 360;
-        this.countAngle = this.startAngle;
-
-
         this.init();
+    }
 
+    init(){
+        return this;
+    }
 
-        //console.log( this );
+    update( data, allData ){
+        this.data = data;
+        this.allData = allData;
+
+        if( !ju.jsonInData( this.data, 'data' ) ) return;
+
+        this.calcTotal();
+
+        console.log( 'dount update', this.data, this, utils );
+
+        return this;
+    }
+
+    calcTotal(){
+        let total = 0, tmp = 0;
+
+        this.data.data.map( ( val ) => {
+            total += val.value;
+        });
+        this.total = total;
+
+        this.data.data.map( ( val ) => {
+            val._percent =  utils.parseFinance( val.value / total );
+            tmp = utils.parseFinance( tmp + val._percent );
+            val._totalPercent = tmp;
+
+            val.endAngle = this.totalAngle * val._totalPercent;
+        });
+
+        //修正浮点数精确度
+        if( this.data.data.length ){
+            let item = this.data.data[ this.data.data.length - 1];
+            tmp = tmp - item._percent;
+
+            item._percent = 1 - tmp;
+            item._totalPercent = 1;
+            item.endAngle = this.totalAngle;
+        }
+        //计算开始角度
+        this.data.data.map( ( val, key ) => {
+            if( !key ) {
+                val.startAngle = 0;
+                return;
+            }
+            val.startAngle = this.data.data[ key - 1].endAngle;
+        })
     }
 
     calcLayoutPosition() {
