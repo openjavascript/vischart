@@ -89,19 +89,21 @@ var VisChart = function (_VisChartBase) {
 
             this.data.series.map(function (val, key) {
                 //console.log( val, constant );
+                var ins = void 0;
+
                 switch (val.type) {
                     case constant.CHART_TYPE.dount:
                         {
-                            //console.log( 'dount find' );
-
-                            var dount = new _index4.default(_this2.box, _this2.width, _this2.height);
-                            dount.setStage(_this2.stage);
-                            dount.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
-
-                            _this2.ins.push(dount);
-
+                            ins = new _index4.default(_this2.box, _this2.width, _this2.height);
+                            _this2.options && ins.setOptions(_this2.options);
+                            ins.setStage(_this2.stage);
+                            ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
                             break;
                         }
+                }
+
+                if (ins) {
+                    _this2.ins.push(ins);
                 }
             });
 

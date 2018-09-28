@@ -35,6 +35,8 @@ var VisChartBase = function () {
         this.totalAngle = 360;
         this.angleOffset = 0;
         this.countAngle = 0;
+
+        this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
     }
 
     _createClass(VisChartBase, [{
@@ -48,6 +50,16 @@ var VisChartBase = function () {
         key: 'init',
         value: function init() {
             return this;
+        }
+    }, {
+        key: 'setOptions',
+        value: function setOptions(options) {
+
+            for (var key in options) {
+                this[key] = options[key];
+            }
+
+            this.options = options;
         }
     }, {
         key: 'calcLayoutPosition',

@@ -49,18 +49,20 @@ export default class VisChart extends VisChartBase {
 
         this.data.series.map( ( val, key ) => {
             //console.log( val, constant );
+            let ins;
+
             switch( val.type ){
                 case constant.CHART_TYPE.dount: {
-                    //console.log( 'dount find' );
-
-                    let dount = new Dount( this.box, this.width, this.height );
-                        dount.setStage( this.stage );
-                        dount.update( ju.clone( val ), ju.clone( this.data ) );
-
-                    this.ins.push( dount );
-
+                    ins = new Dount( this.box, this.width, this.height );
+                    this.options && ( ins.setOptions( this.options ) );
+                    ins.setStage( this.stage );
+                    ins.update( ju.clone( val ), ju.clone( this.data ) );
                     break;
                 }
+            }
+
+            if( ins ){
+                this.ins.push( ins );
             }
         });
 

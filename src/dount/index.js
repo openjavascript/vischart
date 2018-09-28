@@ -17,16 +17,10 @@ export default class Dount extends VisChartBase  {
         this.outPercent = .50;
         this.inPercent = .37;
 
-        this.path = [];
+        this.animationStep = 8;
+        this.angleStep = 5;
 
-        this.colors = [
-            '#f12575'
-            , '#da432e'
-            , '#f3a42d'
-            , '#19af89'
-            , '#24a3ea'
-            , '#b56be8'
-        ];
+        this.path = [];
 
         this.init();
     }
@@ -62,13 +56,13 @@ export default class Dount extends VisChartBase  {
     animation(){
         if( this.isDone ) return;
 
-        let tmp, tmppoint, step = 3;
+        let tmp, tmppoint, step = this.angleStep;
 
-        this.countAngle += 8;
+        this.countAngle += this.animationStep;
         //this.countAngle += 350;
 
         if( this.countAngle >= this.totalAngle ){
-            this.countAngle = 360;
+            this.countAngle = this.totalAngle;
             this.isDone = 1;
         }
 

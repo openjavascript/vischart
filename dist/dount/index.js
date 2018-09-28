@@ -49,9 +49,10 @@ var Dount = function (_VisChartBase) {
         _this.outPercent = .50;
         _this.inPercent = .37;
 
-        _this.path = [];
+        _this.animationStep = 8;
+        _this.angleStep = 5;
 
-        _this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
+        _this.path = [];
 
         _this.init();
         return _this;
@@ -97,13 +98,13 @@ var Dount = function (_VisChartBase) {
 
             var tmp = void 0,
                 tmppoint = void 0,
-                step = 3;
+                step = this.angleStep;
 
-            this.countAngle += 8;
+            this.countAngle += this.animationStep;
             //this.countAngle += 350;
 
             if (this.countAngle >= this.totalAngle) {
-                this.countAngle = 360;
+                this.countAngle = this.totalAngle;
                 this.isDone = 1;
             }
 
