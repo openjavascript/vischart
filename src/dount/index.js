@@ -15,7 +15,7 @@ export default class Dount extends VisChartBase  {
         this.name = 'Dount ' + Date.now();
 
         this.outPercent = .50;
-        this.inPercent = .37;
+        this.inPercent = .34;
 
         this.animationStep = 8;
         this.angleStep = 5;
@@ -132,6 +132,10 @@ export default class Dount extends VisChartBase  {
                 key % this.colors.length
                 , this.colors[ key % this.colors.length] 
             );
+
+            if( ju.jsonInData( val, 'itemStyle.color' ) ){
+                path.fill( val.itemStyle.color );
+            }
                 
             let tmp = { 
                 path: path

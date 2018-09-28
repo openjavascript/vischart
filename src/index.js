@@ -39,6 +39,8 @@ export default class VisChart extends VisChartBase {
     update( data ){
         this.data = data;
 
+        this.loadImage();
+
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
         //console.log( ju );
@@ -72,15 +74,13 @@ export default class VisChart extends VisChartBase {
     setImage( imgUrl ){
         this.imgUrl = imgUrl;
 
-        this.loadImage();
-
         return this;
     }
 
     loadImage(){
         if( !this.imgUrl ) return;
 
-        if( this.iconLayer ) this.state.remove( this.iconLayer );
+        if( this.iconLayer ) this.iconLayer.remove();
 
         this.iconLayer = new Konva.Layer();
 

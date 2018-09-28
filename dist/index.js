@@ -79,6 +79,8 @@ var VisChart = function (_VisChartBase) {
 
             this.data = data;
 
+            this.loadImage();
+
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
             //console.log( ju );
@@ -114,8 +116,6 @@ var VisChart = function (_VisChartBase) {
         value: function setImage(imgUrl) {
             this.imgUrl = imgUrl;
 
-            this.loadImage();
-
             return this;
         }
     }, {
@@ -125,7 +125,7 @@ var VisChart = function (_VisChartBase) {
 
             if (!this.imgUrl) return;
 
-            if (this.iconLayer) this.state.remove(this.iconLayer);
+            if (this.iconLayer) this.iconLayer.remove();
 
             this.iconLayer = new _konva2.default.Layer();
 

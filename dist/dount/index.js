@@ -47,7 +47,7 @@ var Dount = function (_VisChartBase) {
         _this.name = 'Dount ' + Date.now();
 
         _this.outPercent = .50;
-        _this.inPercent = .37;
+        _this.inPercent = .34;
 
         _this.animationStep = 8;
         _this.angleStep = 5;
@@ -175,6 +175,10 @@ var Dount = function (_VisChartBase) {
                 });
 
                 console.log(key % _this3.colors.length, _this3.colors[key % _this3.colors.length]);
+
+                if (_jsonUtilsx2.default.jsonInData(val, 'itemStyle.color')) {
+                    path.fill(val.itemStyle.color);
+                }
 
                 var tmp = {
                     path: path,
