@@ -113,8 +113,15 @@ var VisChart = function (_VisChartBase) {
         }
     }, {
         key: 'setImage',
-        value: function setImage(imgUrl) {
+        value: function setImage(imgUrl, width, height) {
+            var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+            var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
             this.imgUrl = imgUrl;
+            this.imgWidth = width;
+            this.imgHeight = height;
+            this.imgOffsetX = offsetX;
+            this.imgOffsetY = offsetY;
 
             return this;
         }
@@ -131,12 +138,15 @@ var VisChart = function (_VisChartBase) {
 
             var img = new Image();
             img.onload = function () {
+                var width = _this3.imgWidth || img.width,
+                    height = _this3.imgHeight || img.height;
+
                 _this3.icon = new _konva2.default.Image({
-                    x: _this3.cx - 107 / 2,
-                    y: _this3.cy - 107 / 2,
                     image: img,
-                    width: 107,
-                    height: 107
+                    x: _this3.cx - width / 2 + _this3.imgOffsetX,
+                    y: _this3.cy - height / 2 + _this3.imgOffsetY,
+                    width: width,
+                    height: height
                 });
 
                 _this3.iconLayer.add(_this3.icon);

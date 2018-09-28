@@ -71,8 +71,12 @@ export default class VisChart extends VisChartBase {
         return this;
     }
 
-    setImage( imgUrl ){
+    setImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
         this.imgUrl = imgUrl;
+        this.imgWidth = width;
+        this.imgHeight = height;
+        this.imgOffsetX = offsetX;
+        this.imgOffsetY = offsetY;
 
         return this;
     }
@@ -86,12 +90,16 @@ export default class VisChart extends VisChartBase {
 
         let img = new Image();
         img.onload = ()=>{
+            let width = this.imgWidth || img.width
+                , height = this.imgHeight || img.height
+                ;
+
             this.icon = new Konva.Image( {
-                x: this.cx - 107 / 2
-                , y: this.cy - 107 / 2
-                , image: img
-                , width: 107
-                , height: 107
+                image: img
+                , x: this.cx - width / 2 + this.imgOffsetX
+                , y: this.cy - height / 2 + this.imgOffsetY
+                , width: width
+                , height: height
             });
 
             this.iconLayer.add( this.icon );
