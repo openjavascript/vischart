@@ -31,10 +31,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Dount = function (_VisChartBase) {
     _inherits(Dount, _VisChartBase);
 
-    function Dount(canvas) {
+    function Dount(box, width, height) {
         _classCallCheck(this, Dount);
 
-        var _this = _possibleConstructorReturn(this, (Dount.__proto__ || Object.getPrototypeOf(Dount)).call(this, canvas));
+        var _this = _possibleConstructorReturn(this, (Dount.__proto__ || Object.getPrototypeOf(Dount)).call(this, box, width, height));
 
         _this.name = 'Dount ' + Date.now();
 
@@ -51,60 +51,61 @@ var Dount = function (_VisChartBase) {
 
         _this.init();
 
-        console.log(_this);
+        //console.log( this );
         return _this;
     }
 
     _createClass(Dount, [{
         key: 'calcLayoutPosition',
         value: function calcLayoutPosition() {
-            var _this2 = this;
+            //console.log( 'calcLayoutPosition', Date.now() );
 
-            console.log('calcLayoutPosition', Date.now());
 
             this.outRadius = Math.ceil(this.outPercent * this.max / 2);
             this.inRadius = Math.ceil(this.inPercent * this.max / 2);
 
-            this.layer = new _konva2.default.Layer();
-
-            this.path = new _konva2.default.Path({
-                x: this.cx,
-                y: this.cy,
-                strokeWidth: 0,
-                stroke: '#ff000000',
-                data: '',
-                fill: 'green'
+            /*
+            this.layer = new Konva.Layer();
+             this.path = new Konva.Path({
+              x: this.cx,
+              y: this.cy,
+              strokeWidth: 0,
+              stroke: '#ff000000',
+              data: '',
+              fill: 'green'
             });
-
-            // add the shape to the layer
-            this.layer.add(this.path);
+             this.path.on( 'mouseenter', function(){
+                console.log( 'path mouseenter', Date.now() );
+            });
+             this.path.on( 'mouseleave', function(){
+                console.log( 'path mouseleave', Date.now() );
+            });
+             // add the shape to the layer
+            this.layer.add( this.path);
             this.stage.add(this.layer);
+             // add the layer to the stage
+              window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+            */
+            return this;
+        }
+    }, {
+        key: 'calcDataPosition',
+        value: function calcDataPosition() {
+            if (!this.data) return;
 
-            // add the layer to the stage
+            console.log('calcDataPosition', this.data);
 
-
-            var img = document.querySelector('#dountInImg');
-            var icon = new _konva2.default.Image({
-                x: this.cx - 107 / 2,
-                y: this.cy - 107 / 2,
-                image: img,
-                width: 107,
-                height: 107
-            });
-
-            this.iconLayer = new _konva2.default.Layer();
-            this.iconLayer.add(icon);
-
-            this.stage.add(this.iconLayer);
-
-            window.requestAnimationFrame(function () {
-                _this2.tmpfunc();
-            });
+            return this;
+        }
+    }, {
+        key: 'initDataLayout',
+        value: function initDataLayout() {
+            return this;
         }
     }, {
         key: 'tmpfunc',
         value: function tmpfunc() {
-            var _this3 = this;
+            var _this2 = this;
 
             var tmp = void 0,
                 tmppoint = void 0;
@@ -147,18 +148,8 @@ var Dount = function (_VisChartBase) {
             this.path.draw();
             this.stage.add(this.layer);
 
-            /*
-            let img = document.querySelector( '#dountInImg' );
-            let ctx = this.canvas.getContext( '2d' );
-            ctx.drawImage( 
-                img
-                , this.width / 2 - img.width / 2
-                , this.height / 2 - img.height / 2
-            );
-            */
-
             window.requestAnimationFrame(function () {
-                _this3.tmpfunc();
+                _this2.tmpfunc();
             });
         }
 

@@ -20,6 +20,9 @@ var VisChartBase = function () {
 
         this.box = box;
 
+        this.customWidth = width;
+        this.customHeight = height;
+
         this.width = width || box.offsetWidth;
         this.height = height || box.offsetHeight;
 
@@ -28,40 +31,43 @@ var VisChartBase = function () {
         this.cx = this.max / 2;
         this.cy = this.max / 2;
         this.cpoint = { x: this.cx, y: this.cy };
-
-        console.dir(this.box);
-        console.log(this.box, this.width, this.height, this.max);
     }
 
     _createClass(VisChartBase, [{
         key: 'update',
         value: function update(data) {
-            console.log('VisChartBase update', data);
+            this.data = data;
+
+            this.calcDataPosition();
+            this.initDataLayout();
+
+            return this;
         }
     }, {
         key: 'init',
         value: function init() {
-            console.log('VisChartBase init', Date.now(), this.width, this.height, this.canvas);
-
-            if (!this.box) return;
-
-            this.stage = new _konva2.default.Stage({
-                container: this.box,
-                width: this.width,
-                height: this.height
-            });
-
-            this.calcLayoutPosition();
+            return this;
         }
     }, {
         key: 'calcLayoutPosition',
-        value: function calcLayoutPosition() {}
+        value: function calcLayoutPosition() {
+            return this;
+        }
     }, {
         key: 'calcDataPosition',
-        value: function calcDataPosition() {}
+        value: function calcDataPosition() {
+            return this;
+        }
+    }, {
+        key: 'initDataLayout',
+        value: function initDataLayout() {
+            return this;
+        }
     }, {
         key: 'draw',
-        value: function draw() {}
+        value: function draw() {
+            return this;
+        }
     }]);
 
     return VisChartBase;

@@ -6,8 +6,8 @@ import * as geometry from '../geometry/geometry.js';
 
 
 export default class Dount extends VisChartBase  {
-    constructor( canvas ){
-        super( canvas );
+    constructor( box, width, height ){
+        super( box, width, height );
 
         this.name = 'Dount ' + Date.now();
 
@@ -26,16 +26,18 @@ export default class Dount extends VisChartBase  {
         this.init();
 
 
-        console.log( this );
+        //console.log( this );
     }
 
     calcLayoutPosition() {
-        console.log( 'calcLayoutPosition', Date.now() );
+        //console.log( 'calcLayoutPosition', Date.now() );
 
 
         this.outRadius = Math.ceil( this.outPercent * this.max / 2 );
         this.inRadius = Math.ceil( this.inPercent * this.max / 2 );
 
+
+        /*
         this.layer = new Konva.Layer();
 
         this.path = new Konva.Path({
@@ -47,6 +49,14 @@ export default class Dount extends VisChartBase  {
           fill: 'green'
         });
 
+        this.path.on( 'mouseenter', function(){
+            console.log( 'path mouseenter', Date.now() );
+        });
+
+        this.path.on( 'mouseleave', function(){
+            console.log( 'path mouseleave', Date.now() );
+        });
+
         // add the shape to the layer
         this.layer.add( this.path);
         this.stage.add(this.layer);
@@ -54,23 +64,23 @@ export default class Dount extends VisChartBase  {
         // add the layer to the stage
 
 
-        let img = document.querySelector( '#dountInImg' );
-        let icon = new Konva.Image( {
-            x: this.cx - 107 / 2
-            , y: this.cy - 107 / 2
-            , image: img
-            , width: 107
-            , height: 107
-        });
-
-        this.iconLayer = new Konva.Layer();
-        this.iconLayer.add( icon );
-
-        this.stage.add( this.iconLayer );
-
-
         window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
+        */
+        return this;
     }
+
+    calcDataPosition() {
+        if( !this.data ) return;
+
+        console.log( 'calcDataPosition', this.data );
+
+        return this;
+    }
+
+    initDataLayout(){
+        return this;
+    }
+
 
     tmpfunc(){
         let tmp, tmppoint;
@@ -112,16 +122,6 @@ export default class Dount extends VisChartBase  {
         this.path.setData( this.outline.join('') );
         this.path.draw();
         this.stage.add(this.layer);
-
-        /*
-        let img = document.querySelector( '#dountInImg' );
-        let ctx = this.canvas.getContext( '2d' );
-        ctx.drawImage( 
-            img
-            , this.width / 2 - img.width / 2
-            , this.height / 2 - img.height / 2
-        );
-        */
 
         window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
     }
