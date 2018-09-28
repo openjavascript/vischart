@@ -54,6 +54,7 @@ export default class VisChart extends VisChartBase {
                     //console.log( 'dount find' );
 
                     let dount = new Dount( this.box, this.width, this.height );
+                        dount.setStage( this.stage );
                         dount.update( ju.clone( val ), ju.clone( this.data ) );
 
                     this.ins.push( dount );

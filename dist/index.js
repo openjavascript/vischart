@@ -95,6 +95,7 @@ var VisChart = function (_VisChartBase) {
                             //console.log( 'dount find' );
 
                             var dount = new _index4.default(_this2.box, _this2.width, _this2.height);
+                            dount.setStage(_this2.stage);
                             dount.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
 
                             _this2.ins.push(dount);

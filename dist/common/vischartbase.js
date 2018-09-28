@@ -68,6 +68,11 @@ var VisChartBase = function () {
         value: function draw() {
             return this;
         }
+    }, {
+        key: 'setStage',
+        value: function setStage(stage) {
+            this.stage = stage;
+        }
     }]);
 
     return VisChartBase;

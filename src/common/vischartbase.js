@@ -46,6 +46,10 @@ export default class VisChartBase {
     draw() {
         return this;
     }
+
+    setStage( stage ){
+        this.stage = stage;
+    }
     
 
 }

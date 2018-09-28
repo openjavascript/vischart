@@ -17,10 +17,21 @@ export default class Dount extends VisChartBase  {
         this.outPercent = .50;
         this.inPercent = .37;
 
+        this.colors = [
+            '#f12575'
+            , '#da432e'
+            , '#f3a42d'
+            , '#19af89'
+            , '#24a3ea'
+            , '#b56be8'
+        ];
+
         this.init();
     }
 
     init(){
+        this.calcLayoutPosition();
+
         return this;
     }
 
@@ -30,14 +41,17 @@ export default class Dount extends VisChartBase  {
 
         if( !ju.jsonInData( this.data, 'data' ) ) return;
 
-        this.calcTotal();
+        this.calcDataPosition();
+        this.initDataLayout();
 
         console.log( 'dount update', this.data, this, utils );
 
         return this;
     }
 
-    calcTotal(){
+    calcDataPosition() {
+        if( !this.data ) return;
+
         let total = 0, tmp = 0;
 
         this.data.data.map( ( val ) => {
@@ -75,13 +89,33 @@ export default class Dount extends VisChartBase  {
     calcLayoutPosition() {
         //console.log( 'calcLayoutPosition', Date.now() );
 
-
         this.outRadius = Math.ceil( this.outPercent * this.max / 2 );
         this.inRadius = Math.ceil( this.inPercent * this.max / 2 );
 
+        return this;
+    }
+
+    initDataLayout(){
+ 
+        this.layer = new Konva.Layer();
+        this.path = [];
+
+        this.data.data.map( ( val, key ) => {
+            let path = new Konva.Path({
+              x: this.cx,
+              y: this.cy,
+              strokeWidth: 0,
+              stroke: '#ff000000',
+              data: '',
+              fill: this.colors[ key % this.colors.length - 1]
+            });
+
+            this.path.push( path );
+            this.layer.add( path );
+        });
+        this.stage.add( this.layer );
 
         /*
-        this.layer = new Konva.Layer();
 
         this.path = new Konva.Path({
           x: this.cx,
@@ -109,21 +143,10 @@ export default class Dount extends VisChartBase  {
 
         window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
         */
-        return this;
-    }
-
-    calcDataPosition() {
-        if( !this.data ) return;
-
-        console.log( 'calcDataPosition', this.data );
+       
 
         return this;
     }
-
-    initDataLayout(){
-        return this;
-    }
-
 
     tmpfunc(){
         let tmp, tmppoint;

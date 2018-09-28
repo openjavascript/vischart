@@ -49,6 +49,8 @@ var Dount = function (_VisChartBase) {
         _this.outPercent = .50;
         _this.inPercent = .37;
 
+        _this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
+
         _this.init();
         return _this;
     }
@@ -56,6 +58,8 @@ var Dount = function (_VisChartBase) {
     _createClass(Dount, [{
         key: 'init',
         value: function init() {
+            this.calcLayoutPosition();
+
             return this;
         }
     }, {
@@ -66,16 +70,19 @@ var Dount = function (_VisChartBase) {
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'data')) return;
 
-            this.calcTotal();
+            this.calcDataPosition();
+            this.initDataLayout();
 
             console.log('dount update', this.data, this, utils);
 
             return this;
         }
     }, {
-        key: 'calcTotal',
-        value: function calcTotal() {
+        key: 'calcDataPosition',
+        value: function calcDataPosition() {
             var _this2 = this;
+
+            if (!this.data) return;
 
             var total = 0,
                 tmp = 0;
@@ -116,12 +123,35 @@ var Dount = function (_VisChartBase) {
         value: function calcLayoutPosition() {
             //console.log( 'calcLayoutPosition', Date.now() );
 
-
             this.outRadius = Math.ceil(this.outPercent * this.max / 2);
             this.inRadius = Math.ceil(this.inPercent * this.max / 2);
 
+            return this;
+        }
+    }, {
+        key: 'initDataLayout',
+        value: function initDataLayout() {
+            var _this3 = this;
+
+            this.layer = new _konva2.default.Layer();
+            this.path = [];
+
+            this.data.data.map(function (val, key) {
+                var path = new _konva2.default.Path({
+                    x: _this3.cx,
+                    y: _this3.cy,
+                    strokeWidth: 0,
+                    stroke: '#ff000000',
+                    data: '',
+                    fill: _this3.colors[key % _this3.colors.length - 1]
+                });
+
+                _this3.path.push(path);
+                _this3.layer.add(path);
+            });
+            this.stage.add(this.layer);
+
             /*
-            this.layer = new Konva.Layer();
              this.path = new Konva.Path({
               x: this.cx,
               y: this.cy,
@@ -142,26 +172,13 @@ var Dount = function (_VisChartBase) {
              // add the layer to the stage
               window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
             */
-            return this;
-        }
-    }, {
-        key: 'calcDataPosition',
-        value: function calcDataPosition() {
-            if (!this.data) return;
 
-            console.log('calcDataPosition', this.data);
-
-            return this;
-        }
-    }, {
-        key: 'initDataLayout',
-        value: function initDataLayout() {
             return this;
         }
     }, {
         key: 'tmpfunc',
         value: function tmpfunc() {
-            var _this3 = this;
+            var _this4 = this;
 
             var tmp = void 0,
                 tmppoint = void 0;
@@ -205,7 +222,7 @@ var Dount = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this3.tmpfunc();
+                _this4.tmpfunc();
             });
         }
 
