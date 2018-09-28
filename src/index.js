@@ -6,10 +6,15 @@ import DiagramMeter from './diagrammeter/index.js';
 import Dount from './dount/index.js';
 
 import Konva from 'konva';
+import ju from 'json-utilsx';
+
+import * as constant from './common/constant.js';
 
 export default class VisChart extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );
+
+        this.ins = [];
 
         this.init();
     }
@@ -33,6 +38,28 @@ export default class VisChart extends VisChartBase {
 
     update( data ){
         this.data = data;
+
+        if( !ju.jsonInData( this.data, 'series' ) ) return;
+
+        this.stage.removeChildren();
+
+        console.log( 'update data', data );
+
+        this.data.series.map( ( val, key ) => {
+            console.log( val, constant );
+            switch( val.type ){
+                case constant.CHART_TYPE.dount: {
+                    console.log( 'dount find' );
+
+                    let dount = new Dount( this.box, this.width, this.height );
+                        dount.update( val );
+
+                    this.ins.push( dount );
+
+                    break;
+                }
+            }
+        });
 
         return this;
     }

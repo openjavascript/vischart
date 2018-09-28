@@ -22,6 +22,16 @@ var _konva = require('konva');
 
 var _konva2 = _interopRequireDefault(_konva);
 
+var _jsonUtilsx = require('json-utilsx');
+
+var _jsonUtilsx2 = _interopRequireDefault(_jsonUtilsx);
+
+var _constant = require('./common/constant.js');
+
+var constant = _interopRequireWildcard(_constant);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37,6 +47,8 @@ var VisChart = function (_VisChartBase) {
         _classCallCheck(this, VisChart);
 
         var _this = _possibleConstructorReturn(this, (VisChart.__proto__ || Object.getPrototypeOf(VisChart)).call(this, box, width, height));
+
+        _this.ins = [];
 
         _this.init();
         return _this;
@@ -63,7 +75,32 @@ var VisChart = function (_VisChartBase) {
     }, {
         key: 'update',
         value: function update(data) {
+            var _this2 = this;
+
             this.data = data;
+
+            if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
+
+            this.stage.removeChildren();
+
+            console.log('update data', data);
+
+            this.data.series.map(function (val, key) {
+                console.log(val, constant);
+                switch (val.type) {
+                    case constant.CHART_TYPE.dount:
+                        {
+                            console.log('dount find');
+
+                            var dount = new _index4.default(_this2.box, _this2.width, _this2.height);
+                            dount.update(val);
+
+                            _this2.ins.push(dount);
+
+                            break;
+                        }
+                }
+            });
 
             return this;
         }
@@ -79,7 +116,7 @@ var VisChart = function (_VisChartBase) {
     }, {
         key: 'loadImage',
         value: function loadImage() {
-            var _this2 = this;
+            var _this3 = this;
 
             if (!this.imgUrl) return;
 
@@ -89,17 +126,17 @@ var VisChart = function (_VisChartBase) {
 
             var img = new Image();
             img.onload = function () {
-                _this2.icon = new _konva2.default.Image({
-                    x: _this2.cx - 107 / 2,
-                    y: _this2.cy - 107 / 2,
+                _this3.icon = new _konva2.default.Image({
+                    x: _this3.cx - 107 / 2,
+                    y: _this3.cy - 107 / 2,
                     image: img,
                     width: 107,
                     height: 107
                 });
 
-                _this2.iconLayer.add(_this2.icon);
+                _this3.iconLayer.add(_this3.icon);
 
-                _this2.stage.add(_this2.iconLayer);
+                _this3.stage.add(_this3.iconLayer);
             };
             img.src = this.imgUrl;
 
