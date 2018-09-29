@@ -119,7 +119,7 @@ export default class Dount extends VisChartBase  {
         window.requestAnimationFrame( ()=>{ this.animation() } );
 
         if( this.isDone ){
-            this.animationLine();
+            window.requestAnimationFrame( ()=>{ this.animationLine() } );
         }
     }
 
@@ -166,8 +166,19 @@ export default class Dount extends VisChartBase  {
                 //console.log( 'path mouseleave', Date.now() );
             });
 
+            let line = new Konva.Line({
+              x: this.cx,
+              y: this.cy,
+              points: [ 0, 0, 0, 0 ],
+              stroke: '#ffffff',
+              strokeWidth: 2
+            });
+            this.line.push( line );
+
+
             let layer = new Konva.Layer();
             layer.add( path );
+            layer.add( line );
 
             this.layer.push( layer );
         });
@@ -226,28 +237,37 @@ export default class Dount extends VisChartBase  {
     }
 
     animationLine(){
-        console.log( 'animationLine', Date.now() );
+
+        if( this.lineLengthCount >= this.lineLength ){
+            return;
+        }
+        
+        this.lineLengthCount += this.lineLengthStep;
+
+        if( this.lineLengthCount >= this.lineLength ){
+            this.lineLengthCount = this.lineLength;
+        }
 
         for( let i = 0; i < this.path.length; i++ ){
             let path = this.path[i];
             let layer = this.layer[ i ];
-            let line = new Konva.Line({
-              x: this.cx,
-              y: this.cy,
-              points: [ path.itemData.lineStart.x, path.itemData.lineStart.y, path.itemData.lineEnd.x, path.itemData.lineEnd.y ],
-              stroke: '#ffffff',
-              strokeWidth: 2
-            });
 
+            let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle );
 
-            layer.add( line );
+            let line = this.line[ i ];
+            line.points( [ path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y ] );
 
-            let icon = new IconRound( this.box, this.width, this.height );
-            icon.setOptions( {
-                stage: this.stage
-                , layer: layer
-            });
-            icon.update( path.itemData.lineEnd );
+            if( this.lineLengthCount >= this.lineLength ){
+                let icon = new IconRound( this.box, this.width, this.height );
+                icon.setOptions( {
+                    stage: this.stage
+                    , layer: layer
+                });
+                icon.update( path.itemData.lineEnd );
+                console.log( 'ended', Date.now() );
+            }else{
+                window.requestAnimationFrame( ()=>{ this.animationLine() } );
+            }
 
             this.stage.add( layer );
         }
@@ -260,6 +280,8 @@ export default class Dount extends VisChartBase  {
         this.inRadius = Math.ceil( this.inPercent * this.max / 2 );
 
         this.lineLength = ( Math.min( this.width, this.height ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
+        this.lineLengthCount = 1;
+        this.lineLengthStep = .5;
 
 
         return this;

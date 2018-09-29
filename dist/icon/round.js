@@ -52,9 +52,9 @@ var IconRound = function (_VisChartBase) {
         _this.color = '#ffffff';
 
         _this.max = 1.1;
-        _this.min = 0.5;
+        _this.min = 0.8;
 
-        _this.step = .01;
+        _this.step = .006;
         _this.cur = 1;
 
         _this.isplus = 1;
@@ -71,8 +71,6 @@ var IconRound = function (_VisChartBase) {
     }, {
         key: 'update',
         value: function update(point) {
-            var _this2 = this;
-
             this.point = point;
 
             this.group = new _konva2.default.Group({
@@ -106,9 +104,7 @@ var IconRound = function (_VisChartBase) {
 
             this.layer.add(this.group);
 
-            window.requestAnimationFrame(function () {
-                _this2.animation();
-            });
+            //window.requestAnimationFrame( ()=>{ this.animation() } );
         }
     }, {
         key: 'reset',
@@ -116,7 +112,7 @@ var IconRound = function (_VisChartBase) {
     }, {
         key: 'animation',
         value: function animation() {
-            var _this3 = this;
+            var _this2 = this;
 
             if (this.plus) {
                 this.cur = this.cur + this.step;
@@ -138,7 +134,7 @@ var IconRound = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this3.animation();
+                _this2.animation();
             });
         }
     }, {

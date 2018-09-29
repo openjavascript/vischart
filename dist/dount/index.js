@@ -164,7 +164,9 @@ var Dount = function (_VisChartBase) {
             });
 
             if (this.isDone) {
-                this.animationLine();
+                window.requestAnimationFrame(function () {
+                    _this2.animationLine();
+                });
             }
         }
     }, {
@@ -213,8 +215,18 @@ var Dount = function (_VisChartBase) {
                     //console.log( 'path mouseleave', Date.now() );
                 });
 
+                var line = new _konva2.default.Line({
+                    x: _this3.cx,
+                    y: _this3.cy,
+                    points: [0, 0, 0, 0],
+                    stroke: '#ffffff',
+                    strokeWidth: 2
+                });
+                _this3.line.push(line);
+
                 var layer = new _konva2.default.Layer();
                 layer.add(path);
+                layer.add(line);
 
                 _this3.layer.push(layer);
             });
@@ -277,27 +289,40 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'animationLine',
         value: function animationLine() {
-            console.log('animationLine', Date.now());
+            var _this5 = this;
+
+            if (this.lineLengthCount >= this.lineLength) {
+                return;
+            }
+
+            this.lineLengthCount += this.lineLengthStep;
+
+            if (this.lineLengthCount >= this.lineLength) {
+                this.lineLengthCount = this.lineLength;
+            }
 
             for (var i = 0; i < this.path.length; i++) {
                 var path = this.path[i];
                 var layer = this.layer[i];
-                var line = new _konva2.default.Line({
-                    x: this.cx,
-                    y: this.cy,
-                    points: [path.itemData.lineStart.x, path.itemData.lineStart.y, path.itemData.lineEnd.x, path.itemData.lineEnd.y],
-                    stroke: '#ffffff',
-                    strokeWidth: 2
-                });
 
-                layer.add(line);
+                var lineEnd = geometry.distanceAngleToPoint(this.outRadius + this.lineLengthCount, path.itemData.midAngle);
 
-                var icon = new _round2.default(this.box, this.width, this.height);
-                icon.setOptions({
-                    stage: this.stage,
-                    layer: layer
-                });
-                icon.update(path.itemData.lineEnd);
+                var line = this.line[i];
+                line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y]);
+
+                if (this.lineLengthCount >= this.lineLength) {
+                    var icon = new _round2.default(this.box, this.width, this.height);
+                    icon.setOptions({
+                        stage: this.stage,
+                        layer: layer
+                    });
+                    icon.update(path.itemData.lineEnd);
+                    console.log('ended', Date.now());
+                } else {
+                    window.requestAnimationFrame(function () {
+                        _this5.animationLine();
+                    });
+                }
 
                 this.stage.add(layer);
             }
@@ -311,6 +336,8 @@ var Dount = function (_VisChartBase) {
             this.inRadius = Math.ceil(this.inPercent * this.max / 2);
 
             this.lineLength = (Math.min(this.width, this.height) - this.outRadius * 2) / 2 - this.lineOffset;
+            this.lineLengthCount = 1;
+            this.lineLengthStep = .5;
 
             return this;
         }

@@ -20,9 +20,9 @@ export default class IconRound extends VisChartBase  {
         this.color = '#ffffff';
 
         this.max = 1.1;
-        this.min = 0.5;
+        this.min = 0.8;
 
-        this.step = .01;
+        this.step = .006;
         this.cur = 1;
 
         this.isplus = 1;
@@ -68,8 +68,7 @@ export default class IconRound extends VisChartBase  {
 
         this.layer.add( this.group );
 
-        window.requestAnimationFrame( ()=>{ this.animation() } );
-
+        //window.requestAnimationFrame( ()=>{ this.animation() } );
     }
 
     reset(){
