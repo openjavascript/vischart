@@ -67,14 +67,23 @@ export default class VisChartBase {
         return this;
     }
 
-    setStage( stage ){
-        this.stage = stage;
-    }
-
     reset(){
     }
 
     animation(){
+    }
+
+    layer(){
+        return this.layer;
+    }
+
+    setLayer( layer ){
+        this.layer = layer;
+        return this;
+    }
+
+    setStage( stage ){
+        this.stage = stage;
     }
 
 }

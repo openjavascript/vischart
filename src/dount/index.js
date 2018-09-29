@@ -7,6 +7,8 @@ import ju from 'json-utilsx';
 
 import * as utils from '../common/utils.js';
 
+import IconRound from '../icon/round.js';
+
 
 export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
@@ -237,7 +239,15 @@ export default class Dount extends VisChartBase  {
               strokeWidth: 2
             });
 
+
             layer.add( line );
+
+            let icon = new IconRound( this.box, this.width, this.height );
+            icon.setOptions( {
+                stage: this.stage
+                , layer: layer
+            });
+            icon.update( path.itemData.lineEnd );
 
             this.stage.add( layer );
         }

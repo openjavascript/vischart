@@ -82,16 +82,27 @@ var VisChartBase = function () {
             return this;
         }
     }, {
-        key: 'setStage',
-        value: function setStage(stage) {
-            this.stage = stage;
-        }
-    }, {
         key: 'reset',
         value: function reset() {}
     }, {
         key: 'animation',
         value: function animation() {}
+    }, {
+        key: 'layer',
+        value: function layer() {
+            return this.layer;
+        }
+    }, {
+        key: 'setLayer',
+        value: function setLayer(layer) {
+            this.layer = layer;
+            return this;
+        }
+    }, {
+        key: 'setStage',
+        value: function setStage(stage) {
+            this.stage = stage;
+        }
     }]);
 
     return VisChartBase;

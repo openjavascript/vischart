@@ -26,6 +26,10 @@ var _utils = require('../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
+var _round = require('../icon/round.js');
+
+var _round2 = _interopRequireDefault(_round);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -287,6 +291,13 @@ var Dount = function (_VisChartBase) {
                 });
 
                 layer.add(line);
+
+                var icon = new _round2.default(this.box, this.width, this.height);
+                icon.setOptions({
+                    stage: this.stage,
+                    layer: layer
+                });
+                icon.update(path.itemData.lineEnd);
 
                 this.stage.add(layer);
             }
