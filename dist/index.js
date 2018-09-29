@@ -10,11 +10,11 @@ var _vischartbase = require('./common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
 
-var _index = require('./diagrammeter/index.js');
+var _index = require('./dount/index.js');
 
 var _index2 = _interopRequireDefault(_index);
 
-var _index3 = require('./dount/index.js');
+var _index3 = require('./gauge/index.js');
 
 var _index4 = _interopRequireDefault(_index3);
 
@@ -49,6 +49,7 @@ var VisChart = function (_VisChartBase) {
         var _this = _possibleConstructorReturn(this, (VisChart.__proto__ || Object.getPrototypeOf(VisChart)).call(this, box, width, height));
 
         _this.ins = [];
+        _this.images = [];
 
         _this.init();
         return _this;
@@ -96,6 +97,14 @@ var VisChart = function (_VisChartBase) {
                 switch (val.type) {
                     case constant.CHART_TYPE.dount:
                         {
+                            ins = new _index2.default(_this2.box, _this2.width, _this2.height);
+                            _this2.options && ins.setOptions(_this2.options);
+                            ins.setStage(_this2.stage);
+                            ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
+                            break;
+                        }
+                    case constant.CHART_TYPE.gauge:
+                        {
                             ins = new _index4.default(_this2.box, _this2.width, _this2.height);
                             _this2.options && ins.setOptions(_this2.options);
                             ins.setStage(_this2.stage);
@@ -112,16 +121,18 @@ var VisChart = function (_VisChartBase) {
             return this;
         }
     }, {
-        key: 'setImage',
-        value: function setImage(imgUrl, width, height) {
+        key: 'addImage',
+        value: function addImage(imgUrl, width, height) {
             var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
-            this.imgUrl = imgUrl;
-            this.imgWidth = width;
-            this.imgHeight = height;
-            this.imgOffsetX = offsetX;
-            this.imgOffsetY = offsetY;
+            this.images.push({
+                url: imgUrl,
+                width: width,
+                height: height,
+                offsetX: offsetX,
+                offsetY: offsetY
+            });
 
             return this;
         }
@@ -130,30 +141,30 @@ var VisChart = function (_VisChartBase) {
         value: function loadImage() {
             var _this3 = this;
 
-            if (!this.imgUrl) return;
-
             if (this.iconLayer) this.iconLayer.remove();
-
             this.iconLayer = new _konva2.default.Layer();
 
-            var img = new Image();
-            img.onload = function () {
-                var width = _this3.imgWidth || img.width,
-                    height = _this3.imgHeight || img.height;
+            this.images.map(function (item) {
 
-                _this3.icon = new _konva2.default.Image({
-                    image: img,
-                    x: _this3.cx - width / 2 + _this3.imgOffsetX,
-                    y: _this3.cy - height / 2 + _this3.imgOffsetY,
-                    width: width,
-                    height: height
-                });
+                var img = new Image();
+                img.onload = function () {
+                    var width = item.width || img.width,
+                        height = item.height || img.height;
 
-                _this3.iconLayer.add(_this3.icon);
+                    var icon = new _konva2.default.Image({
+                        image: img,
+                        x: _this3.cx - width / 2 + item.offsetX,
+                        y: _this3.cy - height / 2 + item.offsetY,
+                        width: width,
+                        height: height
+                    });
 
-                _this3.stage.add(_this3.iconLayer);
-            };
-            img.src = this.imgUrl;
+                    _this3.iconLayer.add(icon);
+
+                    _this3.stage.add(_this3.iconLayer);
+                };
+                img.src = item.url;
+            });
 
             return this;
         }

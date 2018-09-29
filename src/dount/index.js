@@ -2,6 +2,8 @@
 import VisChartBase from '../common/vischartbase.js';
 import * as geometry from '../geometry/geometry.js';
 
+import PointAt from '../common/pointat.js';
+
 import Konva from 'konva';
 import ju from 'json-utilsx';
 
@@ -23,9 +25,11 @@ export default class Dount extends VisChartBase  {
         this.angleStep = 5;
 
         this.textHeight = 26;
-        this.lineOffset = 30;
+        this.lineOffset = 40;
 
         this.path = [];
+
+        this.textOffset = 4;
 
         this.init();
     }
@@ -130,13 +134,20 @@ export default class Dount extends VisChartBase  {
         this.line = [];
 
         this.data.data.map( ( val, key ) => {
+            let color = this.colors[ key % this.colors.length];
+
+            if( ju.jsonInData( val, 'itemStyle.color' ) ){
+                //path.fill( val.itemStyle.color );
+                color = val.itemStyle.color;
+            }
+
             let path = new Konva.Path({
               x: this.cx,
               y: this.cy,
-              strokeWidth: 0,
-              stroke: '#ff000000',
+              strokeWidth: 1,
+              stroke: color,
               data: '',
-              fill: this.colors[ key % this.colors.length]
+              fill: color
             });
 
             /*
@@ -145,10 +156,6 @@ export default class Dount extends VisChartBase  {
                 , this.colors[ key % this.colors.length] 
             );
             */
-
-            if( ju.jsonInData( val, 'itemStyle.color' ) ){
-                path.fill( val.itemStyle.color );
-            }
                 
             let tmp = { 
                 path: path
@@ -209,6 +216,8 @@ export default class Dount extends VisChartBase  {
             tmp = utils.parseFinance( tmp + val._percent );
             val._totalPercent = tmp;
 
+            val.percent = parseInt( val._percent * 100 );
+
             val.endAngle = this.totalAngle * val._totalPercent;
         });
 
@@ -218,6 +227,7 @@ export default class Dount extends VisChartBase  {
             tmp = tmp - item._percent;
 
             item._percent = 1 - tmp;
+            item.percent = parseInt( item._percent * 100 );
             item._totalPercent = 1;
             item.endAngle = this.totalAngle;
         }
@@ -233,6 +243,11 @@ export default class Dount extends VisChartBase  {
 
             val.lineStart = geometry.distanceAngleToPoint( this.outRadius, val.midAngle );
             val.lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLength, val.midAngle );
+
+            val.textPoint = geometry.distanceAngleToPoint( this.outRadius + this.lineLength, val.midAngle );
+
+            val.pointDirection = new PointAt( this.width, this.height, geometry.pointPlus( val.textPoint, this.cpoint) );
+
         })
     }
 
@@ -258,19 +273,86 @@ export default class Dount extends VisChartBase  {
             line.points( [ path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y ] );
 
             if( this.lineLengthCount >= this.lineLength ){
-                let icon = new IconRound( this.box, this.width, this.height );
-                icon.setOptions( {
-                    stage: this.stage
-                    , layer: layer
-                });
-                icon.update( path.itemData.lineEnd );
-                console.log( 'ended', Date.now() );
+
+                this.addIcon( path, layer );
+                this.addText( path, layer );
+
             }else{
                 window.requestAnimationFrame( ()=>{ this.animationLine() } );
             }
 
             this.stage.add( layer );
         }
+    }
+
+    addIcon( path, layer ){
+        let icon = new IconRound( this.box, this.width, this.height );
+        icon.setOptions( {
+            stage: this.stage
+            , layer: layer
+        });
+        icon.update( path.itemData.lineEnd );
+    }
+
+    addText( path, layer ){
+        let text = new Konva.Text( {
+            x: 0
+            , y: 0
+            , text: `${path.itemData.percent}%`
+            , fill: '#a3a7f3'
+            , fontFamily: 'HuXiaoBoKuHei'
+            , fontSize: 31
+        });
+        let textX =  this.cx + path.itemData.textPoint.x
+            , textY =  this.cy + path.itemData.textPoint.y
+            , direct = path.itemData.pointDirection.auto()
+            ;
+
+        //console.log( 'direct', direct );
+        switch( direct ){
+            case PointAt.DIRE_NAME.leftTop: {
+                textY -= text.textHeight + this.textOffset;
+                textX -= text.textWidth / 2;
+                break;
+            }
+            case PointAt.DIRE_NAME.rightTop: {
+                textY -= text.textHeight + this.textOffset;
+                break;
+            }
+            case PointAt.DIRE_NAME.topCenter: {
+                textY -= text.textHeight + this.textOffset;
+                textX -= text.textWidth / 2;
+                break;
+            }
+            case PointAt.DIRE_NAME.bottomCenter: {
+                textX -= text.textWidth / 2;
+                break;
+            }
+            case PointAt.DIRE_NAME.rightMid: {
+                if( ( textX + text.textWidth ) >= this.width ){
+                    textX = this.width - text.textWidth - 5;
+                }
+                break;
+            }
+            case PointAt.DIRE_NAME.rightBottom: {
+                break;
+            }
+            case PointAt.DIRE_NAME.leftBottom: {
+                textX -= text.textWidth / 2;
+                break;
+            }
+            case PointAt.DIRE_NAME.leftMid: {
+                textX -= text.textWidth; 
+                if( textX < 1 ) textX = 1;
+                textY += this.textOffset;
+                break;
+            }
+
+        }
+
+        text.x( textX );
+        text.y( textY );
+        layer.add( text );
     }
 
     calcLayoutPosition() {

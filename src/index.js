@@ -2,8 +2,8 @@
 
 import VisChartBase from './common/vischartbase.js';
 
-import DiagramMeter from './diagrammeter/index.js';
 import Dount from './dount/index.js';
+import Gauge from './gauge/index.js';
 
 import Konva from 'konva';
 import ju from 'json-utilsx';
@@ -15,6 +15,7 @@ export default class VisChart extends VisChartBase {
         super( box, width, height );
 
         this.ins = [];
+        this.images = [];
 
         this.init();
     }
@@ -61,6 +62,13 @@ export default class VisChart extends VisChartBase {
                     ins.update( ju.clone( val ), ju.clone( this.data ) );
                     break;
                 }
+                case constant.CHART_TYPE.gauge: {
+                    ins = new Gauge( this.box, this.width, this.height );
+                    this.options && ( ins.setOptions( this.options ) );
+                    ins.setStage( this.stage );
+                    ins.update( ju.clone( val ), ju.clone( this.data ) );
+                    break;
+                }
             }
 
             if( ins ){
@@ -71,44 +79,47 @@ export default class VisChart extends VisChartBase {
         return this;
     }
 
-    setImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
-        this.imgUrl = imgUrl;
-        this.imgWidth = width;
-        this.imgHeight = height;
-        this.imgOffsetX = offsetX;
-        this.imgOffsetY = offsetY;
+    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
+        this.images.push( {
+            url: imgUrl
+            , width: width
+            , height: height
+            , offsetX: offsetX
+            , offsetY: offsetY
+        });
 
         return this;
     }
 
     loadImage(){
-        if( !this.imgUrl ) return;
 
         if( this.iconLayer ) this.iconLayer.remove();
-
         this.iconLayer = new Konva.Layer();
 
-        let img = new Image();
-        img.onload = ()=>{
-            let width = this.imgWidth || img.width
-                , height = this.imgHeight || img.height
-                ;
+        this.images.map( ( item ) => {
+            
+            let img = new Image();
+            img.onload = ()=>{
+                let width = item.width || img.width
+                    , height = item.height || img.height
+                    ;
 
-            this.icon = new Konva.Image( {
-                image: img
-                , x: this.cx - width / 2 + this.imgOffsetX
-                , y: this.cy - height / 2 + this.imgOffsetY
-                , width: width
-                , height: height
-            });
+                let icon = new Konva.Image( {
+                    image: img
+                    , x: this.cx - width / 2 + item.offsetX
+                    , y: this.cy - height / 2 + item.offsetY
+                    , width: width
+                    , height: height
+                });
 
-            this.iconLayer.add( this.icon );
+                this.iconLayer.add( icon );
 
-            this.stage.add( this.iconLayer );
+                this.stage.add( this.iconLayer );
 
-        }
-        img.src = this.imgUrl; 
-
+            }
+            img.src = item.url; 
+        });
+          
         return this;
     }
 

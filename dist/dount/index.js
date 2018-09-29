@@ -14,6 +14,10 @@ var _geometry = require('../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
 
+var _pointat = require('../common/pointat.js');
+
+var _pointat2 = _interopRequireDefault(_pointat);
+
 var _konva = require('konva');
 
 var _konva2 = _interopRequireDefault(_konva);
@@ -57,9 +61,11 @@ var Dount = function (_VisChartBase) {
         _this.angleStep = 5;
 
         _this.textHeight = 26;
-        _this.lineOffset = 30;
+        _this.lineOffset = 40;
 
         _this.path = [];
+
+        _this.textOffset = 4;
 
         _this.init();
         return _this;
@@ -179,13 +185,20 @@ var Dount = function (_VisChartBase) {
             this.line = [];
 
             this.data.data.map(function (val, key) {
+                var color = _this3.colors[key % _this3.colors.length];
+
+                if (_jsonUtilsx2.default.jsonInData(val, 'itemStyle.color')) {
+                    //path.fill( val.itemStyle.color );
+                    color = val.itemStyle.color;
+                }
+
                 var path = new _konva2.default.Path({
                     x: _this3.cx,
                     y: _this3.cy,
-                    strokeWidth: 0,
-                    stroke: '#ff000000',
+                    strokeWidth: 1,
+                    stroke: color,
                     data: '',
-                    fill: _this3.colors[key % _this3.colors.length]
+                    fill: color
                 });
 
                 /*
@@ -194,10 +207,6 @@ var Dount = function (_VisChartBase) {
                     , this.colors[ key % this.colors.length] 
                 );
                 */
-
-                if (_jsonUtilsx2.default.jsonInData(val, 'itemStyle.color')) {
-                    path.fill(val.itemStyle.color);
-                }
 
                 var tmp = {
                     path: path,
@@ -260,6 +269,8 @@ var Dount = function (_VisChartBase) {
                 tmp = utils.parseFinance(tmp + val._percent);
                 val._totalPercent = tmp;
 
+                val.percent = parseInt(val._percent * 100);
+
                 val.endAngle = _this4.totalAngle * val._totalPercent;
             });
 
@@ -269,6 +280,7 @@ var Dount = function (_VisChartBase) {
                 tmp = tmp - item._percent;
 
                 item._percent = 1 - tmp;
+                item.percent = parseInt(item._percent * 100);
                 item._totalPercent = 1;
                 item.endAngle = this.totalAngle;
             }
@@ -284,6 +296,10 @@ var Dount = function (_VisChartBase) {
 
                 val.lineStart = geometry.distanceAngleToPoint(_this4.outRadius, val.midAngle);
                 val.lineEnd = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
+
+                val.textPoint = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
+
+                val.pointDirection = new _pointat2.default(_this4.width, _this4.height, geometry.pointPlus(val.textPoint, _this4.cpoint));
             });
         }
     }, {
@@ -311,13 +327,9 @@ var Dount = function (_VisChartBase) {
                 line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y]);
 
                 if (this.lineLengthCount >= this.lineLength) {
-                    var icon = new _round2.default(this.box, this.width, this.height);
-                    icon.setOptions({
-                        stage: this.stage,
-                        layer: layer
-                    });
-                    icon.update(path.itemData.lineEnd);
-                    console.log('ended', Date.now());
+
+                    this.addIcon(path, layer);
+                    this.addText(path, layer);
                 } else {
                     window.requestAnimationFrame(function () {
                         _this5.animationLine();
@@ -326,6 +338,85 @@ var Dount = function (_VisChartBase) {
 
                 this.stage.add(layer);
             }
+        }
+    }, {
+        key: 'addIcon',
+        value: function addIcon(path, layer) {
+            var icon = new _round2.default(this.box, this.width, this.height);
+            icon.setOptions({
+                stage: this.stage,
+                layer: layer
+            });
+            icon.update(path.itemData.lineEnd);
+        }
+    }, {
+        key: 'addText',
+        value: function addText(path, layer) {
+            var text = new _konva2.default.Text({
+                x: 0,
+                y: 0,
+                text: path.itemData.percent + '%',
+                fill: '#a3a7f3',
+                fontFamily: 'HuXiaoBoKuHei',
+                fontSize: 31
+            });
+            var textX = this.cx + path.itemData.textPoint.x,
+                textY = this.cy + path.itemData.textPoint.y,
+                direct = path.itemData.pointDirection.auto();
+
+            //console.log( 'direct', direct );
+            switch (direct) {
+                case _pointat2.default.DIRE_NAME.leftTop:
+                    {
+                        textY -= text.textHeight + this.textOffset;
+                        textX -= text.textWidth / 2;
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.rightTop:
+                    {
+                        textY -= text.textHeight + this.textOffset;
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.topCenter:
+                    {
+                        textY -= text.textHeight + this.textOffset;
+                        textX -= text.textWidth / 2;
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.bottomCenter:
+                    {
+                        textX -= text.textWidth / 2;
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.rightMid:
+                    {
+                        if (textX + text.textWidth >= this.width) {
+                            textX = this.width - text.textWidth - 5;
+                        }
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.rightBottom:
+                    {
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.leftBottom:
+                    {
+                        textX -= text.textWidth / 2;
+                        break;
+                    }
+                case _pointat2.default.DIRE_NAME.leftMid:
+                    {
+                        textX -= text.textWidth;
+                        if (textX < 1) textX = 1;
+                        textY += this.textOffset;
+                        break;
+                    }
+
+            }
+
+            text.x(textX);
+            text.y(textY);
+            layer.add(text);
         }
     }, {
         key: 'calcLayoutPosition',
