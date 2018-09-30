@@ -85,7 +85,7 @@ var Gauge = function (_VisChartBase) {
         _this.textLineLength = 6;
 
         _this.textRectWidthPercent = .5;
-        _this.textRectHeightPercent = .12;
+        _this.textRectHeightPercent = .11;
 
         _this.init();
         return _this;
@@ -164,6 +164,24 @@ var Gauge = function (_VisChartBase) {
             this.stage.removeChildren();
 
             this.initDataLayout();
+        }
+    }, {
+        key: 'drawText',
+        value: function drawText() {
+
+            this.totalText = new _konva2.default.Text({
+                text: "2345678",
+                x: this.cx,
+                y: this.textY,
+                fontSize: 26,
+                fontFamily: 'HuXiaoBoKuHei',
+                fill: '#ffffff',
+                fontStyle: 'italic'
+            });
+            this.totalText.x(this.cx - this.totalText.textWidth / 2);
+            this.totalText.y(this.textY + 5);
+
+            this.layoutLayer.add(this.totalText);
         }
     }, {
         key: 'drawTextRect',
@@ -385,6 +403,7 @@ var Gauge = function (_VisChartBase) {
             this.drawArcLine();
             this.drawArcText();
             this.drawTextRect();
+            this.drawText();
 
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);

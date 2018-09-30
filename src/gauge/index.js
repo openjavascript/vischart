@@ -49,7 +49,7 @@ export default class Gauge extends VisChartBase  {
         this.textLineLength = 6;
 
         this.textRectWidthPercent = .5;
-        this.textRectHeightPercent = .12;
+        this.textRectHeightPercent = .11;
 
         this.init();
     }
@@ -123,6 +123,23 @@ export default class Gauge extends VisChartBase  {
         this.stage.removeChildren();
 
         this.initDataLayout();
+    }
+
+    drawText(){
+
+        this.totalText = new Konva.Text( {
+            text: "2345678"
+            , x: this.cx
+            , y: this.textY
+            , fontSize: 26
+            , fontFamily: 'HuXiaoBoKuHei'
+            , fill: '#ffffff'
+            , fontStyle: 'italic'
+        });
+        this.totalText.x( this.cx - this.totalText.textWidth / 2 );
+        this.totalText.y( this.textY + 5 );
+
+        this.layoutLayer.add( this.totalText );
     }
 
     drawTextRect(){
@@ -343,6 +360,7 @@ export default class Gauge extends VisChartBase  {
         this.drawArcLine();
         this.drawArcText();
         this.drawTextRect();
+        this.drawText();
 
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );
@@ -375,6 +393,7 @@ export default class Gauge extends VisChartBase  {
     }
 
     addText( path, layer ){
+
     }
 
     calcLayoutPosition() {
