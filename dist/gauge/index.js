@@ -67,11 +67,13 @@ var Gauge = function (_VisChartBase) {
         _this.arcInPercent = .305 / 2;
 
         _this.arcLabelLength = 6;
-        _this.arcTextLength = 6;
+        _this.arcTextLength = 20;
 
         _this.arcAngle = 280;
         _this.part = 22;
-        _this.arcTotal = 2200;
+        _this.arcTotal = 1100;
+
+        _this.textOffset = 0;
 
         _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
         _this.partLabel = _this.part / 2;
@@ -119,12 +121,22 @@ var Gauge = function (_VisChartBase) {
                 this.arcOutlinePartAr.push('L');
                 this.arcOutlinePartAr.push([end.x, end.y].join(','));
 
-                if (i % 2 || i == 0) {
+                if (!(i * this.partNum % 100) && i) {
+                    var angleOffset = 8;
+                    if (i >= 19) {
+                        angleOffset = 12;
+                    }
+                    if (i >= 21) {
+                        angleOffset = 16;
+                    }
                     var text = {
                         text: i * this.partNum,
                         angle: angle,
-                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength, angle)
+                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength, angle - angleOffset)
                     };
+                    text.textPoint = new _pointat2.default(this.width, this.height, geometry.pointPlus(text.point, this.cpoint));
+
+                    this.textAr.push(text);
                 }
             }
         }
@@ -134,6 +146,28 @@ var Gauge = function (_VisChartBase) {
             this.stage.removeChildren();
 
             this.initDataLayout();
+        }
+    }, {
+        key: 'drawArcText',
+        value: function drawArcText() {
+            var _this2 = this;
+
+            if (!(this.textAr && this.textAr.length)) return;
+
+            this.textAr.map(function (val) {
+                var text = new _konva2.default.Text({
+                    x: val.point.x + _this2.cx,
+                    y: val.point.y + _this2.cy,
+                    text: val.text,
+                    fontSize: 10
+                    //, rotation: val.angle
+                    , fontFamily: 'MicrosoftYaHei',
+                    fill: _this2.lineColor
+                });
+                text.rotation(val.angle + 90);
+
+                _this2.layoutLayer.add(text);
+            });
         }
     }, {
         key: 'drawArcLine',
@@ -205,7 +239,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.layer = new _konva2.default.Layer();
             this.layoutLayer = new _konva2.default.Layer();
@@ -288,12 +322,13 @@ var Gauge = function (_VisChartBase) {
             this.drawCircleLine();
             this.drawArc();
             this.drawArcLine();
+            this.drawArcText();
 
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);
 
             window.requestAnimationFrame(function () {
-                _this2.animation();
+                _this3.animation();
             });
         }
     }, {

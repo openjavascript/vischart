@@ -31,16 +31,19 @@ export default class Gauge extends VisChartBase  {
         this.arcInPercent = .305 / 2;
 
         this.arcLabelLength = 6;
-        this.arcTextLength = 6;
+        this.arcTextLength = 20;
 
         this.arcAngle = 280;
         this.part = 22;
-        this.arcTotal = 2200;
+        this.arcTotal = 1100;
+
+        this.textOffset = 0;
 
         this.arcOffset = 90 + ( 360 - this.arcAngle ) / 2;
         this.partLabel = this.part / 2;
         this.partAngle = ( this.arcAngle ) / this.part;
         this.partNum = this.arcTotal / this.part;
+
 
         this.init();
     }
@@ -78,12 +81,23 @@ export default class Gauge extends VisChartBase  {
             this.arcOutlinePartAr.push( 'L' );
             this.arcOutlinePartAr.push( [ end.x, end.y ].join(',') );
 
-            if( i % 2 || i == 0 ){
+            
+            if( !(i * this.partNum % 100) && i ){
+                let angleOffset = 8;
+                if( i >= 19 ){
+                    angleOffset = 12;
+                }
+                if( i >= 21 ){
+                    angleOffset = 16;
+                }
                 let text = {
                     text: i * this.partNum
                     , angle: angle
-                    , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength, angle )
+                    , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength, angle - angleOffset )
                 };
+                text.textPoint = new PointAt( this.width, this.height, geometry.pointPlus( text.point, this.cpoint) );
+
+                this.textAr.push( text );
             }
 
         }
@@ -93,6 +107,25 @@ export default class Gauge extends VisChartBase  {
         this.stage.removeChildren();
 
         this.initDataLayout();
+    }
+
+    drawArcText() {
+        if( !( this.textAr && this.textAr.length ) ) return;
+
+        this.textAr.map( ( val ) => {
+            let text = new Konva.Text( {
+                x: val.point.x + this.cx
+                , y: val.point.y + this.cy
+                , text: val.text
+                , fontSize: 10
+                //, rotation: val.angle
+                , fontFamily: 'MicrosoftYaHei'
+                , fill: this.lineColor
+            });
+            text.rotation( val.angle + 90  );
+
+            this.layoutLayer.add( text );
+        });
     }
 
     drawArcLine(){
@@ -138,7 +171,6 @@ export default class Gauge extends VisChartBase  {
         this.layoutLayer.add( this.arcLine );
         this.layoutLayer.add( this.arcPartLine );
         this.layoutLayer.add( this.arcOutlinePart );
-
     }
 
     drawArc(){
@@ -251,6 +283,7 @@ export default class Gauge extends VisChartBase  {
         this.drawCircleLine();
         this.drawArc();
         this.drawArcLine();
+        this.drawArcText();
 
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );
