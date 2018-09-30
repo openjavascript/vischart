@@ -54,16 +54,16 @@ var Gauge = function (_VisChartBase) {
 
         _this.name = 'Gauge' + Date.now();
 
-        _this.roundRadiusPercent = .078;
+        _this.roundRadiusPercent = .085;
 
         _this.lineColor = '#596ea7';
 
-        _this.circleLinePercent = .25;
+        _this.circleLinePercent = .26;
         _this.circlePercent = .28;
 
-        _this.arcLinePercent = .38 / 2;
+        _this.arcLinePercent = .39 / 2;
 
-        _this.arcOutPercent = .37 / 2;
+        _this.arcOutPercent = .38 / 2;
         _this.arcInPercent = .305 / 2;
 
         _this.arcLabelLength = 6;
@@ -333,7 +333,7 @@ var Gauge = function (_VisChartBase) {
                 x: this.cx,
                 y: this.cy,
                 text: "高频\n攻击",
-                fontSize: 17,
+                fontSize: 18,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
                 fontStyle: 'italic'

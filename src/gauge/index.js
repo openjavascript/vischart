@@ -18,16 +18,16 @@ export default class Gauge extends VisChartBase  {
 
         this.name = 'Gauge' + Date.now();
 
-        this.roundRadiusPercent = .078;
+        this.roundRadiusPercent = .085;
 
         this.lineColor = '#596ea7';
 
-        this.circleLinePercent = .25;
+        this.circleLinePercent = .26;
         this.circlePercent = .28;
 
-        this.arcLinePercent = .38 / 2;
+        this.arcLinePercent = .39 / 2;
 
-        this.arcOutPercent = .37 / 2;
+        this.arcOutPercent = .38 / 2;
         this.arcInPercent = .305 / 2;
 
         this.arcLabelLength = 6;
@@ -289,7 +289,7 @@ export default class Gauge extends VisChartBase  {
             x: this.cx
             , y: this.cy
             , text: "高频\n攻击"
-            , fontSize: 17
+            , fontSize: 18
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
             , fontStyle: 'italic'
