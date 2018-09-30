@@ -80,6 +80,9 @@ var Gauge = function (_VisChartBase) {
         _this.partAngle = _this.arcAngle / _this.part;
         _this.partNum = _this.arcTotal / _this.part;
 
+        _this.textOffsetX = -1;
+        _this.textOffsetY = -8;
+
         _this.init();
         return _this;
     }
@@ -121,8 +124,13 @@ var Gauge = function (_VisChartBase) {
                 this.arcOutlinePartAr.push('L');
                 this.arcOutlinePartAr.push([end.x, end.y].join(','));
 
-                if (!(i * this.partNum % 100) && i) {
+                if (!(i * this.partNum % 100) || i === 0) {
                     var angleOffset = 8;
+
+                    if (i === 0) {
+                        angleOffset = 1;
+                    }
+
                     if (i >= 19) {
                         angleOffset = 12;
                     }
@@ -158,7 +166,7 @@ var Gauge = function (_VisChartBase) {
                 var text = new _konva2.default.Text({
                     x: val.point.x + _this2.cx,
                     y: val.point.y + _this2.cy,
-                    text: val.text,
+                    text: val.text + '',
                     fontSize: 10
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
@@ -256,26 +264,28 @@ var Gauge = function (_VisChartBase) {
             this.percentText = new _konva2.default.Text({
                 x: this.cx,
                 y: this.cy,
-                text: '65',
-                fontSize: 28,
-                fontFamily: 'Agency FB',
-                fill: '#c7d6ff',
-                fontStyle: 'italic'
-            });
-            this.percentText.x(this.cx - this.percentText.textWidth / 2 - 6);
-            this.percentText.y(this.cy - this.percentText.textHeight / 2);
-
-            this.percentSymbolText = new _konva2.default.Text({
-                x: this.cx,
-                y: this.cy,
-                text: '%',
+                text: "高频\n攻击",
                 fontSize: 17,
-                fontFamily: 'Agency FB',
-                fill: '#c7d6ff',
+                fontFamily: 'HuXiaoBoKuHei',
+                fill: '#ffffff',
                 fontStyle: 'italic'
             });
-            this.percentSymbolText.x(this.percentText.attrs.x + this.percentText.textWidth);
-            this.percentSymbolText.y(this.percentText.attrs.y + this.percentText.textHeight - this.percentSymbolText.textHeight - 2);
+            this.percentText.x(this.cx - this.percentText.textWidth / 2 + this.textOffsetX);
+            this.percentText.y(this.cy - this.percentText.textHeight / 2 + this.textOffsetY);
+
+            /*
+            this.percentSymbolText = new Konva.Text( {
+                x: this.cx
+                , y: this.cy
+                , text: '%'
+                , fontSize: 17
+                , fontFamily: 'Agency FB'
+                , fill: '#c7d6ff'
+                , fontStyle: 'italic'
+            });
+            this.percentSymbolText.x( this.percentText.attrs.x  + this.percentText.textWidth );
+            this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
+            */
 
             console.log(this.percentText);
 
@@ -316,7 +326,8 @@ var Gauge = function (_VisChartBase) {
             this.layer.add(group);
             this.layer.add(this.roundLine);
             this.layer.add(this.percentText);
-            this.layer.add(this.percentSymbolText);
+            //this.layer.add( this.percentSymbolText );
+
 
             this.drawCircle();
             this.drawCircleLine();
@@ -404,7 +415,7 @@ var Gauge = function (_VisChartBase) {
                 x: this.cx,
                 y: this.cy,
                 stroke: this.lineColor,
-                strokeWidth: 2,
+                strokeWidth: 1.5,
                 fill: '#ffffff00'
             });
 

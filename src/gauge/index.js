@@ -44,6 +44,9 @@ export default class Gauge extends VisChartBase  {
         this.partAngle = ( this.arcAngle ) / this.part;
         this.partNum = this.arcTotal / this.part;
 
+        this.textOffsetX = -1;
+        this.textOffsetY = -8;
+
 
         this.init();
     }
@@ -82,8 +85,13 @@ export default class Gauge extends VisChartBase  {
             this.arcOutlinePartAr.push( [ end.x, end.y ].join(',') );
 
             
-            if( !(i * this.partNum % 100) && i ){
+            if( !(i * this.partNum % 100) || i === 0 ){
                 let angleOffset = 8;
+
+                if( i === 0 ){
+                    angleOffset = 1;
+                }
+
                 if( i >= 19 ){
                     angleOffset = 12;
                 }
@@ -116,7 +124,7 @@ export default class Gauge extends VisChartBase  {
             let text = new Konva.Text( {
                 x: val.point.x + this.cx
                 , y: val.point.y + this.cy
-                , text: val.text
+                , text: val.text + ''
                 , fontSize: 10
                 //, rotation: val.angle
                 , fontFamily: 'MicrosoftYaHei'
@@ -215,15 +223,16 @@ export default class Gauge extends VisChartBase  {
         this.percentText = new Konva.Text( {
             x: this.cx
             , y: this.cy
-            , text: '65'
-            , fontSize: 28
-            , fontFamily: 'Agency FB'
-            , fill: '#c7d6ff'
+            , text: "高频\n攻击"
+            , fontSize: 17
+            , fontFamily: 'HuXiaoBoKuHei'
+            , fill: '#ffffff'
             , fontStyle: 'italic'
         });
-        this.percentText.x( this.cx - this.percentText.textWidth / 2 - 6 );
-        this.percentText.y( this.cy - this.percentText.textHeight / 2 );
+        this.percentText.x( this.cx - this.percentText.textWidth / 2 + this.textOffsetX );
+        this.percentText.y( this.cy - this.percentText.textHeight / 2 + this.textOffsetY );
 
+        /*
         this.percentSymbolText = new Konva.Text( {
             x: this.cx
             , y: this.cy
@@ -235,6 +244,7 @@ export default class Gauge extends VisChartBase  {
         });
         this.percentSymbolText.x( this.percentText.attrs.x  + this.percentText.textWidth );
         this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
+        */
 
         console.log( this.percentText );
 
@@ -276,7 +286,7 @@ export default class Gauge extends VisChartBase  {
         this.layer.add( group );
         this.layer.add( this.roundLine );
         this.layer.add( this.percentText );
-        this.layer.add( this.percentSymbolText );
+        //this.layer.add( this.percentSymbolText );
 
 
         this.drawCircle();
@@ -360,7 +370,7 @@ export default class Gauge extends VisChartBase  {
             , x: this.cx
             , y: this.cy
             , stroke: this.lineColor
-            , strokeWidth: 2
+            , strokeWidth: 1.5
             , fill: '#ffffff00'
         });
 
