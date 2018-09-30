@@ -58,6 +58,18 @@ var Gauge = function (_VisChartBase) {
 
         _this.lineColor = '#596ea7';
 
+        _this.circleLinePercent = .31;
+        _this.circlePercent = .34;
+
+        _this.arcInPercent = .365 / 2;
+        _this.arcOutPercent = .44 / 2;
+
+        _this.arcAngle = 300;
+        _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
+
+        _this.part = 22;
+        _this.partLabel = _this.part / 2;
+
         _this.init();
         return _this;
     }
@@ -66,6 +78,9 @@ var Gauge = function (_VisChartBase) {
         key: 'init',
         value: function init() {
             this.roundRadius = this.width * this.roundRadiusPercent;
+
+            this.arcInRadius = this.width * this.arcInPercent;
+            this.arcOutRadius = this.width * this.arcOutPercent;
         }
     }, {
         key: 'update',
@@ -75,14 +90,31 @@ var Gauge = function (_VisChartBase) {
             this.initDataLayout();
         }
     }, {
-        key: 'reset',
-        value: function reset() {}
+        key: 'drawArc',
+        value: function drawArc() {
+            var params = {
+                x: this.cx,
+                y: this.cy,
+                innerRadius: this.arcInRadius,
+                outerRadius: this.arcOutRadius,
+                angle: this.arcAngle,
+                fill: '#ffffff',
+                stroke: '#ffffff00',
+                strokeWidth: 0,
+                rotation: this.arcOffset
+            };
+            console.log(params);
+            this.arc = new _konva2.default.Arc(params);
+
+            this.layoutLayer.add(this.arc);
+        }
     }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
             var _this2 = this;
 
             this.layer = new _konva2.default.Layer();
+            this.layoutLayer = new _konva2.default.Layer();
 
             this.roundLine = new _konva2.default.Circle({
                 x: this.cx,
@@ -158,7 +190,12 @@ var Gauge = function (_VisChartBase) {
             this.layer.add(this.percentText);
             this.layer.add(this.percentSymbolText);
 
+            this.drawCircle();
+            this.drawCircleLine();
+            this.drawArc();
+
             this.stage.add(this.layer);
+            this.stage.add(this.layoutLayer);
 
             window.requestAnimationFrame(function () {
                 _this2.animation();
@@ -167,8 +204,6 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'animation',
         value: function animation() {
-            var _this3 = this;
-
             this.angle++;
 
             var point = geometry.distanceAngleToPoint(this.roundRadius + 6, this.angle);
@@ -179,9 +214,7 @@ var Gauge = function (_VisChartBase) {
 
             this.stage.add(this.layer);
 
-            window.requestAnimationFrame(function () {
-                _this3.animation();
-            });
+            //window.requestAnimationFrame( ()=>{ this.animation() } );
         }
     }, {
         key: 'calcDataPosition',
@@ -198,6 +231,58 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'calcLayoutPosition',
         value: function calcLayoutPosition() {}
+    }, {
+        key: 'drawCircle',
+        value: function drawCircle() {
+            this.circleRadius = Math.ceil(this.circlePercent * this.max / 2);
+
+            this.circle = new _konva2.default.Circle({
+                x: this.cx,
+                y: this.cy,
+                radius: this.circleRadius,
+                stroke: this.lineColor,
+                strokeWidth: 1,
+                fill: '#ffffff00'
+            });
+            this.layoutLayer.add(this.circle);
+        }
+    }, {
+        key: 'drawCircleLine',
+        value: function drawCircleLine() {
+            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.max / 2);
+
+            var points = [];
+            points.push('M');
+            for (var i = 90; i <= 180; i++) {
+                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i);
+                points.push([tmp.x, tmp.y].join(',') + ',');
+                if (i == 90) {
+                    points.push('L');
+                }
+            }
+            points.push('M');
+            for (var _i = 270; _i <= 360; _i++) {
+                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i);
+                points.push([_tmp.x, _tmp.y].join(',') + ',');
+                if (_i == 270) {
+                    points.push('L');
+                }
+            }
+
+            this.circleLine = new _konva2.default.Path({
+                data: points.join(''),
+                x: this.cx,
+                y: this.cy,
+                stroke: this.lineColor,
+                strokeWidth: 2,
+                fill: '#ffffff00'
+            });
+
+            this.layoutLayer.add(this.circleLine);
+        }
+    }, {
+        key: 'reset',
+        value: function reset() {}
     }]);
 
     return Gauge;
