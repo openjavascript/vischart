@@ -51,10 +51,17 @@ export default class Gauge extends VisChartBase  {
         this.textRectWidthPercent = .5;
         this.textRectHeightPercent = .11;
 
+        this.textRoundPercent = .38;
+        this.textRoundOffsetAngle = 150;
+        this.textRoundAngle = [ this.textRoundOffsetAngle, this.textRoundOffsetAngle + 120, this.textRoundOffsetAngle + 120 * 2];
+        this.textRoundPoint = [];
+
         this.init();
     }
 
     init(){
+        this.textRoundRadius = this.width * this.textRoundPercent;
+
         this.roundRadius = this.width * this.roundRadiusPercent;
 
         this.arcInRadius = this.width * this.arcInPercent;
@@ -66,6 +73,11 @@ export default class Gauge extends VisChartBase  {
         this.textHeight = this.textRectHeightPercent * this.width;
         this.textX = this.cx - this.textWidth / 2; 
         this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
+
+        this.textRoundAngle.map( ( val ) => {
+            let point = geometry.distanceAngleToPoint( this.textRoundRadius, val )
+            this.textRoundPoint.push( point );
+        });
 
         this.arcPartLineAr = [];
         this.arcOutlinePartAr = [];
@@ -91,7 +103,6 @@ export default class Gauge extends VisChartBase  {
             this.arcOutlinePartAr.push( [ start.x, start.y ].join(',') );
             this.arcOutlinePartAr.push( 'L' );
             this.arcOutlinePartAr.push( [ end.x, end.y ].join(',') );
-
             
             if( !(i * this.partNum % 100) || i === 0 ){
                 let angleOffset = 8, lengthOffset = 0;
@@ -117,6 +128,23 @@ export default class Gauge extends VisChartBase  {
             }
 
         }
+    }
+
+    initRoundText(){
+        this.textRoundPoint.map( ( val ) => {
+            console.log( 'initRoundText', val );
+            let tmp  = new Konva.Circle( {
+                x: this.cx + val.x
+                , y: this.cy + val.y
+                , radius: 10
+                , stroke: 'red'
+                , strokeWidth: 0
+                , fill: 'red'
+            });
+
+            this.layoutLayer.add( tmp );
+
+        });
     }
 
     update( data, allData ){
@@ -344,7 +372,7 @@ export default class Gauge extends VisChartBase  {
         group.add( wedge1 );
         group.add( wedge );
 
-        this.angle = -90;
+        this.angle = this.arcOffset - 2;
 
         this.group = group;
 
@@ -362,6 +390,8 @@ export default class Gauge extends VisChartBase  {
         this.drawTextRect();
         this.drawText();
 
+        this.initRoundText();
+
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );
 
@@ -369,7 +399,7 @@ export default class Gauge extends VisChartBase  {
         window.requestAnimationFrame( ()=>{ this.animation() } );
     }
     animation(){
-        this.angle++;
+        //this.angle++;
 
         let point = geometry.distanceAngleToPoint(  this.roundRadius + 6, this.angle )
         this.group.x( this.cx + point.x );

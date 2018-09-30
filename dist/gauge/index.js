@@ -87,6 +87,11 @@ var Gauge = function (_VisChartBase) {
         _this.textRectWidthPercent = .5;
         _this.textRectHeightPercent = .11;
 
+        _this.textRoundPercent = .38;
+        _this.textRoundOffsetAngle = 150;
+        _this.textRoundAngle = [_this.textRoundOffsetAngle, _this.textRoundOffsetAngle + 120, _this.textRoundOffsetAngle + 120 * 2];
+        _this.textRoundPoint = [];
+
         _this.init();
         return _this;
     }
@@ -94,6 +99,10 @@ var Gauge = function (_VisChartBase) {
     _createClass(Gauge, [{
         key: 'init',
         value: function init() {
+            var _this2 = this;
+
+            this.textRoundRadius = this.width * this.textRoundPercent;
+
             this.roundRadius = this.width * this.roundRadiusPercent;
 
             this.arcInRadius = this.width * this.arcInPercent;
@@ -105,6 +114,11 @@ var Gauge = function (_VisChartBase) {
             this.textHeight = this.textRectHeightPercent * this.width;
             this.textX = this.cx - this.textWidth / 2;
             this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
+
+            this.textRoundAngle.map(function (val) {
+                var point = geometry.distanceAngleToPoint(_this2.textRoundRadius, val);
+                _this2.textRoundPoint.push(point);
+            });
 
             this.arcPartLineAr = [];
             this.arcOutlinePartAr = [];
@@ -157,6 +171,25 @@ var Gauge = function (_VisChartBase) {
                     this.textAr.push(text);
                 }
             }
+        }
+    }, {
+        key: 'initRoundText',
+        value: function initRoundText() {
+            var _this3 = this;
+
+            this.textRoundPoint.map(function (val) {
+                console.log('initRoundText', val);
+                var tmp = new _konva2.default.Circle({
+                    x: _this3.cx + val.x,
+                    y: _this3.cy + val.y,
+                    radius: 10,
+                    stroke: 'red',
+                    strokeWidth: 0,
+                    fill: 'red'
+                });
+
+                _this3.layoutLayer.add(tmp);
+            });
         }
     }, {
         key: 'update',
@@ -226,23 +259,23 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawArcText',
         value: function drawArcText() {
-            var _this2 = this;
+            var _this4 = this;
 
             if (!(this.textAr && this.textAr.length)) return;
 
             this.textAr.map(function (val) {
                 var text = new _konva2.default.Text({
-                    x: val.point.x + _this2.cx,
-                    y: val.point.y + _this2.cy,
+                    x: val.point.x + _this4.cx,
+                    y: val.point.y + _this4.cy,
                     text: val.text + '',
                     fontSize: 11
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
-                    fill: _this2.lineColor
+                    fill: _this4.lineColor
                 });
                 text.rotation(val.angle + 90);
 
-                _this2.layoutLayer.add(text);
+                _this4.layoutLayer.add(text);
             });
         }
     }, {
@@ -315,7 +348,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
-            var _this3 = this;
+            var _this5 = this;
 
             this.layer = new _konva2.default.Layer();
             this.layoutLayer = new _konva2.default.Layer();
@@ -387,7 +420,7 @@ var Gauge = function (_VisChartBase) {
             group.add(wedge1);
             group.add(wedge);
 
-            this.angle = -90;
+            this.angle = this.arcOffset - 2;
 
             this.group = group;
 
@@ -405,17 +438,19 @@ var Gauge = function (_VisChartBase) {
             this.drawTextRect();
             this.drawText();
 
+            this.initRoundText();
+
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);
 
             window.requestAnimationFrame(function () {
-                _this3.animation();
+                _this5.animation();
             });
         }
     }, {
         key: 'animation',
         value: function animation() {
-            this.angle++;
+            //this.angle++;
 
             var point = geometry.distanceAngleToPoint(this.roundRadius + 6, this.angle);
             this.group.x(this.cx + point.x);
