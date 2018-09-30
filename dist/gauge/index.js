@@ -92,16 +92,20 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawArc',
         value: function drawArc() {
+
             var params = {
                 x: this.cx,
                 y: this.cy,
                 innerRadius: this.arcInRadius,
                 outerRadius: this.arcOutRadius,
-                angle: this.arcAngle,
-                fill: '#ffffff',
-                stroke: '#ffffff00',
+                angle: this.arcAngle
+                //, fill: 'red'
+                , stroke: '#ffffff00',
                 strokeWidth: 0,
-                rotation: this.arcOffset
+                rotation: this.arcOffset,
+                fillLinearGradientStartPoint: { x: -50, y: -50 },
+                fillLinearGradientEndPoint: { x: 50, y: 50 },
+                fillLinearGradientColorStops: [0, '#ff9000', .5, '#64b185', 1, '#5a78ca']
             };
             console.log(params);
             this.arc = new _konva2.default.Arc(params);

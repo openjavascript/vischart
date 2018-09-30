@@ -51,16 +51,25 @@ export default class Gauge extends VisChartBase  {
     }
 
     drawArc(){
+
         let params = {
             x: this.cx
             , y: this.cy
             , innerRadius: this.arcInRadius
             , outerRadius: this.arcOutRadius
             , angle: this.arcAngle
-            , fill: '#ffffff'
+            //, fill: 'red'
             , stroke: '#ffffff00'
             , strokeWidth: 0
             , rotation: this.arcOffset
+            , fillLinearGradientStartPoint: { x : -50, y : -50}
+            , fillLinearGradientEndPoint: { x : 50, y : 50}
+            , fillLinearGradientColorStops: 
+            [ 
+                0, '#ff9000'
+                , .5, '#64b185'
+                , 1, '#5a78ca'
+            ]
         };
         console.log( params );
         this.arc = new Konva.Arc( params );
