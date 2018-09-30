@@ -46,6 +46,7 @@ export default class Gauge extends VisChartBase  {
 
         this.textOffsetX = -1;
         this.textOffsetY = -8;
+        this.textLineLength = 6;
 
         this.textRectWidthPercent = .5;
         this.textRectHeightPercent = .12;
@@ -136,6 +137,31 @@ export default class Gauge extends VisChartBase  {
             , y: this.textY
         });
 
+        let points = [];
+        points.push( 'M', [ this.textX, this.textY + this.textLineLength ].join(',') );
+        points.push( 'L', [ this.textX, this.textY ].join(',') );
+        points.push( 'L', [ this.textX + this.textLineLength, this.textY ].join(',') );
+
+        points.push( 'M', [ this.textX + this.textWidth - this.textLineLength, this.textY ].join(',') );
+        points.push( 'L', [ this.textX + this.textWidth, this.textY ].join(',') );
+        points.push( 'L', [ this.textX + this.textWidth, this.textY + this.textLineLength ].join(',') );
+
+        points.push( 'M', [ this.textX + this.textWidth, this.textY + this.textHeight - this.textLineLength ].join(',') );
+        points.push( 'L', [ this.textX + this.textWidth, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ this.textX + this.textWidth - this.textLineLength, this.textY + this.textHeight ].join(',') );
+
+        points.push( 'M', [ this.textX + this.textLineLength, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ this.textX, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ this.textX, this.textY + this.textHeight - this.textLineLength ].join(',') );
+
+        this.textLinePath = new Konva.Path( {
+            data: points.join('')
+            , stroke: this.lineColor
+            , strokeWidth: 1
+        });
+
+
+        this.layoutLayer.add( this.textLinePath );
         this.layoutLayer.add( this.textRect );
     }
 
