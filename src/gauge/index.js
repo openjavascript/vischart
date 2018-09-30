@@ -18,21 +18,29 @@ export default class Gauge extends VisChartBase  {
 
         this.name = 'Gauge' + Date.now();
 
-        this.roundRadiusPercent = .1;
+        this.roundRadiusPercent = .078;
 
         this.lineColor = '#596ea7';
 
-        this.circleLinePercent = .31;
-        this.circlePercent = .34;
+        this.circleLinePercent = .25;
+        this.circlePercent = .28;
 
-        this.arcInPercent = .365 / 2;
-        this.arcOutPercent = .44 / 2;
+        this.arcLinePercent = .38 / 2;
 
-        this.arcAngle = 300;
-        this.arcOffset = 90 + ( 360 - this.arcAngle ) / 2;
+        this.arcOutPercent = .37 / 2;
+        this.arcInPercent = .305 / 2;
 
+        this.arcLabelLength = 6;
+        this.arcTextLength = 6;
+
+        this.arcAngle = 280;
         this.part = 22;
+        this.arcTotal = 2200;
+
+        this.arcOffset = 90 + ( 360 - this.arcAngle ) / 2;
         this.partLabel = this.part / 2;
+        this.partAngle = ( this.arcAngle ) / this.part;
+        this.partNum = this.arcTotal / this.part;
 
         this.init();
     }
@@ -42,12 +50,95 @@ export default class Gauge extends VisChartBase  {
 
         this.arcInRadius = this.width * this.arcInPercent;
         this.arcOutRadius = this.width * this.arcOutPercent;
+
+        this.arcLineRaidus = Math.ceil( this.arcLinePercent * this.max )
+
+        this.arcPartLineAr = [];
+        this.arcOutlinePartAr = [];
+        this.textAr = [];
+        for( let i = 0; i <= this.part; i++ ){
+            let start, end, angle;
+            angle = i * this.partAngle + this.arcOffset;
+
+            if( i && i < this.part ){
+                start = geometry.distanceAngleToPoint( this.arcInRadius, angle );
+                end = geometry.distanceAngleToPoint( this.arcOutRadius, angle );
+
+                this.arcPartLineAr.push( 'M' );
+                this.arcPartLineAr.push( [ start.x, start.y ].join(',') );
+                this.arcPartLineAr.push( 'L' );
+                this.arcPartLineAr.push( [ end.x, end.y ].join(',') );
+            }
+
+            start = geometry.distanceAngleToPoint( this.arcLineRaidus, angle );
+            end = geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcLabelLength, angle );
+
+            this.arcOutlinePartAr.push( 'M' );
+            this.arcOutlinePartAr.push( [ start.x, start.y ].join(',') );
+            this.arcOutlinePartAr.push( 'L' );
+            this.arcOutlinePartAr.push( [ end.x, end.y ].join(',') );
+
+            if( i % 2 || i == 0 ){
+                let text = {
+                    text: i * this.partNum
+                    , angle: angle
+                    , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength, angle )
+                };
+            }
+
+        }
     }
 
     update( data, allData ){
         this.stage.removeChildren();
 
         this.initDataLayout();
+    }
+
+    drawArcLine(){
+
+        let points = [];
+            points.push( 'M' );
+        for( let i = this.arcOffset; i <= ( this.arcOffset + this.arcAngle ); i+=0.5 ){
+            let tmp = geometry.distanceAngleToPoint( this.arcLineRaidus, i );
+            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
+            if( i == 90 ){
+                points.push( 'L' );
+            }
+        }
+
+        this.arcLine = new Konva.Path( {
+            data: points.join('')
+            , x: this.cx
+            , y: this.cy
+            , stroke: this.lineColor
+            , strokeWidth: 1
+            , fill: '#ffffff00'
+        });
+
+        this.arcPartLine = new Konva.Path( {
+            data: this.arcPartLineAr.join('')
+            , x: this.cx
+            , y: this.cy
+            , stroke: '#00000088'
+            , strokeWidth: 1
+            , fill: '#ffffff00'
+        });
+
+        this.arcOutlinePart = new Konva.Path( {
+            data: this.arcOutlinePartAr.join('')
+            , x: this.cx
+            , y: this.cy
+            , stroke: this.lineColor
+            , strokeWidth: 1
+            , fill: '#ffffff00'
+        });
+
+
+        this.layoutLayer.add( this.arcLine );
+        this.layoutLayer.add( this.arcPartLine );
+        this.layoutLayer.add( this.arcOutlinePart );
+
     }
 
     drawArc(){
@@ -71,7 +162,6 @@ export default class Gauge extends VisChartBase  {
                 , 1, '#5a78ca'
             ]
         };
-        console.log( params );
         this.arc = new Konva.Arc( params );
 
         this.layoutLayer.add( this.arc );
@@ -86,7 +176,7 @@ export default class Gauge extends VisChartBase  {
             , y: this.cy
             , radius: this.roundRadius
             , stroke: this.lineColor
-            , strokeWidth: 3
+            , strokeWidth: 2.5
             , fill: 'rgba( 0, 0, 0, .5 )'
         });
 
@@ -94,7 +184,7 @@ export default class Gauge extends VisChartBase  {
             x: this.cx
             , y: this.cy
             , text: '65'
-            , fontSize: 33
+            , fontSize: 28
             , fontFamily: 'Agency FB'
             , fill: '#c7d6ff'
             , fontStyle: 'italic'
@@ -106,7 +196,7 @@ export default class Gauge extends VisChartBase  {
             x: this.cx
             , y: this.cy
             , text: '%'
-            , fontSize: 18
+            , fontSize: 17
             , fontFamily: 'Agency FB'
             , fill: '#c7d6ff'
             , fontStyle: 'italic'
@@ -118,8 +208,8 @@ export default class Gauge extends VisChartBase  {
 
        let wedge = new Konva.Wedge({
           x: 0,
-          y: -6,
-          radius: 12,
+          y: -3,
+          radius: 10,
           angle: 20,
           fill: '#ff5a00',
           stroke: '#ff5a00',
@@ -129,8 +219,8 @@ export default class Gauge extends VisChartBase  {
 
        let wedge1 = new Konva.Wedge({
           x: 0,
-          y: -6,
-          radius: 12,
+          y: -3,
+          radius: 10,
           angle: 20,
           fill: '#973500',
           stroke: '#973500',
@@ -160,6 +250,7 @@ export default class Gauge extends VisChartBase  {
         this.drawCircle();
         this.drawCircleLine();
         this.drawArc();
+        this.drawArcLine();
 
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );
@@ -216,7 +307,7 @@ export default class Gauge extends VisChartBase  {
         let points = [];
             points.push( 'M' );
         for( let i = 90; i <= 180; i++ ){
-            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i + 90 );
             points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
             if( i == 90 ){
                 points.push( 'L' );
@@ -224,7 +315,7 @@ export default class Gauge extends VisChartBase  {
         }
         points.push( 'M');
         for( let i = 270; i <= 360; i++ ){
-            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i + 90 );
             points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
             if( i == 270 ){
                 points.push( 'L' );

@@ -54,21 +54,29 @@ var Gauge = function (_VisChartBase) {
 
         _this.name = 'Gauge' + Date.now();
 
-        _this.roundRadiusPercent = .1;
+        _this.roundRadiusPercent = .078;
 
         _this.lineColor = '#596ea7';
 
-        _this.circleLinePercent = .31;
-        _this.circlePercent = .34;
+        _this.circleLinePercent = .25;
+        _this.circlePercent = .28;
 
-        _this.arcInPercent = .365 / 2;
-        _this.arcOutPercent = .44 / 2;
+        _this.arcLinePercent = .38 / 2;
 
-        _this.arcAngle = 300;
-        _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
+        _this.arcOutPercent = .37 / 2;
+        _this.arcInPercent = .305 / 2;
 
+        _this.arcLabelLength = 6;
+        _this.arcTextLength = 6;
+
+        _this.arcAngle = 280;
         _this.part = 22;
+        _this.arcTotal = 2200;
+
+        _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
         _this.partLabel = _this.part / 2;
+        _this.partAngle = _this.arcAngle / _this.part;
+        _this.partNum = _this.arcTotal / _this.part;
 
         _this.init();
         return _this;
@@ -81,6 +89,44 @@ var Gauge = function (_VisChartBase) {
 
             this.arcInRadius = this.width * this.arcInPercent;
             this.arcOutRadius = this.width * this.arcOutPercent;
+
+            this.arcLineRaidus = Math.ceil(this.arcLinePercent * this.max);
+
+            this.arcPartLineAr = [];
+            this.arcOutlinePartAr = [];
+            this.textAr = [];
+            for (var i = 0; i <= this.part; i++) {
+                var start = void 0,
+                    end = void 0,
+                    angle = void 0;
+                angle = i * this.partAngle + this.arcOffset;
+
+                if (i && i < this.part) {
+                    start = geometry.distanceAngleToPoint(this.arcInRadius, angle);
+                    end = geometry.distanceAngleToPoint(this.arcOutRadius, angle);
+
+                    this.arcPartLineAr.push('M');
+                    this.arcPartLineAr.push([start.x, start.y].join(','));
+                    this.arcPartLineAr.push('L');
+                    this.arcPartLineAr.push([end.x, end.y].join(','));
+                }
+
+                start = geometry.distanceAngleToPoint(this.arcLineRaidus, angle);
+                end = geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcLabelLength, angle);
+
+                this.arcOutlinePartAr.push('M');
+                this.arcOutlinePartAr.push([start.x, start.y].join(','));
+                this.arcOutlinePartAr.push('L');
+                this.arcOutlinePartAr.push([end.x, end.y].join(','));
+
+                if (i % 2 || i == 0) {
+                    var text = {
+                        text: i * this.partNum,
+                        angle: angle,
+                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength, angle)
+                    };
+                }
+            }
         }
     }, {
         key: 'update',
@@ -88,6 +134,51 @@ var Gauge = function (_VisChartBase) {
             this.stage.removeChildren();
 
             this.initDataLayout();
+        }
+    }, {
+        key: 'drawArcLine',
+        value: function drawArcLine() {
+
+            var points = [];
+            points.push('M');
+            for (var i = this.arcOffset; i <= this.arcOffset + this.arcAngle; i += 0.5) {
+                var tmp = geometry.distanceAngleToPoint(this.arcLineRaidus, i);
+                points.push([tmp.x, tmp.y].join(',') + ',');
+                if (i == 90) {
+                    points.push('L');
+                }
+            }
+
+            this.arcLine = new _konva2.default.Path({
+                data: points.join(''),
+                x: this.cx,
+                y: this.cy,
+                stroke: this.lineColor,
+                strokeWidth: 1,
+                fill: '#ffffff00'
+            });
+
+            this.arcPartLine = new _konva2.default.Path({
+                data: this.arcPartLineAr.join(''),
+                x: this.cx,
+                y: this.cy,
+                stroke: '#00000088',
+                strokeWidth: 1,
+                fill: '#ffffff00'
+            });
+
+            this.arcOutlinePart = new _konva2.default.Path({
+                data: this.arcOutlinePartAr.join(''),
+                x: this.cx,
+                y: this.cy,
+                stroke: this.lineColor,
+                strokeWidth: 1,
+                fill: '#ffffff00'
+            });
+
+            this.layoutLayer.add(this.arcLine);
+            this.layoutLayer.add(this.arcPartLine);
+            this.layoutLayer.add(this.arcOutlinePart);
         }
     }, {
         key: 'drawArc',
@@ -107,7 +198,6 @@ var Gauge = function (_VisChartBase) {
                 fillLinearGradientEndPoint: { x: 50, y: 50 },
                 fillLinearGradientColorStops: [0, '#ff9000', .5, '#64b185', 1, '#5a78ca']
             };
-            console.log(params);
             this.arc = new _konva2.default.Arc(params);
 
             this.layoutLayer.add(this.arc);
@@ -125,7 +215,7 @@ var Gauge = function (_VisChartBase) {
                 y: this.cy,
                 radius: this.roundRadius,
                 stroke: this.lineColor,
-                strokeWidth: 3,
+                strokeWidth: 2.5,
                 fill: 'rgba( 0, 0, 0, .5 )'
             });
 
@@ -133,7 +223,7 @@ var Gauge = function (_VisChartBase) {
                 x: this.cx,
                 y: this.cy,
                 text: '65',
-                fontSize: 33,
+                fontSize: 28,
                 fontFamily: 'Agency FB',
                 fill: '#c7d6ff',
                 fontStyle: 'italic'
@@ -145,7 +235,7 @@ var Gauge = function (_VisChartBase) {
                 x: this.cx,
                 y: this.cy,
                 text: '%',
-                fontSize: 18,
+                fontSize: 17,
                 fontFamily: 'Agency FB',
                 fill: '#c7d6ff',
                 fontStyle: 'italic'
@@ -157,8 +247,8 @@ var Gauge = function (_VisChartBase) {
 
             var wedge = new _konva2.default.Wedge({
                 x: 0,
-                y: -6,
-                radius: 12,
+                y: -3,
+                radius: 10,
                 angle: 20,
                 fill: '#ff5a00',
                 stroke: '#ff5a00',
@@ -168,8 +258,8 @@ var Gauge = function (_VisChartBase) {
 
             var wedge1 = new _konva2.default.Wedge({
                 x: 0,
-                y: -6,
-                radius: 12,
+                y: -3,
+                radius: 10,
                 angle: 20,
                 fill: '#973500',
                 stroke: '#973500',
@@ -197,6 +287,7 @@ var Gauge = function (_VisChartBase) {
             this.drawCircle();
             this.drawCircleLine();
             this.drawArc();
+            this.drawArcLine();
 
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);
@@ -258,7 +349,7 @@ var Gauge = function (_VisChartBase) {
             var points = [];
             points.push('M');
             for (var i = 90; i <= 180; i++) {
-                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i);
+                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i + 90);
                 points.push([tmp.x, tmp.y].join(',') + ',');
                 if (i == 90) {
                     points.push('L');
@@ -266,7 +357,7 @@ var Gauge = function (_VisChartBase) {
             }
             points.push('M');
             for (var _i = 270; _i <= 360; _i++) {
-                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i);
+                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i + 90);
                 points.push([_tmp.x, _tmp.y].join(',') + ',');
                 if (_i == 270) {
                     points.push('L');
