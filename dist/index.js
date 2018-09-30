@@ -51,6 +51,9 @@ var VisChart = function (_VisChartBase) {
         _this.ins = [];
         _this.images = [];
 
+        _this.rateWidth = 330;
+        _this.rateHeight = 330;
+
         _this.init();
         return _this;
     }
@@ -126,10 +129,13 @@ var VisChart = function (_VisChartBase) {
             var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
+            //console.log( this.rateWidth, this.width );
+            var rateW = this.width / this.rateWidth,
+                rateH = this.height / this.rateHeight;
             this.images.push({
                 url: imgUrl,
-                width: width,
-                height: height,
+                width: width * rateW,
+                height: height * rateH,
                 offsetX: offsetX,
                 offsetY: offsetY
             });

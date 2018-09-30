@@ -57,6 +57,9 @@ var Dount = function (_VisChartBase) {
         _this.outPercent = .53;
         _this.inPercent = .37;
 
+        _this.circleLinePercent = .34;
+        _this.circlePercent = .31;
+
         _this.animationStep = 8;
         _this.angleStep = 5;
 
@@ -66,6 +69,8 @@ var Dount = function (_VisChartBase) {
         _this.path = [];
 
         _this.textOffset = 4;
+
+        _this.lineColor = '#24a3ea';
 
         _this.init();
         return _this;
@@ -176,6 +181,55 @@ var Dount = function (_VisChartBase) {
             }
         }
     }, {
+        key: 'drawCircle',
+        value: function drawCircle() {
+            this.circleRadius = Math.ceil(this.circlePercent * this.max / 2);
+
+            this.circle = new _konva2.default.Circle({
+                x: this.cx,
+                y: this.cy,
+                radius: this.circleRadius,
+                stroke: this.lineColor,
+                strokeWidth: 2.5,
+                fill: '#ffffff00'
+            });
+            this.layoutLayer.add(this.circle);
+        }
+    }, {
+        key: 'drawCircleLine',
+        value: function drawCircleLine() {
+            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.max / 2);
+
+            var points = [];
+            points.push('M');
+            for (var i = 90; i <= 180; i++) {
+                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i);
+                points.push([tmp.x, tmp.y].join(',') + ',');
+                if (i == 90) {
+                    points.push('L');
+                }
+            }
+            points.push('M');
+            for (var _i3 = 270; _i3 <= 360; _i3++) {
+                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i3);
+                points.push([_tmp.x, _tmp.y].join(',') + ',');
+                if (_i3 == 270) {
+                    points.push('L');
+                }
+            }
+
+            this.circleLine = new _konva2.default.Path({
+                data: points.join(''),
+                x: this.cx,
+                y: this.cy,
+                stroke: this.lineColor,
+                strokeWidth: 2.5,
+                fill: '#ffffff00'
+            });
+
+            this.layoutLayer.add(this.circleLine);
+        }
+    }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
             var _this3 = this;
@@ -183,6 +237,13 @@ var Dount = function (_VisChartBase) {
             this.layer = [];
             this.path = [];
             this.line = [];
+
+            this.layoutLayer = new _konva2.default.Layer();
+
+            this.drawCircle();
+            this.drawCircleLine();
+
+            this.stage.add(this.layoutLayer);
 
             this.data.data.map(function (val, key) {
                 var color = _this3.colors[key % _this3.colors.length];

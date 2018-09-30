@@ -17,6 +17,9 @@ export default class VisChart extends VisChartBase {
         this.ins = [];
         this.images = [];
 
+        this.rateWidth = 330;
+        this.rateHeight = 330;
+
         this.init();
     }
 
@@ -80,10 +83,14 @@ export default class VisChart extends VisChartBase {
     }
 
     addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
+        //console.log( this.rateWidth, this.width );
+        let rateW = this.width / this.rateWidth
+            , rateH = this.height / this.rateHeight
+            ;
         this.images.push( {
             url: imgUrl
-            , width: width
-            , height: height
+            , width: width * rateW
+            , height: height * rateH
             , offsetX: offsetX
             , offsetY: offsetY
         });

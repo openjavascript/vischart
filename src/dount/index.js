@@ -21,6 +21,9 @@ export default class Dount extends VisChartBase  {
         this.outPercent = .53;
         this.inPercent = .37;
 
+        this.circleLinePercent = .34;
+        this.circlePercent = .31;
+
         this.animationStep = 8;
         this.angleStep = 5;
 
@@ -30,6 +33,8 @@ export default class Dount extends VisChartBase  {
         this.path = [];
 
         this.textOffset = 4;
+
+        this.lineColor = '#24a3ea';
 
         this.init();
     }
@@ -127,11 +132,66 @@ export default class Dount extends VisChartBase  {
         }
     }
 
+    drawCircle(){
+        this.circleRadius = Math.ceil( this.circlePercent * this.max / 2 )
+
+        this.circle = new Konva.Circle( {
+            x: this.cx
+            , y: this.cy
+            , radius: this.circleRadius
+            , stroke: this.lineColor
+            , strokeWidth: 2.5
+            , fill: '#ffffff00'
+        });
+        this.layoutLayer.add( this.circle );
+    }
+
+    drawCircleLine(){
+        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.max / 2 )
+
+        let points = [];
+            points.push( 'M' );
+        for( let i = 90; i <= 180; i++ ){
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
+            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
+            if( i == 90 ){
+                points.push( 'L' );
+            }
+        }
+        points.push( 'M');
+        for( let i = 270; i <= 360; i++ ){
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
+            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
+            if( i == 270 ){
+                points.push( 'L' );
+            }
+        }
+
+        this.circleLine = new Konva.Path( {
+            data: points.join('')
+            , x: this.cx
+            , y: this.cy
+            , stroke: this.lineColor
+            , strokeWidth: 2.5
+            , fill: '#ffffff00'
+        });
+
+        this.layoutLayer.add( this.circleLine );
+    }
+
     initDataLayout(){
  
         this.layer = [];
         this.path = [];
         this.line = [];
+
+
+        this.layoutLayer = new Konva.Layer();
+
+        this.drawCircle();
+        this.drawCircleLine();
+
+        this.stage.add( this.layoutLayer );
 
         this.data.data.map( ( val, key ) => {
             let color = this.colors[ key % this.colors.length];
