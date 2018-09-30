@@ -47,6 +47,8 @@ export default class Gauge extends VisChartBase  {
         this.textOffsetX = -1;
         this.textOffsetY = -8;
 
+        this.textRectWidthPercent = .5;
+        this.textRectHeightPercent = .12;
 
         this.init();
     }
@@ -58,6 +60,11 @@ export default class Gauge extends VisChartBase  {
         this.arcOutRadius = this.width * this.arcOutPercent;
 
         this.arcLineRaidus = Math.ceil( this.arcLinePercent * this.max )
+
+        this.textWidth = this.textRectWidthPercent * this.width;
+        this.textHeight = this.textRectHeightPercent * this.width;
+        this.textX = this.cx - this.textWidth / 2; 
+        this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
         this.arcPartLineAr = [];
         this.arcOutlinePartAr = [];
@@ -86,22 +93,22 @@ export default class Gauge extends VisChartBase  {
 
             
             if( !(i * this.partNum % 100) || i === 0 ){
-                let angleOffset = 8;
+                let angleOffset = 8, lengthOffset = 0;
 
                 if( i === 0 ){
                     angleOffset = 1;
                 }
 
                 if( i >= 19 ){
-                    angleOffset = 12;
+                    angleOffset = 14;
                 }
                 if( i >= 21 ){
-                    angleOffset = 16;
+                    angleOffset = 18;
                 }
                 let text = {
                     text: i * this.partNum
-                    , angle: angle
-                    , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength, angle - angleOffset )
+                    , angle: angle - angleOffset
+                    , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength + lengthOffset, angle - angleOffset )
                 };
                 text.textPoint = new PointAt( this.width, this.height, geometry.pointPlus( text.point, this.cpoint) );
 
@@ -117,6 +124,21 @@ export default class Gauge extends VisChartBase  {
         this.initDataLayout();
     }
 
+    drawTextRect(){
+        this.textRect = new Konva.Rect( {
+            fill: '#596ea7'
+            , stroke: '#ffffff00'
+            , strokeWidth: 0
+            , opacity: .3
+            , width: this.textWidth
+            , height: this.textHeight
+            , x: this.textX
+            , y: this.textY
+        });
+
+        this.layoutLayer.add( this.textRect );
+    }
+
     drawArcText() {
         if( !( this.textAr && this.textAr.length ) ) return;
 
@@ -125,7 +147,7 @@ export default class Gauge extends VisChartBase  {
                 x: val.point.x + this.cx
                 , y: val.point.y + this.cy
                 , text: val.text + ''
-                , fontSize: 10
+                , fontSize: 11
                 //, rotation: val.angle
                 , fontFamily: 'MicrosoftYaHei'
                 , fill: this.lineColor
@@ -294,6 +316,7 @@ export default class Gauge extends VisChartBase  {
         this.drawArc();
         this.drawArcLine();
         this.drawArcText();
+        this.drawTextRect();
 
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );

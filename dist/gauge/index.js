@@ -83,6 +83,9 @@ var Gauge = function (_VisChartBase) {
         _this.textOffsetX = -1;
         _this.textOffsetY = -8;
 
+        _this.textRectWidthPercent = .5;
+        _this.textRectHeightPercent = .12;
+
         _this.init();
         return _this;
     }
@@ -96,6 +99,11 @@ var Gauge = function (_VisChartBase) {
             this.arcOutRadius = this.width * this.arcOutPercent;
 
             this.arcLineRaidus = Math.ceil(this.arcLinePercent * this.max);
+
+            this.textWidth = this.textRectWidthPercent * this.width;
+            this.textHeight = this.textRectHeightPercent * this.width;
+            this.textX = this.cx - this.textWidth / 2;
+            this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
             this.arcPartLineAr = [];
             this.arcOutlinePartAr = [];
@@ -125,22 +133,23 @@ var Gauge = function (_VisChartBase) {
                 this.arcOutlinePartAr.push([end.x, end.y].join(','));
 
                 if (!(i * this.partNum % 100) || i === 0) {
-                    var angleOffset = 8;
+                    var angleOffset = 8,
+                        lengthOffset = 0;
 
                     if (i === 0) {
                         angleOffset = 1;
                     }
 
                     if (i >= 19) {
-                        angleOffset = 12;
+                        angleOffset = 14;
                     }
                     if (i >= 21) {
-                        angleOffset = 16;
+                        angleOffset = 18;
                     }
                     var text = {
                         text: i * this.partNum,
-                        angle: angle,
-                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength, angle - angleOffset)
+                        angle: angle - angleOffset,
+                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength + lengthOffset, angle - angleOffset)
                     };
                     text.textPoint = new _pointat2.default(this.width, this.height, geometry.pointPlus(text.point, this.cpoint));
 
@@ -156,6 +165,22 @@ var Gauge = function (_VisChartBase) {
             this.initDataLayout();
         }
     }, {
+        key: 'drawTextRect',
+        value: function drawTextRect() {
+            this.textRect = new _konva2.default.Rect({
+                fill: '#596ea7',
+                stroke: '#ffffff00',
+                strokeWidth: 0,
+                opacity: .3,
+                width: this.textWidth,
+                height: this.textHeight,
+                x: this.textX,
+                y: this.textY
+            });
+
+            this.layoutLayer.add(this.textRect);
+        }
+    }, {
         key: 'drawArcText',
         value: function drawArcText() {
             var _this2 = this;
@@ -167,7 +192,7 @@ var Gauge = function (_VisChartBase) {
                     x: val.point.x + _this2.cx,
                     y: val.point.y + _this2.cy,
                     text: val.text + '',
-                    fontSize: 10
+                    fontSize: 11
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
                     fill: _this2.lineColor
@@ -334,6 +359,7 @@ var Gauge = function (_VisChartBase) {
             this.drawArc();
             this.drawArcLine();
             this.drawArcText();
+            this.drawTextRect();
 
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);
