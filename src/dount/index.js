@@ -357,12 +357,53 @@ export default class Dount extends VisChartBase  {
             for( let i = 1; i < item.length; i++ ){
                 let pre = item[ i - 1], cur = item[ i ];
                 //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                if( ( cur.lineEnd.y - pre.lineEnd.y ) < this.lineHeight ){
+                if( Math.abs( cur.lineEnd.y - pre.lineEnd.y ) < this.lineHeight ){
+                    /*
+                    cur.lineEnd.y = pre.lineEnd.y + this.lineHeight;
+                    cur.lineExpend.y = cur.lineEnd.y;
+                    */
                     needFix = 1;
                     break;
                 }
             }
-            console.log( item, key, needFix );
+            switch( key ){
+                case 1: {
+                    break;
+                }
+                case 2: {
+                    break;
+                }
+                case 4: {
+                    let tmpY = item[ 0 ].lineEnd.y;
+                    for( let i = 1; i < item.length; i++ ){
+                        let pre = item[ i - 1], cur = item[ i ], zero = item[0];
+                        tmpY += this.lineHeight;
+                        cur.lineEnd.y = tmpY;
+
+                        if( cur.lineEnd.y < cur.lineStart.y ){
+                            tmpY = cur.lineStart.y + this.lineHeight;
+                            cur.lineEnd.y = tmpY;
+                        }
+                        cur.lineExpend.y = tmpY;
+                    }
+                    break;
+                }
+                case 8: {
+                    let tmpY = item[ item.length - 1].lineEnd.y;
+                    for( let i = item.length - 2; i > 0; i-- ){
+                        let pre = item[ i + 1], cur = item[ i ];
+                        tmpY += this.lineHeight;
+                        cur.lineEnd.y = tmpY;
+
+                        if( cur.lineEnd.y < cur.lineStart.y ){
+                            cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
+                        }
+                        cur.lineExpend.y = cur.lineEnd.y;
+                    }
+
+                    break;
+                }
+            }
         });
     }
 
