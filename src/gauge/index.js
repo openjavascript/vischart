@@ -236,7 +236,6 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1
         });
 
-
         this.layoutLayer.add( this.textLinePath );
         this.layoutLayer.add( this.textRect );
     }
