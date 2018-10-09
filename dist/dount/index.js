@@ -72,6 +72,20 @@ var Dount = function (_VisChartBase) {
 
         _this.lineColor = '#24a3ea';
 
+        _this.lineRange = {
+            "1": [],
+            "2": [],
+            "4": [],
+            "8": []
+        };
+
+        _this.lineWidth = 60;
+        _this.lineSpace = 10;
+        _this.lineAngle = 45;
+        _this.lineHeight = 20;
+
+        _this.loopSort = [4, 8, 1, 2];
+
         _this.init();
         return _this;
     }
@@ -113,6 +127,7 @@ var Dount = function (_VisChartBase) {
             var _this2 = this;
 
             if (this.isDone) return;
+            this.countAngle = this.totalAngle;
 
             var tmp = void 0,
                 tmppoint = void 0,
@@ -183,7 +198,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
-            this.circleRadius = Math.ceil(this.circlePercent * this.max / 2);
+            this.circleRadius = Math.ceil(this.circlePercent * this.min / 2);
 
             this.circle = new _konva2.default.Circle({
                 x: this.cx,
@@ -198,7 +213,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircleLine',
         value: function drawCircleLine() {
-            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.max / 2);
+            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.min / 2);
 
             var points = [];
             points.push('M');
@@ -345,8 +360,14 @@ var Dount = function (_VisChartBase) {
                 item._totalPercent = 1;
                 item.endAngle = this.totalAngle;
             }
-            //计算开始角度, 计算指示线的2端
-            this.data.data.map(function (val, key) {
+
+            this.lineRange = {
+                "1": [],
+                "2": [],
+                "4": [],
+                "8": []
+                //计算开始角度, 计算指示线的2端
+            };this.data.data.map(function (val, key) {
                 if (!key) {
                     val.startAngle = 0;
                 } else {
@@ -361,6 +382,22 @@ var Dount = function (_VisChartBase) {
                 val.textPoint = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
 
                 val.pointDirection = new _pointat2.default(_this4.width, _this4.height, geometry.pointPlus(val.textPoint, _this4.cpoint));
+                var lineAngle = val.pointDirection.autoAngle();
+
+                switch (lineAngle) {
+                    case 1:
+                    case 8:
+                        {
+                            //val.lineEnd.x = this.lineLeft;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                _this4.lineRange[lineAngle].push(val);
             });
         }
     }, {
@@ -371,6 +408,7 @@ var Dount = function (_VisChartBase) {
             if (this.lineLengthCount >= this.lineLength) {
                 return;
             }
+            this.lineLengthCount = this.lineLength;
 
             this.lineLengthCount += this.lineLengthStep;
 
@@ -382,15 +420,38 @@ var Dount = function (_VisChartBase) {
                 var path = this.path[i];
                 var layer = this.layer[i];
 
-                var lineEnd = geometry.distanceAngleToPoint(this.outRadius + this.lineLengthCount, path.itemData.midAngle);
+                //console.log( path, path.itemData.pointDirection.auto(), path.itemData.pointDirection.autoAngle()  );
+
+                var lineEnd = geometry.distanceAngleToPoint(this.outRadius + this.lineLengthCount, path.itemData.midAngle),
+                    lineExpend = _jsonUtilsx2.default.clone(lineEnd);
+
+                var lineAngle = path.itemData.pointDirection.autoAngle();
+                switch (lineAngle) {
+                    case 1:
+                    case 8:
+                        {
+                            lineEnd.x = -(this.outRadius + this.lineSpace);
+                            lineExpend.x = lineEnd.x - this.lineWidth;
+                            break;
+                        }
+                    default:
+                        {
+                            lineEnd.x = this.outRadius + this.lineSpace;
+                            lineExpend.x = lineEnd.x + this.lineWidth;
+                            break;
+                        }
+                }
 
                 var line = this.line[i];
-                line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y]);
+                line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y, lineExpend.x, lineExpend.y]);
 
                 if (this.lineLengthCount >= this.lineLength) {
 
-                    this.addIcon(path, layer);
-                    this.addText(path, layer);
+                    /*
+                    this.addIcon( path, layer );
+                    this.addText( path, layer );
+                    */
+
                 } else {
                     window.requestAnimationFrame(function () {
                         _this5.animationLine();
@@ -484,12 +545,15 @@ var Dount = function (_VisChartBase) {
         value: function calcLayoutPosition() {
             //console.log( 'calcLayoutPosition', Date.now() );
 
-            this.outRadius = Math.ceil(this.outPercent * this.max / 2);
-            this.inRadius = Math.ceil(this.inPercent * this.max / 2);
+            this.outRadius = Math.ceil(this.outPercent * this.min / 2);
+            this.inRadius = Math.ceil(this.inPercent * this.min / 2);
 
             this.lineLength = (Math.min(this.width, this.height) - this.outRadius * 2) / 2 - this.lineOffset;
             this.lineLengthCount = 1;
             this.lineLengthStep = .5;
+
+            this.lineLeft = this.cx - this.outRadius - this.lineSpace;
+            this.lineRight = this.cx + this.outRadius + this.lineSpace;
 
             return this;
         }

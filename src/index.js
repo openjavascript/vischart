@@ -84,8 +84,8 @@ export default class VisChart extends VisChartBase {
 
     addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
         //console.log( this.rateWidth, this.width );
-        let rateW = this.width / this.rateWidth
-            , rateH = this.height / this.rateHeight
+        let rateW = this.min / this.rateWidth
+            , rateH = this.min / this.rateHeight
             ;
         this.images.push( {
             url: imgUrl

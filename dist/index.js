@@ -130,8 +130,8 @@ var VisChart = function (_VisChartBase) {
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
             //console.log( this.rateWidth, this.width );
-            var rateW = this.width / this.rateWidth,
-                rateH = this.height / this.rateHeight;
+            var rateW = this.min / this.rateWidth,
+                rateH = this.min / this.rateHeight;
             this.images.push({
                 url: imgUrl,
                 width: width * rateW,

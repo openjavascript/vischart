@@ -11,7 +11,6 @@ import * as utils from '../common/utils.js';
 
 import IconRound from '../icon/iconround.js';
 
-
 export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
         super( box, width, height );
@@ -35,6 +34,20 @@ export default class Dount extends VisChartBase  {
         this.textOffset = 4;
 
         this.lineColor = '#24a3ea';
+
+        this.lineRange = {
+            "1": []
+            , "2": []
+            , "4": []
+            , "8": []
+        };
+
+        this.lineWidth = 60;
+        this.lineSpace = 10;
+        this.lineAngle = 45;
+        this.lineHeight = 20;
+
+        this.loopSort = [ 4, 8, 1, 2 ];
 
         this.init();
     }
@@ -69,6 +82,7 @@ export default class Dount extends VisChartBase  {
 
     animation(){
         if( this.isDone ) return;
+        this.countAngle = this.totalAngle;
 
         let tmp, tmppoint, step = this.angleStep;
 
@@ -133,7 +147,7 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircle(){
-        this.circleRadius = Math.ceil( this.circlePercent * this.max / 2 )
+        this.circleRadius = Math.ceil( this.circlePercent * this.min / 2 )
 
         this.circle = new Konva.Circle( {
             x: this.cx
@@ -147,7 +161,7 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircleLine(){
-        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.max / 2 )
+        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.min / 2 )
 
         let points = [];
             points.push( 'M' );
@@ -291,6 +305,13 @@ export default class Dount extends VisChartBase  {
             item._totalPercent = 1;
             item.endAngle = this.totalAngle;
         }
+
+        this.lineRange = {
+            "1": []
+            , "2": []
+            , "4": []
+            , "8": []
+        }
         //计算开始角度, 计算指示线的2端
         this.data.data.map( ( val, key ) => {
             if( !key ) {
@@ -298,6 +319,7 @@ export default class Dount extends VisChartBase  {
             }else{
                 val.startAngle = this.data.data[ key - 1].endAngle;
             }
+
 
             val.midAngle = val.startAngle + ( val.endAngle - val.startAngle ) / 2;
 
@@ -307,7 +329,20 @@ export default class Dount extends VisChartBase  {
             val.textPoint = geometry.distanceAngleToPoint( this.outRadius + this.lineLength, val.midAngle );
 
             val.pointDirection = new PointAt( this.width, this.height, geometry.pointPlus( val.textPoint, this.cpoint) );
+            let lineAngle = val.pointDirection.autoAngle();
 
+            switch( lineAngle ){
+                case 1:
+                case 8: {
+                    //val.lineEnd.x = this.lineLeft;
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+
+            this.lineRange[ lineAngle ].push( val );
         })
     }
 
@@ -316,6 +351,7 @@ export default class Dount extends VisChartBase  {
         if( this.lineLengthCount >= this.lineLength ){
             return;
         }
+        this.lineLengthCount = this.lineLength;
         
         this.lineLengthCount += this.lineLengthStep;
 
@@ -327,15 +363,41 @@ export default class Dount extends VisChartBase  {
             let path = this.path[i];
             let layer = this.layer[ i ];
 
-            let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle );
+            //console.log( path, path.itemData.pointDirection.auto(), path.itemData.pointDirection.autoAngle()  );
+
+            let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle )
+                , lineExpend = ju.clone( lineEnd )
+                ;
+
+            let lineAngle = path.itemData.pointDirection.autoAngle();
+            switch( lineAngle ){
+                case 1:
+                case 8: {
+                    lineEnd.x = -( this.outRadius + this.lineSpace );
+                    lineExpend.x = lineEnd.x - this.lineWidth
+                    break;
+                }
+                default: {
+                    lineEnd.x = this.outRadius + this.lineSpace;
+                    lineExpend.x = lineEnd.x + this.lineWidth
+                    break;
+                }
+            }
+
 
             let line = this.line[ i ];
-            line.points( [ path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y ] );
+            line.points( [ 
+                path.itemData.lineStart.x, path.itemData.lineStart.y
+                , lineEnd.x, lineEnd.y 
+                , lineExpend.x, lineExpend.y 
+            ] );
 
             if( this.lineLengthCount >= this.lineLength ){
 
+                /*
                 this.addIcon( path, layer );
                 this.addText( path, layer );
+                */
 
             }else{
                 window.requestAnimationFrame( ()=>{ this.animationLine() } );
@@ -418,13 +480,15 @@ export default class Dount extends VisChartBase  {
     calcLayoutPosition() {
         //console.log( 'calcLayoutPosition', Date.now() );
 
-        this.outRadius = Math.ceil( this.outPercent * this.max / 2 );
-        this.inRadius = Math.ceil( this.inPercent * this.max / 2 );
+        this.outRadius = Math.ceil( this.outPercent * this.min / 2 );
+        this.inRadius = Math.ceil( this.inPercent * this.min / 2 );
 
         this.lineLength = ( Math.min( this.width, this.height ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
         this.lineLengthCount = 1;
         this.lineLengthStep = .5;
 
+        this.lineLeft = this.cx - this.outRadius - this.lineSpace;
+        this.lineRight = this.cx + this.outRadius + this.lineSpace;
 
         return this;
     }

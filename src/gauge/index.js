@@ -145,7 +145,7 @@ export default class Gauge extends VisChartBase  {
         this.arcLineRaidus = Math.ceil( this.arcLinePercent * this.max )
 
         this.textWidth = this.textRectWidthPercent * this.width;
-        this.textHeight = this.textRectHeightPercent * this.width;
+        this.textHeight = 38;
         this.textX = this.cx - this.textWidth / 2; 
         this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
@@ -260,7 +260,7 @@ export default class Gauge extends VisChartBase  {
         //console.log( this.angle, this.animationAngle );
 
         if( this.curRate ){
-            this.rateStep = Math.floor( this.curRate / this.animationStep )
+            this.rateStep = Math.floor( this.curRate / ( this.animationStep * 2 ) )
             this.animation();
         }
         if( this.totalNum ){

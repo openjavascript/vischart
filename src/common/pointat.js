@@ -12,6 +12,8 @@ export default class PointAt {
         this.cx = this.width / 2;
         this.cy = this.height / 2;
 
+        this.cpoint = { x: this.cx, y: this.cy };
+
         this.offsetX = 20;
         this.offsetY = 20;
 
@@ -128,6 +130,22 @@ export default class PointAt {
 
     auto() {
         let r = this.isLeftTop() + this.isRightTop() + this.isRightBottom() + this.isLeftBottom();
+        return r;
+    }
+
+    autoAngle() {
+        let angle  = geometry.pointAngle( this.cpoint, this.point ), r = '';
+
+        if( angle >= 0 && angle <= 90 ){
+            r = PointAt.DIRE_NAME.rightBottom;
+        }else if( angle > 90 && angle <= 180 ){
+            r = PointAt.DIRE_NAME.leftBottom;
+        }else if( angle > 180 && angle <= 270 ){
+            r = PointAt.DIRE_NAME.leftTop;
+        }else{
+            r = PointAt.DIRE_NAME.rightTop;
+        }
+
         return r;
     }
 

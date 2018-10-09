@@ -27,9 +27,10 @@ var VisChartBase = function () {
         this.height = height || box.offsetHeight;
 
         this.max = Math.max(this.width, this.height);
+        this.min = Math.min(this.width, this.height);
 
-        this.cx = this.max / 2;
-        this.cy = this.max / 2;
+        this.cx = this.width / 2;
+        this.cy = this.height / 2;
         this.cpoint = { x: this.cx, y: this.cy };
 
         this.totalAngle = 360;

@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.pointRectangleIntersection = pointRectangleIntersection;
 exports.pointDistance = pointDistance;
+exports.pointAngle = pointAngle;
 exports.distanceAngleToPoint = distanceAngleToPoint;
 exports.radians = radians;
 exports.degree = degree;
@@ -38,6 +39,23 @@ function pointDistance(_p1, _p2) {
     ;
     return _dist;
 }
+/**
+ * 计算两个坐标点之间的角度
+ * @method pointAngle
+ * @param   {point} _p1
+ * @param   {point} _p2
+ * @return  Boolean
+ * @static
+ */
+function pointAngle(_p1, _p2) {
+    var angle = Math.atan2(_p2.y - _p1.y, _p2.x - _p1.x) * 180 / Math.PI;
+    if (angle < 0) {
+        angle = 360 + angle;
+    }
+
+    return angle;
+}
+
 /**
  * 从长度和角度求坐标点
  * @method  distanceAngleToPoint
