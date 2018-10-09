@@ -19,7 +19,9 @@ export default class Gauge extends VisChartBase  {
 
         this.name = 'Gauge' + Date.now();
 
-        this.curRate = 600;
+        this.curRate = 0;
+        this.totalNum = 0;
+        this.totalNumStep = 5;
 
         this.roundRadiusPercent = .085;
 
@@ -43,6 +45,7 @@ export default class Gauge extends VisChartBase  {
         this.textOffset = 0;
 
         this.arcOffset = 90 + ( 360 - this.arcAngle ) / 2;
+        this.arcOffsetPad = -5;
         this.partLabel = this.part / 2;
         this.partAngle = ( this.arcAngle ) / this.part;
         this.partNum = this.arcTotal / this.part;
@@ -57,6 +60,7 @@ export default class Gauge extends VisChartBase  {
         this.textRoundPercent = .39;
         this.textRoundOffsetAngle = 160;
         this.textRoundPlusAngle = 110;
+        this.textRoundMaxAngle = this.textRoundOffsetAngle + this.textRoundPlusAngle * 2;
         this.roundStatusRaidus = 30;
         this.textRoundAngle = [ 
             {
@@ -89,6 +93,41 @@ export default class Gauge extends VisChartBase  {
         ];
 
         this.init();
+    }
+
+    getAttackRateAngle(){
+        let r = 0;
+
+        r = this.arcOffset + ( this.arcAngle ) * this.getAttackRatePercent();
+
+        return r;
+    }
+
+    getAttackRatePercent(){
+        let r = 0, tmp;
+        if( this.curRate ){
+            tmp = this.curRate;
+            if( tmp > this.arcTotal ){
+                tmp = this.arcTotal;
+            }
+            
+            r = tmp / this.arcTotal;
+        }
+        return r;
+    }
+
+    getAttackText(){
+        let text = '低';
+
+        if( this.curRate ){
+            this.textRoundAngle.map( ( val ) => {
+                if( this.curRate >= val.min && this.curRate <= val.max ){
+                    text = val.text;
+                }
+            });
+        }
+
+        return `${text}频\n攻击`;
     }
 
     init(){
@@ -177,58 +216,86 @@ export default class Gauge extends VisChartBase  {
         });
     }
 
-
     update( data, allData ){
         this.stage.removeChildren();
 
+        this.curRate = 600;
+        this.totalNum = 234567;
+
         this.initDataLayout();
+
+        //console.log( 'gauge update', this.getAttackRateAngle() )
+        this.angle = this.arcOffset + this.arcOffsetPad;
+        this.animationAngle =  this.getAttackRateAngle() + this.arcOffsetPad;
+        console.log( this.angle, this.animationAngle );
+
+        this.curRate && this.animation();
+        if( this.totalNum ){
+            this.totalNumStep = Math.floor( this.totalNum / ( 40 * 1 ) );
+            this.totalNumCount = 0;
+            this.animationText();
+        }
     }
 
     drawText(){
 
-        this.totalText = new Konva.Text( {
-            text: "2345678"
+        let params = {
+            text: 0 + ''
             , x: this.cx
             , y: this.textY
             , fontSize: 26
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
             , fontStyle: 'italic'
-        });
+        }, tmp = ju.clone( params );
+        tmp.text = this.totalNum; 
+
+        this.totalText = new Konva.Text( params );
         this.totalText.x( this.cx - this.totalText.textWidth / 2 );
         this.totalText.y( this.textY + 5 );
 
-        this.layoutLayer.add( this.totalText );
+        this.tmpTotalText = new Konva.Text( tmp );
+        
+
     }
 
     drawTextRect(){
+
+        let textWidth =  this.tmpTotalText.textWidth + 30
+            , textX = 0
+            ;
+            if( textWidth < 170 ){
+                textWidth = 170;
+            }
+            textX = this.cx - textWidth / 2 + 2
+
         this.textRect = new Konva.Rect( {
             fill: '#596ea7'
             , stroke: '#ffffff00'
             , strokeWidth: 0
             , opacity: .3
-            , width: this.textWidth
+            , width: textWidth
             , height: this.textHeight
-            , x: this.textX
+            , x: textX
             , y: this.textY
         });
 
         let points = [];
-        points.push( 'M', [ this.textX, this.textY + this.textLineLength ].join(',') );
-        points.push( 'L', [ this.textX, this.textY ].join(',') );
-        points.push( 'L', [ this.textX + this.textLineLength, this.textY ].join(',') );
+        points.push( 'M', [ textX, this.textY + this.textLineLength ].join(',') );
+        points.push( 'L', [ textX, this.textY ].join(',') );
+        points.push( 'L', [ textX + this.textLineLength, this.textY ].join(',') );
 
-        points.push( 'M', [ this.textX + this.textWidth - this.textLineLength, this.textY ].join(',') );
-        points.push( 'L', [ this.textX + this.textWidth, this.textY ].join(',') );
-        points.push( 'L', [ this.textX + this.textWidth, this.textY + this.textLineLength ].join(',') );
+        points.push( 'M', [ textX + textWidth - this.textLineLength, this.textY ].join(',') );
+        points.push( 'L', [ textX + textWidth, this.textY ].join(',') );
+        points.push( 'L', [ textX + textWidth, this.textY + this.textLineLength ].join(',') );
 
-        points.push( 'M', [ this.textX + this.textWidth, this.textY + this.textHeight - this.textLineLength ].join(',') );
-        points.push( 'L', [ this.textX + this.textWidth, this.textY + this.textHeight ].join(',') );
-        points.push( 'L', [ this.textX + this.textWidth - this.textLineLength, this.textY + this.textHeight ].join(',') );
+        points.push( 'M', [ textX + textWidth, this.textY + this.textHeight - this.textLineLength ].join(',') );
+        points.push( 'L', [ textX + textWidth, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ textX + textWidth - this.textLineLength, this.textY + this.textHeight ].join(',') );
 
-        points.push( 'M', [ this.textX + this.textLineLength, this.textY + this.textHeight ].join(',') );
-        points.push( 'L', [ this.textX, this.textY + this.textHeight ].join(',') );
-        points.push( 'L', [ this.textX, this.textY + this.textHeight - this.textLineLength ].join(',') );
+        points.push( 'M', [ textX + this.textLineLength, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ textX, this.textY + this.textHeight ].join(',') );
+        points.push( 'L', [ textX, this.textY + this.textHeight - this.textLineLength ].join(',') );
 
         this.textLinePath = new Konva.Path( {
             data: points.join('')
@@ -238,6 +305,7 @@ export default class Gauge extends VisChartBase  {
 
         this.layoutLayer.add( this.textLinePath );
         this.layoutLayer.add( this.textRect );
+        this.layoutLayer.add( this.totalText );
     }
 
     drawArcText() {
@@ -346,7 +414,7 @@ export default class Gauge extends VisChartBase  {
         this.percentText = new Konva.Text( {
             x: this.cx
             , y: this.cy
-            , text: "高频\n攻击"
+            , text: this.getAttackText()
             , fontSize: 18
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
@@ -417,19 +485,21 @@ export default class Gauge extends VisChartBase  {
         this.drawArc();
         this.drawArcLine();
         this.drawArcText();
-        this.drawTextRect();
         this.drawText();
+        this.drawTextRect();
 
         this.initRoundText();
 
         this.stage.add( this.layer );
         this.stage.add( this.layoutLayer );
 
-
-        window.requestAnimationFrame( ()=>{ this.animation() } );
     }
     animation(){
-        //this.angle++;
+        if( this.angle > this.animationAngle ) return;
+        this.angle += 5;
+        if( this.angle >= this.animationAngle ) {
+            this.angle = this.animationAngle;
+        };
 
         let point = geometry.distanceAngleToPoint(  this.roundRadius + 6, this.angle )
         this.group.x( this.cx + point.x );
@@ -439,8 +509,21 @@ export default class Gauge extends VisChartBase  {
 
         this.stage.add( this.layer );
 
+        window.requestAnimationFrame( ()=>{ this.animation() } );
+    }
 
-        //window.requestAnimationFrame( ()=>{ this.animation() } );
+    animationText(){
+        if( this.totalNumCount >= this.totalNum ) return;
+        this.totalNumCount += this.totalNumStep;
+        if( this.totalNumCount >= this.totalNum ) {
+            this.totalNumCount = this.totalNum;
+        };
+
+        this.totalText.text( this.totalNumCount );
+        this.totalText.x( this.cx - this.totalText.textWidth / 2 );
+        this.stage.add( this.layoutLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationText() } );
     }
 
     calcDataPosition() {

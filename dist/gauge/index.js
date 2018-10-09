@@ -58,7 +58,9 @@ var Gauge = function (_VisChartBase) {
 
         _this.name = 'Gauge' + Date.now();
 
-        _this.curRate = 600;
+        _this.curRate = 0;
+        _this.totalNum = 0;
+        _this.totalNumStep = 5;
 
         _this.roundRadiusPercent = .085;
 
@@ -82,6 +84,7 @@ var Gauge = function (_VisChartBase) {
         _this.textOffset = 0;
 
         _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
+        _this.arcOffsetPad = -5;
         _this.partLabel = _this.part / 2;
         _this.partAngle = _this.arcAngle / _this.part;
         _this.partNum = _this.arcTotal / _this.part;
@@ -96,6 +99,7 @@ var Gauge = function (_VisChartBase) {
         _this.textRoundPercent = .39;
         _this.textRoundOffsetAngle = 160;
         _this.textRoundPlusAngle = 110;
+        _this.textRoundMaxAngle = _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2;
         _this.roundStatusRaidus = 30;
         _this.textRoundAngle = [{
             angle: _this.textRoundOffsetAngle,
@@ -128,9 +132,50 @@ var Gauge = function (_VisChartBase) {
     }
 
     _createClass(Gauge, [{
+        key: 'getAttackRateAngle',
+        value: function getAttackRateAngle() {
+            var r = 0;
+
+            r = this.arcOffset + this.arcAngle * this.getAttackRatePercent();
+
+            return r;
+        }
+    }, {
+        key: 'getAttackRatePercent',
+        value: function getAttackRatePercent() {
+            var r = 0,
+                tmp = void 0;
+            if (this.curRate) {
+                tmp = this.curRate;
+                if (tmp > this.arcTotal) {
+                    tmp = this.arcTotal;
+                }
+
+                r = tmp / this.arcTotal;
+            }
+            return r;
+        }
+    }, {
+        key: 'getAttackText',
+        value: function getAttackText() {
+            var _this2 = this;
+
+            var text = '低';
+
+            if (this.curRate) {
+                this.textRoundAngle.map(function (val) {
+                    if (_this2.curRate >= val.min && _this2.curRate <= val.max) {
+                        text = val.text;
+                    }
+                });
+            }
+
+            return text + '\u9891\n\u653B\u51FB';
+        }
+    }, {
         key: 'init',
         value: function init() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.textRoundRadius = this.width * this.textRoundPercent;
 
@@ -147,8 +192,8 @@ var Gauge = function (_VisChartBase) {
             this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
             this.textRoundAngle.map(function (val, key) {
-                var point = geometry.distanceAngleToPoint(_this2.textRoundRadius, val.angle);
-                val.point = geometry.pointPlus(point, _this2.cpoint);
+                var point = geometry.distanceAngleToPoint(_this3.textRoundRadius, val.angle);
+                val.point = geometry.pointPlus(point, _this3.cpoint);
             });
 
             this.arcPartLineAr = [];
@@ -206,17 +251,17 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'initRoundText',
         value: function initRoundText() {
-            var _this3 = this;
+            var _this4 = this;
 
             this.textRoundAngle.map(function (val) {
 
-                val.ins = new _roundstatetext2.default(_this3.box, _this3.width, _this3.height);
+                val.ins = new _roundstatetext2.default(_this4.box, _this4.width, _this4.height);
                 val.ins.setOptions(Object.assign(val, {
-                    stage: _this3.stage,
-                    layer: _this3.layoutLayer
+                    stage: _this4.stage,
+                    layer: _this4.layoutLayer
                 }));
                 val.ins.init();
-                val.ins.update(_this3.curRate);
+                val.ins.update(_this4.curRate);
             });
         }
     }, {
@@ -224,56 +269,83 @@ var Gauge = function (_VisChartBase) {
         value: function update(data, allData) {
             this.stage.removeChildren();
 
+            this.curRate = 600;
+            this.totalNum = 234567;
+
             this.initDataLayout();
+
+            //console.log( 'gauge update', this.getAttackRateAngle() )
+            this.angle = this.arcOffset + this.arcOffsetPad;
+            this.animationAngle = this.getAttackRateAngle() + this.arcOffsetPad;
+            console.log(this.angle, this.animationAngle);
+
+            this.curRate && this.animation();
+            if (this.totalNum) {
+                this.totalNumStep = Math.floor(this.totalNum / (40 * 1));
+                this.totalNumCount = 0;
+                this.animationText();
+            }
         }
     }, {
         key: 'drawText',
         value: function drawText() {
 
-            this.totalText = new _konva2.default.Text({
-                text: "2345678",
+            var params = {
+                text: 0 + '',
                 x: this.cx,
                 y: this.textY,
                 fontSize: 26,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
                 fontStyle: 'italic'
-            });
+            },
+                tmp = _jsonUtilsx2.default.clone(params);
+            tmp.text = this.totalNum;
+
+            this.totalText = new _konva2.default.Text(params);
             this.totalText.x(this.cx - this.totalText.textWidth / 2);
             this.totalText.y(this.textY + 5);
 
-            this.layoutLayer.add(this.totalText);
+            this.tmpTotalText = new _konva2.default.Text(tmp);
         }
     }, {
         key: 'drawTextRect',
         value: function drawTextRect() {
+
+            var textWidth = this.tmpTotalText.textWidth + 30,
+                textX = 0;
+            if (textWidth < 170) {
+                textWidth = 170;
+            }
+            textX = this.cx - textWidth / 2 + 2;
+
             this.textRect = new _konva2.default.Rect({
                 fill: '#596ea7',
                 stroke: '#ffffff00',
                 strokeWidth: 0,
                 opacity: .3,
-                width: this.textWidth,
+                width: textWidth,
                 height: this.textHeight,
-                x: this.textX,
+                x: textX,
                 y: this.textY
             });
 
             var points = [];
-            points.push('M', [this.textX, this.textY + this.textLineLength].join(','));
-            points.push('L', [this.textX, this.textY].join(','));
-            points.push('L', [this.textX + this.textLineLength, this.textY].join(','));
+            points.push('M', [textX, this.textY + this.textLineLength].join(','));
+            points.push('L', [textX, this.textY].join(','));
+            points.push('L', [textX + this.textLineLength, this.textY].join(','));
 
-            points.push('M', [this.textX + this.textWidth - this.textLineLength, this.textY].join(','));
-            points.push('L', [this.textX + this.textWidth, this.textY].join(','));
-            points.push('L', [this.textX + this.textWidth, this.textY + this.textLineLength].join(','));
+            points.push('M', [textX + textWidth - this.textLineLength, this.textY].join(','));
+            points.push('L', [textX + textWidth, this.textY].join(','));
+            points.push('L', [textX + textWidth, this.textY + this.textLineLength].join(','));
 
-            points.push('M', [this.textX + this.textWidth, this.textY + this.textHeight - this.textLineLength].join(','));
-            points.push('L', [this.textX + this.textWidth, this.textY + this.textHeight].join(','));
-            points.push('L', [this.textX + this.textWidth - this.textLineLength, this.textY + this.textHeight].join(','));
+            points.push('M', [textX + textWidth, this.textY + this.textHeight - this.textLineLength].join(','));
+            points.push('L', [textX + textWidth, this.textY + this.textHeight].join(','));
+            points.push('L', [textX + textWidth - this.textLineLength, this.textY + this.textHeight].join(','));
 
-            points.push('M', [this.textX + this.textLineLength, this.textY + this.textHeight].join(','));
-            points.push('L', [this.textX, this.textY + this.textHeight].join(','));
-            points.push('L', [this.textX, this.textY + this.textHeight - this.textLineLength].join(','));
+            points.push('M', [textX + this.textLineLength, this.textY + this.textHeight].join(','));
+            points.push('L', [textX, this.textY + this.textHeight].join(','));
+            points.push('L', [textX, this.textY + this.textHeight - this.textLineLength].join(','));
 
             this.textLinePath = new _konva2.default.Path({
                 data: points.join(''),
@@ -283,27 +355,28 @@ var Gauge = function (_VisChartBase) {
 
             this.layoutLayer.add(this.textLinePath);
             this.layoutLayer.add(this.textRect);
+            this.layoutLayer.add(this.totalText);
         }
     }, {
         key: 'drawArcText',
         value: function drawArcText() {
-            var _this4 = this;
+            var _this5 = this;
 
             if (!(this.textAr && this.textAr.length)) return;
 
             this.textAr.map(function (val) {
                 var text = new _konva2.default.Text({
-                    x: val.point.x + _this4.cx,
-                    y: val.point.y + _this4.cy,
+                    x: val.point.x + _this5.cx,
+                    y: val.point.y + _this5.cy,
                     text: val.text + '',
                     fontSize: 11
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
-                    fill: _this4.lineColor
+                    fill: _this5.lineColor
                 });
                 text.rotation(val.angle + 90);
 
-                _this4.layoutLayer.add(text);
+                _this5.layoutLayer.add(text);
             });
         }
     }, {
@@ -376,8 +449,6 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
-            var _this5 = this;
-
             this.layer = new _konva2.default.Layer();
             this.layoutLayer = new _konva2.default.Layer();
 
@@ -393,7 +464,7 @@ var Gauge = function (_VisChartBase) {
             this.percentText = new _konva2.default.Text({
                 x: this.cx,
                 y: this.cy,
-                text: "高频\n攻击",
+                text: this.getAttackText(),
                 fontSize: 18,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
@@ -463,22 +534,24 @@ var Gauge = function (_VisChartBase) {
             this.drawArc();
             this.drawArcLine();
             this.drawArcText();
-            this.drawTextRect();
             this.drawText();
+            this.drawTextRect();
 
             this.initRoundText();
 
             this.stage.add(this.layer);
             this.stage.add(this.layoutLayer);
-
-            window.requestAnimationFrame(function () {
-                _this5.animation();
-            });
         }
     }, {
         key: 'animation',
         value: function animation() {
-            //this.angle++;
+            var _this6 = this;
+
+            if (this.angle > this.animationAngle) return;
+            this.angle += 5;
+            if (this.angle >= this.animationAngle) {
+                this.angle = this.animationAngle;
+            };
 
             var point = geometry.distanceAngleToPoint(this.roundRadius + 6, this.angle);
             this.group.x(this.cx + point.x);
@@ -488,7 +561,28 @@ var Gauge = function (_VisChartBase) {
 
             this.stage.add(this.layer);
 
-            //window.requestAnimationFrame( ()=>{ this.animation() } );
+            window.requestAnimationFrame(function () {
+                _this6.animation();
+            });
+        }
+    }, {
+        key: 'animationText',
+        value: function animationText() {
+            var _this7 = this;
+
+            if (this.totalNumCount >= this.totalNum) return;
+            this.totalNumCount += this.totalNumStep;
+            if (this.totalNumCount >= this.totalNum) {
+                this.totalNumCount = this.totalNum;
+            };
+
+            this.totalText.text(this.totalNumCount);
+            this.totalText.x(this.cx - this.totalText.textWidth / 2);
+            this.stage.add(this.layoutLayer);
+
+            window.requestAnimationFrame(function () {
+                _this7.animationText();
+            });
         }
     }, {
         key: 'calcDataPosition',
