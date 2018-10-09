@@ -425,43 +425,72 @@ var Dount = function (_VisChartBase) {
                 switch (key) {
                     case 1:
                         {
-                            break;
-                        }
-                    case 2:
-                        {
-                            break;
-                        }
-                    case 4:
-                        {
                             var tmpY = item[0].lineEnd.y;
                             for (var _i4 = 1; _i4 < item.length; _i4++) {
                                 var _pre = item[_i4 - 1],
                                     _cur = item[_i4],
                                     zero = item[0];
-                                tmpY += _this4.lineHeight;
+                                tmpY -= _this4.lineHeight;
                                 _cur.lineEnd.y = tmpY;
 
                                 if (_cur.lineEnd.y < _cur.lineStart.y) {
-                                    tmpY = _cur.lineStart.y + _this4.lineHeight;
-                                    _cur.lineEnd.y = tmpY;
+                                    //tmpY = cur.lineStart.y + this.lineHeight;
+                                    //cur.lineEnd.y = tmpY;
                                 }
                                 _cur.lineExpend.y = tmpY;
                             }
                             break;
                         }
-                    case 8:
+                    case 2:
                         {
-                            var _tmpY = item[item.length - 1].lineEnd.y;
-                            for (var _i5 = item.length - 2; _i5 > 0; _i5--) {
-                                var _pre2 = item[_i5 + 1],
-                                    _cur2 = item[_i5];
+                            var _tmpY = item[0].lineEnd.y;
+                            for (var _i5 = 1; _i5 < item.length; _i5++) {
+                                var _pre2 = item[_i5 - 1],
+                                    _cur2 = item[_i5],
+                                    _zero = item[0];
                                 _tmpY += _this4.lineHeight;
                                 _cur2.lineEnd.y = _tmpY;
 
                                 if (_cur2.lineEnd.y < _cur2.lineStart.y) {
-                                    _cur2.lineEnd.y = _cur2.lineStart.y + _this4.lineHeight;
+                                    //tmpY = cur.lineStart.y + this.lineHeight;
+                                    //cur.lineEnd.y = tmpY;
                                 }
-                                _cur2.lineExpend.y = _cur2.lineEnd.y;
+                                _cur2.lineExpend.y = _tmpY;
+                            }
+
+                            break;
+                        }
+                    case 4:
+                        {
+                            var _tmpY2 = item[0].lineEnd.y;
+                            for (var _i6 = 1; _i6 < item.length; _i6++) {
+                                var _pre3 = item[_i6 - 1],
+                                    _cur3 = item[_i6],
+                                    _zero2 = item[0];
+                                _tmpY2 += _this4.lineHeight;
+                                _cur3.lineEnd.y = _tmpY2;
+
+                                if (_cur3.lineEnd.y < _cur3.lineStart.y) {
+                                    _tmpY2 = _cur3.lineStart.y + _this4.lineHeight;
+                                    _cur3.lineEnd.y = _tmpY2;
+                                }
+                                _cur3.lineExpend.y = _tmpY2;
+                            }
+                            break;
+                        }
+                    case 8:
+                        {
+                            var _tmpY3 = item[item.length - 1].lineEnd.y;
+                            for (var _i7 = item.length - 2; _i7 > 0; _i7--) {
+                                var _pre4 = item[_i7 + 1],
+                                    _cur4 = item[_i7];
+                                _tmpY3 += _this4.lineHeight;
+                                _cur4.lineEnd.y = _tmpY3;
+
+                                if (_cur4.lineEnd.y < _cur4.lineStart.y) {
+                                    _cur4.lineEnd.y = _cur4.lineStart.y + _this4.lineHeight;
+                                }
+                                _cur4.lineExpend.y = _cur4.lineEnd.y;
                             }
 
                             break;

@@ -368,9 +368,34 @@ export default class Dount extends VisChartBase  {
             }
             switch( key ){
                 case 1: {
+                    let tmpY = item[ 0 ].lineEnd.y;
+                    for( let i = 1; i < item.length; i++ ){
+                        let pre = item[ i - 1], cur = item[ i ], zero = item[0];
+                        tmpY -= this.lineHeight;
+                        cur.lineEnd.y = tmpY;
+
+                        if( cur.lineEnd.y < cur.lineStart.y ){
+                            //tmpY = cur.lineStart.y + this.lineHeight;
+                            //cur.lineEnd.y = tmpY;
+                        }
+                        cur.lineExpend.y = tmpY;
+                    }
                     break;
                 }
                 case 2: {
+                    let tmpY = item[ 0 ].lineEnd.y;
+                    for( let i = 1; i < item.length; i++ ){
+                        let pre = item[ i - 1], cur = item[ i ], zero = item[0];
+                        tmpY += this.lineHeight;
+                        cur.lineEnd.y = tmpY;
+
+                        if( cur.lineEnd.y < cur.lineStart.y ){
+                            //tmpY = cur.lineStart.y + this.lineHeight;
+                            //cur.lineEnd.y = tmpY;
+                        }
+                        cur.lineExpend.y = tmpY;
+                    }
+
                     break;
                 }
                 case 4: {
