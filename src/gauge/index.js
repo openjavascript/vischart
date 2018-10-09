@@ -23,6 +23,10 @@ export default class Gauge extends VisChartBase  {
         this.totalNum = 0;
         this.totalNumStep = 5;
 
+        this.animationStep = 40 * 1;
+
+
+
         this.roundRadiusPercent = .085;
 
         this.lineColor = '#596ea7';
@@ -215,23 +219,52 @@ export default class Gauge extends VisChartBase  {
 
         });
     }
-
+    /*
+{
+    "series": [
+        {
+            "type": "gauge",
+            "data": [
+                {
+                    "value": 200,
+                    "total": 134567,
+                    "name": "完成率"
+                }
+            ]
+        }
+    ]
+}
+    */
     update( data, allData ){
         this.stage.removeChildren();
 
+        //console.log( 123, data );
+
+        if( (data && data.data && data.data.length) ){
+            data.data.map( val => {
+                this.curRate = val.value;
+                this.totalNum = val.total
+            });
+        }
+
+        /*
         this.curRate = 600;
         this.totalNum = 234567;
+        */
 
         this.initDataLayout();
 
         //console.log( 'gauge update', this.getAttackRateAngle() )
         this.angle = this.arcOffset + this.arcOffsetPad;
         this.animationAngle =  this.getAttackRateAngle() + this.arcOffsetPad;
-        console.log( this.angle, this.animationAngle );
+        //console.log( this.angle, this.animationAngle );
 
-        this.curRate && this.animation();
+        if( this.curRate ){
+            this.rateStep = Math.floor( this.curRate / this.animationStep )
+            this.animation();
+        }
         if( this.totalNum ){
-            this.totalNumStep = Math.floor( this.totalNum / ( 40 * 1 ) );
+            this.totalNumStep = Math.floor( this.totalNum / this.animationStep );
             this.totalNumCount = 0;
             this.animationText();
         }
@@ -437,7 +470,7 @@ export default class Gauge extends VisChartBase  {
         this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
         */
 
-        console.log( this.percentText );
+        //console.log( this.percentText );
 
        let wedge = new Konva.Wedge({
           x: 0,
@@ -496,7 +529,7 @@ export default class Gauge extends VisChartBase  {
     }
     animation(){
         if( this.angle > this.animationAngle ) return;
-        this.angle += 5;
+        this.angle += this.rateStep;
         if( this.angle >= this.animationAngle ) {
             this.angle = this.animationAngle;
         };

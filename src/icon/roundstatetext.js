@@ -23,7 +23,7 @@ export default class RoundStateText extends VisChartBase  {
     }
 
     init(){
-        console.log( 'RoundStateText init', this );
+        //console.log( 'RoundStateText init', this );
         this.circleRaidus = this.radius - 5;
 
         //this.lineColor = this.curColor;

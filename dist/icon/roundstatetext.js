@@ -58,7 +58,7 @@ var RoundStateText = function (_VisChartBase) {
     _createClass(RoundStateText, [{
         key: 'init',
         value: function init() {
-            console.log('RoundStateText init', this);
+            //console.log( 'RoundStateText init', this );
             this.circleRaidus = this.radius - 5;
 
             //this.lineColor = this.curColor;

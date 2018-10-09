@@ -62,6 +62,8 @@ var Gauge = function (_VisChartBase) {
         _this.totalNum = 0;
         _this.totalNumStep = 5;
 
+        _this.animationStep = 40 * 1;
+
         _this.roundRadiusPercent = .085;
 
         _this.lineColor = '#596ea7';
@@ -264,24 +266,57 @@ var Gauge = function (_VisChartBase) {
                 val.ins.update(_this4.curRate);
             });
         }
+        /*
+        {
+        "series": [
+            {
+                "type": "gauge",
+                "data": [
+                    {
+                        "value": 200,
+                        "total": 134567,
+                        "name": "完成率"
+                    }
+                ]
+            }
+        ]
+        }
+        */
+
     }, {
         key: 'update',
         value: function update(data, allData) {
+            var _this5 = this;
+
             this.stage.removeChildren();
 
+            //console.log( 123, data );
+
+            if (data && data.data && data.data.length) {
+                data.data.map(function (val) {
+                    _this5.curRate = val.value;
+                    _this5.totalNum = val.total;
+                });
+            }
+
+            /*
             this.curRate = 600;
             this.totalNum = 234567;
+            */
 
             this.initDataLayout();
 
             //console.log( 'gauge update', this.getAttackRateAngle() )
             this.angle = this.arcOffset + this.arcOffsetPad;
             this.animationAngle = this.getAttackRateAngle() + this.arcOffsetPad;
-            console.log(this.angle, this.animationAngle);
+            //console.log( this.angle, this.animationAngle );
 
-            this.curRate && this.animation();
+            if (this.curRate) {
+                this.rateStep = Math.floor(this.curRate / this.animationStep);
+                this.animation();
+            }
             if (this.totalNum) {
-                this.totalNumStep = Math.floor(this.totalNum / (40 * 1));
+                this.totalNumStep = Math.floor(this.totalNum / this.animationStep);
                 this.totalNumCount = 0;
                 this.animationText();
             }
@@ -360,23 +395,23 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawArcText',
         value: function drawArcText() {
-            var _this5 = this;
+            var _this6 = this;
 
             if (!(this.textAr && this.textAr.length)) return;
 
             this.textAr.map(function (val) {
                 var text = new _konva2.default.Text({
-                    x: val.point.x + _this5.cx,
-                    y: val.point.y + _this5.cy,
+                    x: val.point.x + _this6.cx,
+                    y: val.point.y + _this6.cy,
                     text: val.text + '',
                     fontSize: 11
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
-                    fill: _this5.lineColor
+                    fill: _this6.lineColor
                 });
                 text.rotation(val.angle + 90);
 
-                _this5.layoutLayer.add(text);
+                _this6.layoutLayer.add(text);
             });
         }
     }, {
@@ -487,7 +522,7 @@ var Gauge = function (_VisChartBase) {
             this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
             */
 
-            console.log(this.percentText);
+            //console.log( this.percentText );
 
             var wedge = new _konva2.default.Wedge({
                 x: 0,
@@ -545,10 +580,10 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'animation',
         value: function animation() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.angle > this.animationAngle) return;
-            this.angle += 5;
+            this.angle += this.rateStep;
             if (this.angle >= this.animationAngle) {
                 this.angle = this.animationAngle;
             };
@@ -562,13 +597,13 @@ var Gauge = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this6.animation();
+                _this7.animation();
             });
         }
     }, {
         key: 'animationText',
         value: function animationText() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (this.totalNumCount >= this.totalNum) return;
             this.totalNumCount += this.totalNumStep;
@@ -581,7 +616,7 @@ var Gauge = function (_VisChartBase) {
             this.stage.add(this.layoutLayer);
 
             window.requestAnimationFrame(function () {
-                _this7.animationText();
+                _this8.animationText();
             });
         }
     }, {
