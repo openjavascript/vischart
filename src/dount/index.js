@@ -9,7 +9,7 @@ import ju from 'json-utilsx';
 
 import * as utils from '../common/utils.js';
 
-import IconRound from '../icon/iconround.js';
+import IconCircle from '../icon/iconcircle.js';
 
 export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
@@ -330,20 +330,40 @@ export default class Dount extends VisChartBase  {
 
             val.pointDirection = new PointAt( this.width, this.height, geometry.pointPlus( val.textPoint, this.cpoint) );
             let lineAngle = val.pointDirection.autoAngle();
+            val.lineExpend = ju.clone( val.lineEnd )
 
             switch( lineAngle ){
                 case 1:
                 case 8: {
                     //val.lineEnd.x = this.lineLeft;
+                    val.lineEnd.x = -( this.outRadius + this.lineSpace );
+                    val.lineExpend.x = val.lineEnd.x - this.lineWidth
                     break;
                 }
                 default: {
+                    val.lineEnd.x = this.outRadius + this.lineSpace;
+                    val.lineExpend.x = val.lineEnd.x + this.lineWidth
                     break;
                 }
             }
 
             this.lineRange[ lineAngle ].push( val );
         })
+
+        this.loopSort.map( key => {
+            let item = this.lineRange[ key ];
+            if( !( item && item.length && item.length > 1 ) ) return;
+            let needFix;
+            for( let i = 1; i < item.length; i++ ){
+                let pre = item[ i - 1], cur = item[ i ];
+                //console.log( pre.lineEnd.y, cur.lineEnd.y );
+                if( ( cur.lineEnd.y - pre.lineEnd.y ) < this.lineHeight ){
+                    needFix = 1;
+                    break;
+                }
+            }
+            console.log( item, key, needFix );
+        });
     }
 
     animationLine(){
@@ -365,39 +385,23 @@ export default class Dount extends VisChartBase  {
 
             //console.log( path, path.itemData.pointDirection.auto(), path.itemData.pointDirection.autoAngle()  );
 
-            let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle )
-                , lineExpend = ju.clone( lineEnd )
-                ;
-
-            let lineAngle = path.itemData.pointDirection.autoAngle();
-            switch( lineAngle ){
-                case 1:
-                case 8: {
-                    lineEnd.x = -( this.outRadius + this.lineSpace );
-                    lineExpend.x = lineEnd.x - this.lineWidth
-                    break;
-                }
-                default: {
-                    lineEnd.x = this.outRadius + this.lineSpace;
-                    lineExpend.x = lineEnd.x + this.lineWidth
-                    break;
-                }
-            }
-
+            //let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle );
+            let lineEnd = path.itemData.lineEnd;
+            let lineExpend = path.itemData.lineExpend;
 
             let line = this.line[ i ];
             line.points( [ 
                 path.itemData.lineStart.x, path.itemData.lineStart.y
                 , lineEnd.x, lineEnd.y 
-                , lineExpend.x, lineExpend.y 
+                , lineExpend.x,lineExpend.y 
             ] );
 
             if( this.lineLengthCount >= this.lineLength ){
 
                 /*
-                this.addIcon( path, layer );
                 this.addText( path, layer );
                 */
+                this.addIcon( path, layer );
 
             }else{
                 window.requestAnimationFrame( ()=>{ this.animationLine() } );
@@ -408,12 +412,12 @@ export default class Dount extends VisChartBase  {
     }
 
     addIcon( path, layer ){
-        let icon = new IconRound( this.box, this.width, this.height );
+        let icon = new IconCircle( this.box, this.width, this.height );
         icon.setOptions( {
             stage: this.stage
             , layer: layer
         });
-        icon.update( path.itemData.lineEnd );
+        icon.update( path.itemData.lineExpend );
     }
 
     addText( path, layer ){

@@ -30,9 +30,9 @@ var _utils = require('../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
-var _iconround = require('../icon/iconround.js');
+var _iconcircle = require('../icon/iconcircle.js');
 
-var _iconround2 = _interopRequireDefault(_iconround);
+var _iconcircle2 = _interopRequireDefault(_iconcircle);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -383,21 +383,42 @@ var Dount = function (_VisChartBase) {
 
                 val.pointDirection = new _pointat2.default(_this4.width, _this4.height, geometry.pointPlus(val.textPoint, _this4.cpoint));
                 var lineAngle = val.pointDirection.autoAngle();
+                val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
 
                 switch (lineAngle) {
                     case 1:
                     case 8:
                         {
                             //val.lineEnd.x = this.lineLeft;
+                            val.lineEnd.x = -(_this4.outRadius + _this4.lineSpace);
+                            val.lineExpend.x = val.lineEnd.x - _this4.lineWidth;
                             break;
                         }
                     default:
                         {
+                            val.lineEnd.x = _this4.outRadius + _this4.lineSpace;
+                            val.lineExpend.x = val.lineEnd.x + _this4.lineWidth;
                             break;
                         }
                 }
 
                 _this4.lineRange[lineAngle].push(val);
+            });
+
+            this.loopSort.map(function (key) {
+                var item = _this4.lineRange[key];
+                if (!(item && item.length && item.length > 1)) return;
+                var needFix = void 0;
+                for (var i = 1; i < item.length; i++) {
+                    var pre = item[i - 1],
+                        cur = item[i];
+                    //console.log( pre.lineEnd.y, cur.lineEnd.y );
+                    if (cur.lineEnd.y - pre.lineEnd.y < _this4.lineHeight) {
+                        needFix = 1;
+                        break;
+                    }
+                }
+                console.log(item, key, needFix);
             });
         }
     }, {
@@ -422,25 +443,9 @@ var Dount = function (_VisChartBase) {
 
                 //console.log( path, path.itemData.pointDirection.auto(), path.itemData.pointDirection.autoAngle()  );
 
-                var lineEnd = geometry.distanceAngleToPoint(this.outRadius + this.lineLengthCount, path.itemData.midAngle),
-                    lineExpend = _jsonUtilsx2.default.clone(lineEnd);
-
-                var lineAngle = path.itemData.pointDirection.autoAngle();
-                switch (lineAngle) {
-                    case 1:
-                    case 8:
-                        {
-                            lineEnd.x = -(this.outRadius + this.lineSpace);
-                            lineExpend.x = lineEnd.x - this.lineWidth;
-                            break;
-                        }
-                    default:
-                        {
-                            lineEnd.x = this.outRadius + this.lineSpace;
-                            lineExpend.x = lineEnd.x + this.lineWidth;
-                            break;
-                        }
-                }
+                //let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle );
+                var lineEnd = path.itemData.lineEnd;
+                var lineExpend = path.itemData.lineExpend;
 
                 var line = this.line[i];
                 line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y, lineExpend.x, lineExpend.y]);
@@ -448,10 +453,9 @@ var Dount = function (_VisChartBase) {
                 if (this.lineLengthCount >= this.lineLength) {
 
                     /*
-                    this.addIcon( path, layer );
                     this.addText( path, layer );
                     */
-
+                    this.addIcon(path, layer);
                 } else {
                     window.requestAnimationFrame(function () {
                         _this5.animationLine();
@@ -464,12 +468,12 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addIcon',
         value: function addIcon(path, layer) {
-            var icon = new _iconround2.default(this.box, this.width, this.height);
+            var icon = new _iconcircle2.default(this.box, this.width, this.height);
             icon.setOptions({
                 stage: this.stage,
                 layer: layer
             });
-            icon.update(path.itemData.lineEnd);
+            icon.update(path.itemData.lineExpend);
         }
     }, {
         key: 'addText',
