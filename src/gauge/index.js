@@ -9,7 +9,8 @@ import ju from 'json-utilsx';
 
 import * as utils from '../common/utils.js';
 
-import IconRound from '../icon/round.js';
+import IconRound from '../icon/iconround.js';
+import RoundStateText from '../icon/roundstatetext.js';
 
 
 export default class Gauge extends VisChartBase  {
@@ -17,6 +18,8 @@ export default class Gauge extends VisChartBase  {
         super( box, width, height );
 
         this.name = 'Gauge' + Date.now();
+
+        this.curRate = 600;
 
         this.roundRadiusPercent = .085;
 
@@ -51,10 +54,39 @@ export default class Gauge extends VisChartBase  {
         this.textRectWidthPercent = .5;
         this.textRectHeightPercent = .11;
 
-        this.textRoundPercent = .38;
-        this.textRoundOffsetAngle = 150;
-        this.textRoundAngle = [ this.textRoundOffsetAngle, this.textRoundOffsetAngle + 120, this.textRoundOffsetAngle + 120 * 2];
-        this.textRoundPoint = [];
+        this.textRoundPercent = .39;
+        this.textRoundOffsetAngle = 160;
+        this.textRoundPlusAngle = 110;
+        this.roundStatusRaidus = 30;
+        this.textRoundAngle = [ 
+            {
+                angle: this.textRoundOffsetAngle
+                , text: '低'
+                , point: {}
+                , min: 0
+                , max: 100
+                , radius: this.roundStatusRaidus
+                , lineColor: this.lineColor
+            } 
+            ,{ 
+                angle: this.textRoundOffsetAngle + this.textRoundPlusAngle
+                , text: '中'
+                , point: {}
+                , min: 101
+                , max: 500
+                , radius: this.roundStatusRaidus
+                , lineColor: this.lineColor
+            }
+            , {
+                angle: this.textRoundOffsetAngle + this.textRoundPlusAngle * 2
+                , text: '高'
+                , point: {}
+                , min: 501
+                , max: Math.pow( 10, 10 )
+                , radius: this.roundStatusRaidus
+                , lineColor: this.lineColor
+            }
+        ];
 
         this.init();
     }
@@ -74,9 +106,10 @@ export default class Gauge extends VisChartBase  {
         this.textX = this.cx - this.textWidth / 2; 
         this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
-        this.textRoundAngle.map( ( val ) => {
-            let point = geometry.distanceAngleToPoint( this.textRoundRadius, val )
-            this.textRoundPoint.push( point );
+
+        this.textRoundAngle.map( ( val, key ) => {
+            let point = geometry.distanceAngleToPoint( this.textRoundRadius, val.angle )
+            val.point = geometry.pointPlus( point, this.cpoint );
         });
 
         this.arcPartLineAr = [];
@@ -131,21 +164,19 @@ export default class Gauge extends VisChartBase  {
     }
 
     initRoundText(){
-        this.textRoundPoint.map( ( val ) => {
-            console.log( 'initRoundText', val );
-            let tmp  = new Konva.Circle( {
-                x: this.cx + val.x
-                , y: this.cy + val.y
-                , radius: 10
-                , stroke: 'red'
-                , strokeWidth: 0
-                , fill: 'red'
-            });
+        this.textRoundAngle.map( ( val ) => {
 
-            this.layoutLayer.add( tmp );
+            val.ins = new RoundStateText( this.box, this.width, this.height );
+            val.ins.setOptions( Object.assign( val, {
+                stage: this.stage
+                , layer: this.layoutLayer
+            }) );
+            val.ins.init( );
+            val.ins.update( this.curRate );
 
         });
     }
+
 
     update( data, allData ){
         this.stage.removeChildren();

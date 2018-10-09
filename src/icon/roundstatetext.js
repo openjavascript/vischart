@@ -10,96 +10,120 @@ import * as utils from '../common/utils.js';
 
 export default class RoundStateText extends VisChartBase  {
     constructor( box, width, height ){
-        super( box, width, height );
+        super( width, height );
 
-        this.name = 'IconRound ' + Date.now();
+        this.name = 'RoundStateText ' + Date.now();
 
-        this.outRadius = 6;
-        this.inRadius = 2;
+        this.radius = 30;
 
-        this.color = '#ffffff';
+        this.textOffsetX = -2;
+        this.textOffsetY = -1;
 
-        this.max = 1.1;
-        this.min = 0.8;
-
-        this.step = .006;
-        this.cur = 1;
-
-        this.isplus = 1;
-
-        this.init();
+        this.curColor = '#deaf5c';
     }
 
     init(){
+        console.log( 'RoundStateText init', this );
+        this.circleRaidus = this.radius - 5;
+
+        //this.lineColor = this.curColor;
+
+        this.initDataLayout();
+
         return this;
     }
 
-    update( point ){
-        this.point = point;
+    update( rate ){
+        this.rate = rate;
 
-        this.group = new Konva.Group({
-            x: this.point.x + this.cx
-            , y: this.point.y + this.cy
-            , width: this.outRadius * 2
-            , height: this.outRadius * 2
-        });
+        let color = this.lineColor;
 
-        this.circle = new Konva.Circle( {
-            radius: this.inRadius
-            , fill: this.color
-            , stroke: this.color
-            , x: 0
-            , y: 0
-        });
+        if( rate >= this.min && rate < this.max ){
+            color = this.curColor;
+        }
 
-        this.outcircle = new Konva.Circle( {
-            radius: this.outRadius
-            , fill: '#ffffff00'
-            , stroke: this.color
-            , strokeWidth: 1
-            , x: 0
-            , y: 0
-        });
+        this.text.fill( color );
+        this.circle.stroke( color );
+        this.circleLine.stroke( color );
 
-        this.group.add( this.circle );
-        this.group.add( this.outcircle );
 
-        this.group.scale( { x: this.cur, y: this.cur } );
-
-        this.layer.add( this.group );
-
-        //window.requestAnimationFrame( ()=>{ this.animation() } );
+        return this;
     }
+
+    initDataLayout(){
+        this.drawText();
+        this.drawCircle()
+        this.drawCircleLine()
+    }
+    drawText(){
+        this.text = new Konva.Text( {
+            x: this.point.x
+            , y: this.point.y
+            , text: this.text
+            , fontSize: 32
+            , fontFamily: 'HuXiaoBoKuHei'
+            , fill: this.lineColor
+            , fontStyle: 'italic'
+        });
+
+        this.text.x( this.point.x - this.text.textWidth / 2 + this.textOffsetX );
+        this.text.y( this.point.y - this.text.textHeight / 2 + this.textOffsetY );
+
+
+        this.layer.add( this.text );
+    }
+
+    drawCircle(){
+        this.circle = new Konva.Circle( {
+            x: this.point.x
+            , y: this.point.y
+            , radius: this.circleRaidus
+            , stroke: this.lineColor
+            , strokeWidth: 2
+            , fill: '#ffffff00'
+        });
+
+        this.layer.add( this.circle );
+    }
+
+    drawCircleLine(){
+        this.circleLineRadius = this.radius - 1;
+
+        let points = [];
+            points.push( 'M' );
+        for( let i = 90; i <= 180; i++ ){
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i + 90 );
+            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
+            if( i == 90 ){
+                points.push( 'L' );
+            }
+        }
+        points.push( 'M');
+        for( let i = 270; i <= 360; i++ ){
+            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i + 90 );
+            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
+            if( i == 270 ){
+                points.push( 'L' );
+            }
+        }
+
+        this.circleLine = new Konva.Path( {
+            data: points.join('')
+            , x: this.point.x
+            , y: this.point.y
+            , stroke: this.lineColor
+            , strokeWidth: 2
+            , fill: '#ffffff00'
+        });
+
+        this.layer.add( this.circleLine );
+    }
+
 
     reset(){
     }
 
     animation(){
-
-        if( this.plus ){
-            this.cur = this.cur + this.step;
-
-            if( this.cur > this.max ){
-                this.cur = this.max;
-                this.plus = 0;
-            }
-        }else{
-            this.cur = this.cur - this.step;
-            if( this.cur < this.min ){
-                this.cur = this.min;
-                this.plus = 1;
-            }
-        }
-
-
-        this.group.scale( { x: this.cur, y: this.cur } );
-
-        this.stage.add( this.layer );
-
-        window.requestAnimationFrame( ()=>{ this.animation() } );
-    }
-
-    initDataLayout(){
     }
 
     calcDataPosition() {

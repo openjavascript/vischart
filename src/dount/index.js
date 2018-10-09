@@ -9,7 +9,7 @@ import ju from 'json-utilsx';
 
 import * as utils from '../common/utils.js';
 
-import IconRound from '../icon/round.js';
+import IconRound from '../icon/iconround.js';
 
 
 export default class Dount extends VisChartBase  {

@@ -30,9 +30,13 @@ var _utils = require('../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
-var _round = require('../icon/round.js');
+var _iconround = require('../icon/iconround.js');
 
-var _round2 = _interopRequireDefault(_round);
+var _iconround2 = _interopRequireDefault(_iconround);
+
+var _roundstatetext = require('../icon/roundstatetext.js');
+
+var _roundstatetext2 = _interopRequireDefault(_roundstatetext);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -53,6 +57,8 @@ var Gauge = function (_VisChartBase) {
         var _this = _possibleConstructorReturn(this, (Gauge.__proto__ || Object.getPrototypeOf(Gauge)).call(this, box, width, height));
 
         _this.name = 'Gauge' + Date.now();
+
+        _this.curRate = 600;
 
         _this.roundRadiusPercent = .085;
 
@@ -87,10 +93,35 @@ var Gauge = function (_VisChartBase) {
         _this.textRectWidthPercent = .5;
         _this.textRectHeightPercent = .11;
 
-        _this.textRoundPercent = .38;
-        _this.textRoundOffsetAngle = 150;
-        _this.textRoundAngle = [_this.textRoundOffsetAngle, _this.textRoundOffsetAngle + 120, _this.textRoundOffsetAngle + 120 * 2];
-        _this.textRoundPoint = [];
+        _this.textRoundPercent = .39;
+        _this.textRoundOffsetAngle = 160;
+        _this.textRoundPlusAngle = 110;
+        _this.roundStatusRaidus = 30;
+        _this.textRoundAngle = [{
+            angle: _this.textRoundOffsetAngle,
+            text: '低',
+            point: {},
+            min: 0,
+            max: 100,
+            radius: _this.roundStatusRaidus,
+            lineColor: _this.lineColor
+        }, {
+            angle: _this.textRoundOffsetAngle + _this.textRoundPlusAngle,
+            text: '中',
+            point: {},
+            min: 101,
+            max: 500,
+            radius: _this.roundStatusRaidus,
+            lineColor: _this.lineColor
+        }, {
+            angle: _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2,
+            text: '高',
+            point: {},
+            min: 501,
+            max: Math.pow(10, 10),
+            radius: _this.roundStatusRaidus,
+            lineColor: _this.lineColor
+        }];
 
         _this.init();
         return _this;
@@ -115,9 +146,9 @@ var Gauge = function (_VisChartBase) {
             this.textX = this.cx - this.textWidth / 2;
             this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
-            this.textRoundAngle.map(function (val) {
-                var point = geometry.distanceAngleToPoint(_this2.textRoundRadius, val);
-                _this2.textRoundPoint.push(point);
+            this.textRoundAngle.map(function (val, key) {
+                var point = geometry.distanceAngleToPoint(_this2.textRoundRadius, val.angle);
+                val.point = geometry.pointPlus(point, _this2.cpoint);
             });
 
             this.arcPartLineAr = [];
@@ -177,18 +208,15 @@ var Gauge = function (_VisChartBase) {
         value: function initRoundText() {
             var _this3 = this;
 
-            this.textRoundPoint.map(function (val) {
-                console.log('initRoundText', val);
-                var tmp = new _konva2.default.Circle({
-                    x: _this3.cx + val.x,
-                    y: _this3.cy + val.y,
-                    radius: 10,
-                    stroke: 'red',
-                    strokeWidth: 0,
-                    fill: 'red'
-                });
+            this.textRoundAngle.map(function (val) {
 
-                _this3.layoutLayer.add(tmp);
+                val.ins = new _roundstatetext2.default(_this3.box, _this3.width, _this3.height);
+                val.ins.setOptions(Object.assign(val, {
+                    stage: _this3.stage,
+                    layer: _this3.layoutLayer
+                }));
+                val.ins.init();
+                val.ins.update(_this3.curRate);
             });
         }
     }, {

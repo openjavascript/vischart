@@ -30,9 +30,9 @@ var _utils = require('../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
-var _round = require('../icon/round.js');
+var _iconround = require('../icon/iconround.js');
 
-var _round2 = _interopRequireDefault(_round);
+var _iconround2 = _interopRequireDefault(_iconround);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -403,7 +403,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addIcon',
         value: function addIcon(path, layer) {
-            var icon = new _round2.default(this.box, this.width, this.height);
+            var icon = new _iconround2.default(this.box, this.width, this.height);
             icon.setOptions({
                 stage: this.stage,
                 layer: layer

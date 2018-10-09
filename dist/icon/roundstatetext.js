@@ -42,104 +42,127 @@ var RoundStateText = function (_VisChartBase) {
     function RoundStateText(box, width, height) {
         _classCallCheck(this, RoundStateText);
 
-        var _this = _possibleConstructorReturn(this, (RoundStateText.__proto__ || Object.getPrototypeOf(RoundStateText)).call(this, box, width, height));
+        var _this = _possibleConstructorReturn(this, (RoundStateText.__proto__ || Object.getPrototypeOf(RoundStateText)).call(this, width, height));
 
-        _this.name = 'IconRound ' + Date.now();
+        _this.name = 'RoundStateText ' + Date.now();
 
-        _this.outRadius = 6;
-        _this.inRadius = 2;
+        _this.radius = 30;
 
-        _this.color = '#ffffff';
+        _this.textOffsetX = -2;
+        _this.textOffsetY = -1;
 
-        _this.max = 1.1;
-        _this.min = 0.8;
-
-        _this.step = .006;
-        _this.cur = 1;
-
-        _this.isplus = 1;
-
-        _this.init();
+        _this.curColor = '#deaf5c';
         return _this;
     }
 
     _createClass(RoundStateText, [{
         key: 'init',
         value: function init() {
+            console.log('RoundStateText init', this);
+            this.circleRaidus = this.radius - 5;
+
+            //this.lineColor = this.curColor;
+
+            this.initDataLayout();
+
             return this;
         }
     }, {
         key: 'update',
-        value: function update(point) {
-            this.point = point;
+        value: function update(rate) {
+            this.rate = rate;
 
-            this.group = new _konva2.default.Group({
-                x: this.point.x + this.cx,
-                y: this.point.y + this.cy,
-                width: this.outRadius * 2,
-                height: this.outRadius * 2
+            var color = this.lineColor;
+
+            if (rate >= this.min && rate < this.max) {
+                color = this.curColor;
+            }
+
+            this.text.fill(color);
+            this.circle.stroke(color);
+            this.circleLine.stroke(color);
+
+            return this;
+        }
+    }, {
+        key: 'initDataLayout',
+        value: function initDataLayout() {
+            this.drawText();
+            this.drawCircle();
+            this.drawCircleLine();
+        }
+    }, {
+        key: 'drawText',
+        value: function drawText() {
+            this.text = new _konva2.default.Text({
+                x: this.point.x,
+                y: this.point.y,
+                text: this.text,
+                fontSize: 32,
+                fontFamily: 'HuXiaoBoKuHei',
+                fill: this.lineColor,
+                fontStyle: 'italic'
             });
 
+            this.text.x(this.point.x - this.text.textWidth / 2 + this.textOffsetX);
+            this.text.y(this.point.y - this.text.textHeight / 2 + this.textOffsetY);
+
+            this.layer.add(this.text);
+        }
+    }, {
+        key: 'drawCircle',
+        value: function drawCircle() {
             this.circle = new _konva2.default.Circle({
-                radius: this.inRadius,
-                fill: this.color,
-                stroke: this.color,
-                x: 0,
-                y: 0
+                x: this.point.x,
+                y: this.point.y,
+                radius: this.circleRaidus,
+                stroke: this.lineColor,
+                strokeWidth: 2,
+                fill: '#ffffff00'
             });
 
-            this.outcircle = new _konva2.default.Circle({
-                radius: this.outRadius,
-                fill: '#ffffff00',
-                stroke: this.color,
-                strokeWidth: 1,
-                x: 0,
-                y: 0
+            this.layer.add(this.circle);
+        }
+    }, {
+        key: 'drawCircleLine',
+        value: function drawCircleLine() {
+            this.circleLineRadius = this.radius - 1;
+
+            var points = [];
+            points.push('M');
+            for (var i = 90; i <= 180; i++) {
+                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i + 90);
+                points.push([tmp.x, tmp.y].join(',') + ',');
+                if (i == 90) {
+                    points.push('L');
+                }
+            }
+            points.push('M');
+            for (var _i = 270; _i <= 360; _i++) {
+                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i + 90);
+                points.push([_tmp.x, _tmp.y].join(',') + ',');
+                if (_i == 270) {
+                    points.push('L');
+                }
+            }
+
+            this.circleLine = new _konva2.default.Path({
+                data: points.join(''),
+                x: this.point.x,
+                y: this.point.y,
+                stroke: this.lineColor,
+                strokeWidth: 2,
+                fill: '#ffffff00'
             });
 
-            this.group.add(this.circle);
-            this.group.add(this.outcircle);
-
-            this.group.scale({ x: this.cur, y: this.cur });
-
-            this.layer.add(this.group);
-
-            //window.requestAnimationFrame( ()=>{ this.animation() } );
+            this.layer.add(this.circleLine);
         }
     }, {
         key: 'reset',
         value: function reset() {}
     }, {
         key: 'animation',
-        value: function animation() {
-            var _this2 = this;
-
-            if (this.plus) {
-                this.cur = this.cur + this.step;
-
-                if (this.cur > this.max) {
-                    this.cur = this.max;
-                    this.plus = 0;
-                }
-            } else {
-                this.cur = this.cur - this.step;
-                if (this.cur < this.min) {
-                    this.cur = this.min;
-                    this.plus = 1;
-                }
-            }
-
-            this.group.scale({ x: this.cur, y: this.cur });
-
-            this.stage.add(this.layer);
-
-            window.requestAnimationFrame(function () {
-                _this2.animation();
-            });
-        }
-    }, {
-        key: 'initDataLayout',
-        value: function initDataLayout() {}
+        value: function animation() {}
     }, {
         key: 'calcDataPosition',
         value: function calcDataPosition() {}
