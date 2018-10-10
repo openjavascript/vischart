@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _vischartbase = require('../common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
@@ -100,6 +102,8 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'update',
         value: function update(data, allData) {
+            _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'update', this).call(this, data, allData);
+
             this.data = data;
             this.allData = allData;
 
@@ -201,8 +205,8 @@ var Dount = function (_VisChartBase) {
             this.circleRadius = Math.ceil(this.circlePercent * this.min / 2);
 
             this.circle = new _konva2.default.Circle({
-                x: this.cx,
-                y: this.cy,
+                x: this.fixCx(),
+                y: this.fixCy(),
                 radius: this.circleRadius,
                 stroke: this.lineColor,
                 strokeWidth: 2.5,
@@ -235,8 +239,8 @@ var Dount = function (_VisChartBase) {
 
             this.circleLine = new _konva2.default.Path({
                 data: points.join(''),
-                x: this.cx,
-                y: this.cy,
+                x: this.fixCx(),
+                y: this.fixCy(),
                 stroke: this.lineColor,
                 strokeWidth: 2.5,
                 fill: '#ffffff00'
@@ -269,8 +273,8 @@ var Dount = function (_VisChartBase) {
                 }
 
                 var path = new _konva2.default.Path({
-                    x: _this3.cx,
-                    y: _this3.cy,
+                    x: _this3.fixCx(),
+                    y: _this3.fixCy(),
                     strokeWidth: 1,
                     stroke: color,
                     data: '',
@@ -301,8 +305,8 @@ var Dount = function (_VisChartBase) {
                 });
 
                 var line = new _konva2.default.Line({
-                    x: _this3.cx,
-                    y: _this3.cy,
+                    x: _this3.fixCx(),
+                    y: _this3.fixCy(),
                     points: [0, 0, 0, 0],
                     stroke: '#ffffff',
                     strokeWidth: 2
@@ -381,7 +385,7 @@ var Dount = function (_VisChartBase) {
 
                 val.textPoint = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
 
-                val.pointDirection = new _pointat2.default(_this4.width, _this4.height, geometry.pointPlus(val.textPoint, _this4.cpoint));
+                val.pointDirection = new _pointat2.default(_this4.fixWidth(), _this4.fixHeight(), geometry.pointPlus(val.textPoint, _this4.cpoint));
                 var lineAngle = val.pointDirection.autoAngle();
                 val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
 
@@ -545,10 +549,12 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addIcon',
         value: function addIcon(path, layer) {
-            var icon = new _iconcircle2.default(this.box, this.width, this.height);
+            var icon = new _iconcircle2.default(this.box, this.fixWidth(), this.fixHeight());
             icon.setOptions({
                 stage: this.stage,
-                layer: layer
+                layer: layer,
+                cx: this.fixCx(),
+                cy: this.fixCy()
             });
             icon.update(path.itemData.lineExpend);
         }
@@ -561,7 +567,8 @@ var Dount = function (_VisChartBase) {
                 text: path.itemData.percent + '%',
                 fill: '#a3a7f3',
                 fontFamily: 'MicrosoftYaHei',
-                fontSize: 16
+                fontSize: 16,
+                fontStyle: 'italic'
             });
 
             var textPoint = path.itemData.textPoint,
@@ -591,8 +598,8 @@ var Dount = function (_VisChartBase) {
                     }
             }
 
-            var textX = this.cx + textPoint.x,
-                textY = this.cy + textPoint.y,
+            var textX = this.fixCx() + textPoint.x,
+                textY = this.fixCy() + textPoint.y,
                 direct = path.itemData.pointDirection.auto();
 
             text.x(textX);
@@ -607,12 +614,12 @@ var Dount = function (_VisChartBase) {
             this.outRadius = Math.ceil(this.outPercent * this.min / 2);
             this.inRadius = Math.ceil(this.inPercent * this.min / 2);
 
-            this.lineLength = (Math.min(this.width, this.height) - this.outRadius * 2) / 2 - this.lineOffset;
+            this.lineLength = (Math.min(this.fixWidth(), this.fixHeight()) - this.outRadius * 2) / 2 - this.lineOffset;
             this.lineLengthCount = 1;
             this.lineLengthStep = .5;
 
-            this.lineLeft = this.cx - this.outRadius - this.lineSpace;
-            this.lineRight = this.cx + this.outRadius + this.lineSpace;
+            this.lineLeft = this.fixCx() - this.outRadius - this.lineSpace;
+            this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
 
             return this;
         }

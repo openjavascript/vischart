@@ -49,10 +49,6 @@ var VisChart = function (_VisChartBase) {
         var _this = _possibleConstructorReturn(this, (VisChart.__proto__ || Object.getPrototypeOf(VisChart)).call(this, box, width, height));
 
         _this.ins = [];
-        _this.images = [];
-
-        _this.rateWidth = 330;
-        _this.rateHeight = 330;
 
         _this.init();
         return _this;
@@ -82,8 +78,6 @@ var VisChart = function (_VisChartBase) {
             var _this2 = this;
 
             this.data = data;
-
-            this.loadImage();
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
@@ -119,57 +113,6 @@ var VisChart = function (_VisChartBase) {
                 if (ins) {
                     _this2.ins.push(ins);
                 }
-            });
-
-            return this;
-        }
-    }, {
-        key: 'addImage',
-        value: function addImage(imgUrl, width, height) {
-            var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-            var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-
-            //console.log( this.rateWidth, this.width );
-            var rateW = this.min / this.rateWidth,
-                rateH = this.min / this.rateHeight;
-            this.images.push({
-                url: imgUrl,
-                width: width * rateW,
-                height: height * rateH,
-                offsetX: offsetX,
-                offsetY: offsetY
-            });
-
-            return this;
-        }
-    }, {
-        key: 'loadImage',
-        value: function loadImage() {
-            var _this3 = this;
-
-            if (this.iconLayer) this.iconLayer.remove();
-            this.iconLayer = new _konva2.default.Layer();
-
-            this.images.map(function (item) {
-
-                var img = new Image();
-                img.onload = function () {
-                    var width = item.width || img.width,
-                        height = item.height || img.height;
-
-                    var icon = new _konva2.default.Image({
-                        image: img,
-                        x: _this3.cx - width / 2 + item.offsetX,
-                        y: _this3.cy - height / 2 + item.offsetY,
-                        width: width,
-                        height: height
-                    });
-
-                    _this3.iconLayer.add(icon);
-
-                    _this3.stage.add(_this3.iconLayer);
-                };
-                img.src = item.url;
             });
 
             return this;

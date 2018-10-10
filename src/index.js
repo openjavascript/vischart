@@ -15,10 +15,6 @@ export default class VisChart extends VisChartBase {
         super( box, width, height );
 
         this.ins = [];
-        this.images = [];
-
-        this.rateWidth = 330;
-        this.rateHeight = 330;
 
         this.init();
     }
@@ -42,8 +38,6 @@ export default class VisChart extends VisChartBase {
 
     update( data ){
         this.data = data;
-
-        this.loadImage();
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
@@ -79,54 +73,6 @@ export default class VisChart extends VisChartBase {
             }
         });
 
-        return this;
-    }
-
-    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
-        //console.log( this.rateWidth, this.width );
-        let rateW = this.min / this.rateWidth
-            , rateH = this.min / this.rateHeight
-            ;
-        this.images.push( {
-            url: imgUrl
-            , width: width * rateW
-            , height: height * rateH
-            , offsetX: offsetX
-            , offsetY: offsetY
-        });
-
-        return this;
-    }
-
-    loadImage(){
-
-        if( this.iconLayer ) this.iconLayer.remove();
-        this.iconLayer = new Konva.Layer();
-
-        this.images.map( ( item ) => {
-            
-            let img = new Image();
-            img.onload = ()=>{
-                let width = item.width || img.width
-                    , height = item.height || img.height
-                    ;
-
-                let icon = new Konva.Image( {
-                    image: img
-                    , x: this.cx - width / 2 + item.offsetX
-                    , y: this.cy - height / 2 + item.offsetY
-                    , width: width
-                    , height: height
-                });
-
-                this.iconLayer.add( icon );
-
-                this.stage.add( this.iconLayer );
-
-            }
-            img.src = item.url; 
-        });
-          
         return this;
     }
 

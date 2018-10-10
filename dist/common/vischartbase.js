@@ -37,15 +37,137 @@ var VisChartBase = function () {
         this.angleOffset = 0;
         this.countAngle = 0;
 
+        this.images = [];
+
+        this.rateWidth = 330;
+        this.rateHeight = 330;
+
         this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
     }
 
     _createClass(VisChartBase, [{
         key: 'update',
-        value: function update(data) {
+        value: function update(data, allData) {
             this.data = data;
+            this.allData = allData;
+
+            this.loadImage();
 
             return this;
+        }
+    }, {
+        key: 'addImage',
+        value: function addImage(imgUrl, width, height) {
+            var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+            var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+            //console.log( this.rateWidth, this.width );
+            var rateW = this.min / this.rateWidth,
+                rateH = this.min / this.rateHeight;
+            this.images.push({
+                url: imgUrl,
+                width: width * rateW,
+                height: height * rateH,
+                offsetX: offsetX,
+                offsetY: offsetY
+            });
+
+            return this;
+        }
+
+        /*
+            "background": [
+                { 
+                    "url": "./img/dount-in.png"
+                    , "width": 120
+                    , "height": 120
+                    , "offsetX": 0
+                    , "offsetY": 1
+                }
+                , { 
+                    "url": "./img/dount-big.png"
+                    , "width": 250
+                    , "height": 248
+                    , "offsetX": 0
+                    , "offsetY": 1
+                }
+            ],
+        */
+
+    }, {
+        key: 'loadImage',
+        value: function loadImage() {
+            var _this = this;
+
+            if (this.iconLayer) this.iconLayer.remove();
+            this.iconLayer = new _konva2.default.Layer();
+
+            this.images = [];
+
+            if (this.data && this.data.background && this.data.background.length) {
+                this.data.background.map(function (val) {
+                    _this.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0);
+                });
+            }
+
+            this.images.map(function (item) {
+
+                var img = new Image();
+                img.onload = function () {
+                    var width = item.width || img.width,
+                        height = item.height || img.height;
+
+                    var icon = new _konva2.default.Image({
+                        image: img,
+                        x: _this.fixCx() - width / 2 + item.offsetX,
+                        y: _this.fixCy() - height / 2 + item.offsetY,
+                        width: width,
+                        height: height
+                    });
+
+                    _this.iconLayer.add(icon);
+
+                    _this.stage.add(_this.iconLayer);
+                };
+                img.src = item.url;
+            });
+
+            return this;
+        }
+    }, {
+        key: 'hasLegend',
+        value: function hasLegend() {
+            var r = void 0;
+
+            if (this.data && this.data.legend && this.data.legend.data && this.data.legend.data.length) {
+                r = true;
+            }
+
+            return r;
+        }
+    }, {
+        key: 'fixCx',
+        value: function fixCx() {
+            var r = this.cx;
+            return r;
+        }
+    }, {
+        key: 'fixCy',
+        value: function fixCy() {
+            var r = this.cy - 15;
+            return r;
+        }
+    }, {
+        key: 'fixWidth',
+        value: function fixWidth() {
+            var r = this.width;
+            return r;
+        }
+    }, {
+        key: 'fixHeight',
+        value: function fixHeight() {
+            var r = this.height;
+            return r;
         }
     }, {
         key: 'init',

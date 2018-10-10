@@ -59,6 +59,8 @@ export default class Dount extends VisChartBase  {
     }
 
     update( data, allData ){
+        super.update( data, allData );
+
         this.data = data;
         this.allData = allData;
 
@@ -150,8 +152,8 @@ export default class Dount extends VisChartBase  {
         this.circleRadius = Math.ceil( this.circlePercent * this.min / 2 )
 
         this.circle = new Konva.Circle( {
-            x: this.cx
-            , y: this.cy
+            x: this.fixCx()
+            , y: this.fixCy()
             , radius: this.circleRadius
             , stroke: this.lineColor
             , strokeWidth: 2.5
@@ -183,8 +185,8 @@ export default class Dount extends VisChartBase  {
 
         this.circleLine = new Konva.Path( {
             data: points.join('')
-            , x: this.cx
-            , y: this.cy
+            , x: this.fixCx()
+            , y: this.fixCy()
             , stroke: this.lineColor
             , strokeWidth: 2.5
             , fill: '#ffffff00'
@@ -216,8 +218,8 @@ export default class Dount extends VisChartBase  {
             }
 
             let path = new Konva.Path({
-              x: this.cx,
-              y: this.cy,
+              x: this.fixCx(),
+              y: this.fixCy(),
               strokeWidth: 1,
               stroke: color,
               data: '',
@@ -248,8 +250,8 @@ export default class Dount extends VisChartBase  {
             });
 
             let line = new Konva.Line({
-              x: this.cx,
-              y: this.cy,
+              x: this.fixCx(),
+              y: this.fixCy(),
               points: [ 0, 0, 0, 0 ],
               stroke: '#ffffff',
               strokeWidth: 2
@@ -328,7 +330,7 @@ export default class Dount extends VisChartBase  {
 
             val.textPoint = geometry.distanceAngleToPoint( this.outRadius + this.lineLength, val.midAngle );
 
-            val.pointDirection = new PointAt( this.width, this.height, geometry.pointPlus( val.textPoint, this.cpoint) );
+            val.pointDirection = new PointAt( this.fixWidth(), this.fixHeight(), geometry.pointPlus( val.textPoint, this.cpoint) );
             let lineAngle = val.pointDirection.autoAngle();
             val.lineExpend = ju.clone( val.lineEnd )
 
@@ -478,10 +480,12 @@ export default class Dount extends VisChartBase  {
     }
 
     addIcon( path, layer ){
-        let icon = new IconCircle( this.box, this.width, this.height );
+        let icon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
         icon.setOptions( {
             stage: this.stage
             , layer: layer
+            , cx: this.fixCx()
+            , cy: this.fixCy()
         });
         icon.update( path.itemData.lineExpend );
     }
@@ -494,6 +498,7 @@ export default class Dount extends VisChartBase  {
             , fill: '#a3a7f3'
             , fontFamily: 'MicrosoftYaHei'
             , fontSize: 16
+            , fontStyle: 'italic'
         });
 
         let textPoint = path.itemData.textPoint
@@ -520,8 +525,8 @@ export default class Dount extends VisChartBase  {
             }
         }
 
-        let textX =  this.cx + textPoint.x
-            , textY =  this.cy + textPoint.y
+        let textX =  this.fixCx() + textPoint.x
+            , textY =  this.fixCy() + textPoint.y
             , direct = path.itemData.pointDirection.auto()
             ;
 
@@ -536,12 +541,12 @@ export default class Dount extends VisChartBase  {
         this.outRadius = Math.ceil( this.outPercent * this.min / 2 );
         this.inRadius = Math.ceil( this.inPercent * this.min / 2 );
 
-        this.lineLength = ( Math.min( this.width, this.height ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
+        this.lineLength = ( Math.min( this.fixWidth(), this.fixHeight() ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
         this.lineLengthCount = 1;
         this.lineLengthStep = .5;
 
-        this.lineLeft = this.cx - this.outRadius - this.lineSpace;
-        this.lineRight = this.cx + this.outRadius + this.lineSpace;
+        this.lineLeft = this.fixCx() - this.outRadius - this.lineSpace;
+        this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
 
         return this;
     }
