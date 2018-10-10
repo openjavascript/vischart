@@ -30,6 +30,10 @@ var _constant = require('./common/constant.js');
 
 var constant = _interopRequireWildcard(_constant);
 
+var _legend = require('./common/legend.js');
+
+var _legend2 = _interopRequireDefault(_legend);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -49,6 +53,7 @@ var VisChart = function (_VisChartBase) {
         var _this = _possibleConstructorReturn(this, (VisChart.__proto__ || Object.getPrototypeOf(VisChart)).call(this, box, width, height));
 
         _this.ins = [];
+        _this.legend = null;
 
         _this.init();
         return _this;
@@ -87,6 +92,12 @@ var VisChart = function (_VisChartBase) {
 
             //console.log( 'update data', data );
 
+            if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
+                this.legend = new _legend2.default(this.box, this.width, this.height);
+                this.legend.setStage(this.stage);
+                this.legend.update(this.data);
+            }
+
             this.data.series.map(function (val, key) {
                 //console.log( val, constant );
                 var ins = void 0;
@@ -95,22 +106,20 @@ var VisChart = function (_VisChartBase) {
                     case constant.CHART_TYPE.dount:
                         {
                             ins = new _index2.default(_this2.box, _this2.width, _this2.height);
-                            _this2.options && ins.setOptions(_this2.options);
-                            ins.setStage(_this2.stage);
-                            ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
                             break;
                         }
                     case constant.CHART_TYPE.gauge:
                         {
                             ins = new _index4.default(_this2.box, _this2.width, _this2.height);
-                            _this2.options && ins.setOptions(_this2.options);
-                            ins.setStage(_this2.stage);
-                            ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
                             break;
                         }
                 }
 
                 if (ins) {
+                    _this2.legend && ins.setLegend(_this2.legend);
+                    _this2.options && ins.setOptions(_this2.options);
+                    ins.setStage(_this2.stage);
+                    ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
                     _this2.ins.push(ins);
                 }
             });

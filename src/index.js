@@ -9,12 +9,14 @@ import Konva from 'konva';
 import ju from 'json-utilsx';
 
 import * as constant from './common/constant.js';
+import Legend from './common/legend.js';
 
 export default class VisChart extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );
 
         this.ins = [];
+        this.legend = null;
 
         this.init();
     }
@@ -47,6 +49,12 @@ export default class VisChart extends VisChartBase {
 
         //console.log( 'update data', data );
 
+        if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length  ){
+            this.legend = new Legend( this.box, this.width, this.height );
+            this.legend.setStage( this.stage );
+            this.legend.update( this.data );
+        }
+
         this.data.series.map( ( val, key ) => {
             //console.log( val, constant );
             let ins;
@@ -54,21 +62,19 @@ export default class VisChart extends VisChartBase {
             switch( val.type ){
                 case constant.CHART_TYPE.dount: {
                     ins = new Dount( this.box, this.width, this.height );
-                    this.options && ( ins.setOptions( this.options ) );
-                    ins.setStage( this.stage );
-                    ins.update( ju.clone( val ), ju.clone( this.data ) );
                     break;
                 }
                 case constant.CHART_TYPE.gauge: {
                     ins = new Gauge( this.box, this.width, this.height );
-                    this.options && ( ins.setOptions( this.options ) );
-                    ins.setStage( this.stage );
-                    ins.update( ju.clone( val ), ju.clone( this.data ) );
                     break;
                 }
             }
 
             if( ins ){
+                this.legend && ins.setLegend( this.legend );
+                this.options && ( ins.setOptions( this.options ) );
+                ins.setStage( this.stage );
+                ins.update( ju.clone( val ), ju.clone( this.data ) );
                 this.ins.push( ins );
             }
         });

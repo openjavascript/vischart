@@ -56,6 +56,11 @@ var VisChartBase = function () {
             return this;
         }
     }, {
+        key: 'setLegend',
+        value: function setLegend(legend) {
+            this.legend = legend;
+        }
+    }, {
         key: 'addImage',
         value: function addImage(imgUrl, width, height) {
             var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
@@ -154,7 +159,12 @@ var VisChartBase = function () {
     }, {
         key: 'fixCy',
         value: function fixCy() {
-            var r = this.cy - 15;
+            var r = this.cy;
+
+            if (this.legend) {
+                r -= 15;
+            }
+
             return r;
         }
     }, {

@@ -48,6 +48,10 @@ export default class VisChartBase {
         return this;
     }
 
+    setLegend( legend ){
+        this.legend = legend;
+    }
+
     addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
         //console.log( this.rateWidth, this.width );
         let rateW = this.min / this.rateWidth
@@ -147,7 +151,12 @@ export default class VisChartBase {
     }
 
     fixCy(){
-        let r = this.cy - 15;
+        let r = this.cy;
+
+        if( this.legend ){
+            r -= 15;
+        }
+
         return r;
     }
 
