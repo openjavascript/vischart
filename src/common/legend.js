@@ -14,6 +14,10 @@ export default class Legend extends VisChartBase  {
 
         this.name = 'Legend ' + Date.now();
 
+        this.text = [];
+        this.icon = [];
+        this.group = [];
+
     }
 
     setStage( stage ){
@@ -26,20 +30,51 @@ export default class Legend extends VisChartBase  {
     }
 
     init(){
+
+        this.data.data.map( ( item, key ) => {
+            let 
+                x = 0, y = 0
+                , count = key + 1
+                , curRow = Math.floor( key / this.column() )
+                ;
+
+            switch( this.direction() ){
+                case 'bottom': {
+                    y = this.height - ( this.row() - curRow ) * ( this.space() + this.rowHeight() );
+                    x = this.space() + ( this.space() + this.columnWidth() ) * ( key % this.column() ) ;
+                    console.log( x, y, key, this.direction(), curRow );
+                    break;
+                }
+            }
+
+            let text = new Konva.Rect( {
+                text: key + ''
+                , x: x
+                , y: y
+                , width: this.columnWidth
+                , height: 20
+                , fill: '#ffffff'
+            });
+
+            this.layer.add( text );
+
+        });
+        this.stage.add( this.layer );
+        
         return this;
     }
 
     update( data ){
         this.data = data || {};
+        if( !( this.data && this.data.data && this.data.data.length ) ) return;
 
-        /*
         console.log( 
             this.column()
             , this.row()
             , this.direction() 
             , this.outerHeight()
+            , this.columnWidth()
         );
-        */
 
         this.init();
     }
@@ -54,12 +89,16 @@ export default class Legend extends VisChartBase  {
         return r;
     }
 
+    columnWidth(){
+        return ( this.width - ( this.column() + 2 + this.column() - 1 ) * this.space() ) / this.column();
+    }
+
     column(){
         return this.data.column || 1;
     }
 
     space(){
-        return this.data.space || 5;
+        return this.data.space || 15;
     }
 
     rowHeight(){
