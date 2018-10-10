@@ -228,5 +228,15 @@ export default class VisChartBase {
         this.stage = stage;
     }
 
+    setDestroy(){
+        this.isDestroy = 1;
+    }
+
+    destroy(){
+        this.setDestroy();
+        console.log( 'destroy', this.name );
+        this.iconLayer.remove();
+    }
+
 }
 

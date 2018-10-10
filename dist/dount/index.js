@@ -130,6 +130,7 @@ var Dount = function (_VisChartBase) {
         value: function animation() {
             var _this2 = this;
 
+            if (this.isDestroy) return;
             if (this.isDone) return;
             //this.countAngle = this.totalAngle;
 
@@ -295,14 +296,6 @@ var Dount = function (_VisChartBase) {
                 };
 
                 _this3.path.push(tmp);
-
-                path.on('mouseenter', function (evt) {
-                    //console.log( 'path mouseenter', Date.now() );
-                });
-
-                path.on('mouseleave', function () {
-                    //console.log( 'path mouseleave', Date.now() );
-                });
 
                 var line = new _konva2.default.Line({
                     x: _this3.fixCx(),
@@ -622,6 +615,16 @@ var Dount = function (_VisChartBase) {
             this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
 
             return this;
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'destroy', this).call(this);
+            this.layoutLayer.remove();
+            this.layer.map(function (item) {
+                item.remove();
+            });
+            console.log('destroy', Date.now());
         }
     }]);
 

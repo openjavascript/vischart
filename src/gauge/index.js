@@ -528,6 +528,7 @@ export default class Gauge extends VisChartBase  {
 
     }
     animation(){
+        if( this.isDestroy ) return;
         if( this.angle > this.animationAngle ) return;
         this.angle += this.rateStep;
         if( this.angle >= this.animationAngle ) {
@@ -546,6 +547,7 @@ export default class Gauge extends VisChartBase  {
     }
 
     animationText(){
+        if( this.isDestroy ) return;
         if( this.totalNumCount >= this.totalNum ) return;
         this.totalNumCount += this.totalNumStep;
         if( this.totalNumCount >= this.totalNum ) {

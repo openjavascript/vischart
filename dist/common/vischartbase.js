@@ -247,6 +247,18 @@ var VisChartBase = function () {
         value: function setStage(stage) {
             this.stage = stage;
         }
+    }, {
+        key: 'setDestroy',
+        value: function setDestroy() {
+            this.isDestroy = 1;
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            this.setDestroy();
+            console.log('destroy', this.name);
+            this.iconLayer.remove();
+        }
     }]);
 
     return VisChartBase;

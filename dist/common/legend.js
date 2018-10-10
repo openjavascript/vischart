@@ -128,14 +128,28 @@ var Legend = function (_VisChartBase) {
                 group.add(rect);
                 group.add(text);
 
-                _this2.group.push({
+                var data = {
                     ele: group,
                     item: item,
-                    text: text
-                });
+                    text: text,
+                    disabled: false
+                };
+
+                _this2.group.push(data);
 
                 group.on('click', function () {
-                    console.log('click', Date.now(), group, item);
+                    //console.log( 'click', key, data, group, item );
+                    data.disabled = !data.disabled;
+
+                    if (data.disabled) {
+                        group.opacity(.6);
+                    } else {
+                        group.opacity(1);
+                    }
+
+                    _this2.stage.add(_this2.layer);
+
+                    _this2.onChange && _this2.onChange(_this2.group);
                 });
 
                 _this2.layer.add(group);
@@ -195,12 +209,12 @@ var Legend = function (_VisChartBase) {
     }, {
         key: 'spaceY',
         value: function spaceY() {
-            return this.data.space || 5;
+            return this.data.space || 0;
         }
     }, {
         key: 'rowHeight',
         value: function rowHeight() {
-            return this.data.rowHeight || 24;
+            return this.data.rowHeight || 22;
         }
     }, {
         key: 'row',

@@ -90,15 +90,29 @@ export default class Legend extends VisChartBase  {
             group.add( rect );
             group.add( text );
 
-            this.group.push( {
+            let data = {
                 ele: group
                 , item: item
                 , text: text
-            });
+                , disabled: false
+            };
+
+            this.group.push( data );
 
 
-            group.on( 'click', function(){
-                console.log( 'click', Date.now(), group, item );
+            group.on( 'click', ()=>{
+                //console.log( 'click', key, data, group, item );
+                data.disabled = !data.disabled;
+
+                if( data.disabled ){
+                    group.opacity( .6 );
+                }else{
+                    group.opacity( 1 );
+                }
+
+                this.stage.add( this.layer );
+
+                this.onChange && this.onChange( this.group );
             });
 
 
@@ -157,11 +171,11 @@ export default class Legend extends VisChartBase  {
     }
 
     spaceY(){
-        return this.data.space || 5;
+        return this.data.space || 0;
     }
 
     rowHeight(){
-        return this.data.rowHeight || 24;
+        return this.data.rowHeight || 22;
     }
 
     row(){

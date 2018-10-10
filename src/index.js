@@ -42,6 +42,10 @@ export default class VisChart extends VisChartBase {
         this.data = data;
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
+        this.ins.map( item => {
+            item.destroy();
+        });
+
 
         //console.log( ju );
 
@@ -52,8 +56,26 @@ export default class VisChart extends VisChartBase {
         if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length  ){
             this.legend = new Legend( this.box, this.width, this.height );
             this.legend.setStage( this.stage );
+            this.legend.setOptions( {
+                onChange: ( group ) => {
+                    //console.log( 'legend onchange', group );
+                    this.initChart();
+                }
+            });
             this.legend.update( this.data.legend );
+
         }
+        this.initChart();
+        return this;
+    }
+
+    initChart(){
+
+        this.ins.map( item => {
+            item.destroy();
+        });
+
+        this.ins = [];
 
         this.data.series.map( ( val, key ) => {
             //console.log( val, constant );
@@ -74,14 +96,28 @@ export default class VisChart extends VisChartBase {
                 this.legend && ins.setLegend( this.legend );
                 this.options && ( ins.setOptions( this.options ) );
                 ins.setStage( this.stage );
-                ins.update( ju.clone( val ), ju.clone( this.data ) );
+                ins.update( this.getLegendData( val ), ju.clone( this.data ) );
                 this.ins.push( ins );
             }
         });
-
-        return this;
     }
 
+    getLegendData( data ){
+        data = ju.clone( data );
+
+        let tmp = [];
+
+        if( this.legend && this.legend.group && this.legend.group.length ){
+            //console.log( 'getLegendData', this.legend.group, 111111111 );
+            this.legend.group.map( ( item, key ) => {
+                if( !item.disabled ){
+                    tmp.push( data.data[key] );
+                }
+            });
+            data.data = tmp;
+        }
 
 
+        return data;
+    }
 }

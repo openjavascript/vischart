@@ -85,6 +85,9 @@ var VisChart = function (_VisChartBase) {
             this.data = data;
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
+            this.ins.map(function (item) {
+                item.destroy();
+            });
 
             //console.log( ju );
 
@@ -95,8 +98,27 @@ var VisChart = function (_VisChartBase) {
             if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
                 this.legend = new _legend2.default(this.box, this.width, this.height);
                 this.legend.setStage(this.stage);
+                this.legend.setOptions({
+                    onChange: function onChange(group) {
+                        //console.log( 'legend onchange', group );
+                        _this2.initChart();
+                    }
+                });
                 this.legend.update(this.data.legend);
             }
+            this.initChart();
+            return this;
+        }
+    }, {
+        key: 'initChart',
+        value: function initChart() {
+            var _this3 = this;
+
+            this.ins.map(function (item) {
+                item.destroy();
+            });
+
+            this.ins = [];
 
             this.data.series.map(function (val, key) {
                 //console.log( val, constant );
@@ -105,26 +127,43 @@ var VisChart = function (_VisChartBase) {
                 switch (val.type) {
                     case constant.CHART_TYPE.dount:
                         {
-                            ins = new _index2.default(_this2.box, _this2.width, _this2.height);
+                            ins = new _index2.default(_this3.box, _this3.width, _this3.height);
                             break;
                         }
                     case constant.CHART_TYPE.gauge:
                         {
-                            ins = new _index4.default(_this2.box, _this2.width, _this2.height);
+                            ins = new _index4.default(_this3.box, _this3.width, _this3.height);
                             break;
                         }
                 }
 
                 if (ins) {
-                    _this2.legend && ins.setLegend(_this2.legend);
-                    _this2.options && ins.setOptions(_this2.options);
-                    ins.setStage(_this2.stage);
-                    ins.update(_jsonUtilsx2.default.clone(val), _jsonUtilsx2.default.clone(_this2.data));
-                    _this2.ins.push(ins);
+                    _this3.legend && ins.setLegend(_this3.legend);
+                    _this3.options && ins.setOptions(_this3.options);
+                    ins.setStage(_this3.stage);
+                    ins.update(_this3.getLegendData(val), _jsonUtilsx2.default.clone(_this3.data));
+                    _this3.ins.push(ins);
                 }
             });
+        }
+    }, {
+        key: 'getLegendData',
+        value: function getLegendData(data) {
+            data = _jsonUtilsx2.default.clone(data);
 
-            return this;
+            var tmp = [];
+
+            if (this.legend && this.legend.group && this.legend.group.length) {
+                //console.log( 'getLegendData', this.legend.group, 111111111 );
+                this.legend.group.map(function (item, key) {
+                    if (!item.disabled) {
+                        tmp.push(data.data[key]);
+                    }
+                });
+                data.data = tmp;
+            }
+
+            return data;
         }
     }]);
 

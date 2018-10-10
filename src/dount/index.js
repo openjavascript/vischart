@@ -83,6 +83,7 @@ export default class Dount extends VisChartBase  {
     }
 
     animation(){
+        if( this.isDestroy ) return;
         if( this.isDone ) return;
         //this.countAngle = this.totalAngle;
 
@@ -240,14 +241,6 @@ export default class Dount extends VisChartBase  {
             };
 
             this.path.push( tmp );
-
-            path.on( 'mouseenter', (evt)=>{
-                //console.log( 'path mouseenter', Date.now() );
-            });
-
-            path.on( 'mouseleave', ()=>{
-                //console.log( 'path mouseleave', Date.now() );
-            });
 
             let line = new Konva.Line({
               x: this.fixCx(),
@@ -549,5 +542,14 @@ export default class Dount extends VisChartBase  {
         this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
 
         return this;
+    }
+
+    destroy(){
+        super.destroy();
+        this.layoutLayer.remove();
+        this.layer.map( item => {
+            item.remove();
+        });
+        console.log( 'destroy', Date.now() );
     }
 }

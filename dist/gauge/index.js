@@ -582,6 +582,7 @@ var Gauge = function (_VisChartBase) {
         value: function animation() {
             var _this7 = this;
 
+            if (this.isDestroy) return;
             if (this.angle > this.animationAngle) return;
             this.angle += this.rateStep;
             if (this.angle >= this.animationAngle) {
@@ -605,6 +606,7 @@ var Gauge = function (_VisChartBase) {
         value: function animationText() {
             var _this8 = this;
 
+            if (this.isDestroy) return;
             if (this.totalNumCount >= this.totalNum) return;
             this.totalNumCount += this.totalNumStep;
             if (this.totalNumCount >= this.totalNum) {
