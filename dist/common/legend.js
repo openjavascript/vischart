@@ -48,6 +48,10 @@ var Legend = function (_VisChartBase) {
 
         _this.name = 'Legend ' + Date.now();
 
+        _this.textColor = '#24a3ea';
+
+        _this.iconSpace = 5;
+
         _this.text = [];
         _this.icon = [];
         _this.group = [];
@@ -78,23 +82,63 @@ var Legend = function (_VisChartBase) {
                 switch (_this2.direction()) {
                     case 'bottom':
                         {
-                            y = _this2.height - (_this2.row() - curRow) * (_this2.space() + _this2.rowHeight());
                             x = _this2.space() + (_this2.space() + _this2.columnWidth()) * (key % _this2.column());
+                            y = _this2.height - (_this2.row() - curRow) * (_this2.spaceY() + _this2.rowHeight());
                             console.log(x, y, key, _this2.direction(), curRow);
                             break;
                         }
                 }
 
-                var text = new _konva2.default.Rect({
-                    text: key + '',
+                var label = item.name || key + '';
+
+                var color = _this2.colors[key % _this2.colors.length];
+
+                if (_jsonUtilsx2.default.jsonInData(item, 'textStyle.color')) {
+                    //path.fill( val.itemStyle.color );
+                    color = item.textStyle.color;
+                }
+
+                var rect = new _konva2.default.Rect({
                     x: x,
                     y: y,
-                    width: _this2.columnWidth,
-                    height: 20,
-                    fill: '#ffffff'
+                    width: _this2.itemWidth(),
+                    height: _this2.itemHeight(),
+                    fill: color
                 });
 
-                _this2.layer.add(text);
+                var bg = new _konva2.default.Rect({
+                    x: x,
+                    y: y,
+                    width: _this2.columnWidth(),
+                    height: _this2.rowHeight(),
+                    fill: '#ffffff00'
+                });
+
+                var text = new _konva2.default.Text({
+                    text: label,
+                    x: x + _this2.iconSpace + rect.width(),
+                    y: y,
+                    fill: _this2.textColor,
+                    fontFamily: 'MicrosoftYaHei',
+                    fontSize: 12
+                });
+
+                var group = new _konva2.default.Group();
+                group.add(bg);
+                group.add(rect);
+                group.add(text);
+
+                _this2.group.push({
+                    ele: group,
+                    item: item,
+                    text: text
+                });
+
+                group.on('click', function () {
+                    console.log('click', Date.now(), group, item);
+                });
+
+                _this2.layer.add(group);
             });
             this.stage.add(this.layer);
 
@@ -106,7 +150,8 @@ var Legend = function (_VisChartBase) {
             this.data = data || {};
             if (!(this.data && this.data.data && this.data.data.length)) return;
 
-            console.log(this.column(), this.row(), this.direction(), this.outerHeight(), this.columnWidth());
+            console.log(this.column(), this.row(), this.direction(), this.outerHeight(), 'columnWidth:', this.columnWidth());
+            console.log(this.width, this.width - (this.column() - 1 + 2) * this.space());
 
             this.init();
         }
@@ -123,9 +168,19 @@ var Legend = function (_VisChartBase) {
             return r;
         }
     }, {
+        key: 'itemWidth',
+        value: function itemWidth() {
+            return this.data.itemWidth || 5;
+        }
+    }, {
+        key: 'itemHeight',
+        value: function itemHeight() {
+            return this.data.itemHeight || 5;
+        }
+    }, {
         key: 'columnWidth',
         value: function columnWidth() {
-            return (this.width - (this.column() + 2 + this.column() - 1) * this.space()) / this.column();
+            return (this.width - (this.column() - 1 + 2) * this.space()) / this.column();
         }
     }, {
         key: 'column',
@@ -136,6 +191,11 @@ var Legend = function (_VisChartBase) {
         key: 'space',
         value: function space() {
             return this.data.space || 15;
+        }
+    }, {
+        key: 'spaceY',
+        value: function spaceY() {
+            return this.data.space || 5;
         }
     }, {
         key: 'rowHeight',

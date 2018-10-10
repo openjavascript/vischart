@@ -14,6 +14,10 @@ export default class Legend extends VisChartBase  {
 
         this.name = 'Legend ' + Date.now();
 
+        this.textColor = '#24a3ea';
+
+        this.iconSpace = 5;
+
         this.text = [];
         this.icon = [];
         this.group = [];
@@ -40,23 +44,65 @@ export default class Legend extends VisChartBase  {
 
             switch( this.direction() ){
                 case 'bottom': {
-                    y = this.height - ( this.row() - curRow ) * ( this.space() + this.rowHeight() );
                     x = this.space() + ( this.space() + this.columnWidth() ) * ( key % this.column() ) ;
+                    y = this.height - ( this.row() - curRow ) * ( this.spaceY() + this.rowHeight() );
                     console.log( x, y, key, this.direction(), curRow );
                     break;
                 }
             }
 
-            let text = new Konva.Rect( {
-                text: key + ''
-                , x: x
+            let label = item.name || key + '';
+
+            let color = this.colors[ key % this.colors.length];
+
+            if( ju.jsonInData( item, 'textStyle.color' ) ){
+                //path.fill( val.itemStyle.color );
+                color = item.textStyle.color;
+            }
+
+            let rect = new Konva.Rect( {
+                x: x
                 , y: y
-                , width: this.columnWidth
-                , height: 20
-                , fill: '#ffffff'
+                , width: this.itemWidth()
+                , height: this.itemHeight()
+                , fill: color
             });
 
-            this.layer.add( text );
+            let bg = new Konva.Rect( {
+                x: x
+                , y: y
+                , width: this.columnWidth()
+                , height: this.rowHeight()
+                , fill: '#ffffff00'
+            });
+
+            let text = new Konva.Text( {
+                text: label
+                , x: x + this.iconSpace + rect.width()
+                , y: y
+                , fill: this.textColor
+                , fontFamily: 'MicrosoftYaHei'
+                , fontSize: 12
+            });
+
+            let group  = new Konva.Group();
+            group.add( bg );
+            group.add( rect );
+            group.add( text );
+
+            this.group.push( {
+                ele: group
+                , item: item
+                , text: text
+            });
+
+
+            group.on( 'click', function(){
+                console.log( 'click', Date.now(), group, item );
+            });
+
+
+            this.layer.add( group );
 
         });
         this.stage.add( this.layer );
@@ -73,8 +119,9 @@ export default class Legend extends VisChartBase  {
             , this.row()
             , this.direction() 
             , this.outerHeight()
-            , this.columnWidth()
+            , 'columnWidth:', this.columnWidth()
         );
+        console.log( this.width, this.width - ( this.column() - 1  + 2 ) * this.space() );
 
         this.init();
     }
@@ -89,8 +136,16 @@ export default class Legend extends VisChartBase  {
         return r;
     }
 
+    itemWidth(){
+        return this.data.itemWidth || 5;
+    }
+
+    itemHeight(){
+        return this.data.itemHeight || 5;
+    }
+
     columnWidth(){
-        return ( this.width - ( this.column() + 2 + this.column() - 1 ) * this.space() ) / this.column();
+        return ( this.width - ( this.column() - 1 + 2 ) * this.space() ) / this.column();
     }
 
     column(){
@@ -99,6 +154,10 @@ export default class Legend extends VisChartBase  {
 
     space(){
         return this.data.space || 15;
+    }
+
+    spaceY(){
+        return this.data.space || 5;
     }
 
     rowHeight(){
