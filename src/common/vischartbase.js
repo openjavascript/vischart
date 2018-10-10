@@ -27,6 +27,10 @@ export default class VisChartBase {
         this.rateWidth = 330;
         this.rateHeight = 330;
 
+        this.rotationBg = [];
+
+        this.rotationBgCount = 0;
+        this.rotationBgStep = 1;
 
         this.colors = [
             '#f12575'
@@ -52,7 +56,7 @@ export default class VisChartBase {
         this.legend = legend;
     }
 
-    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0 ){
+    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0 ){
         //console.log( this.rateWidth, this.width );
         let rateW = this.min / this.rateWidth
             , rateH = this.min / this.rateHeight
@@ -63,6 +67,7 @@ export default class VisChartBase {
             , height: height * rateH
             , offsetX: offsetX
             , offsetY: offsetY
+            , rotation: rotation
         });
 
         return this;
@@ -99,11 +104,15 @@ export default class VisChartBase {
                     val.url
                     , val.width, val.height
                     , val.offsetX || 0, val.offsetY || 0 
+                    , val.rotation || 0
                 );
             });
         }
 
+        this.rotationBg = [];
+
         this.images.map( ( item ) => {
+            console.log( 'item', item );
             
             let img = new Image();
             img.onload = ()=>{
@@ -121,8 +130,15 @@ export default class VisChartBase {
 
                 this.iconLayer.add( icon );
 
-                this.stage.add( this.iconLayer );
 
+                if( item.rotation ) {
+                    this.rotationBg.push( icon );
+                    icon.x( this.fixCx() - width / 2 + item.offsetX + width / 2 );
+                    icon.y( this.fixCy() - height / 2 + item.offsetY + height / 2 );
+                    icon.offset( { x: width / 2, y: height / 2 } )
+                    if( this.rotationBg.length === 1 ) this.animationBg();
+                }
+                this.stage.add( this.iconLayer );
             }
             img.src = item.url; 
         });
@@ -209,6 +225,21 @@ export default class VisChartBase {
     }
 
     animation(){
+    }
+
+    animationBg(){
+        console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
+        if( this.isDestroy ) return;
+        if( !this.rotationBg.length ) return;
+
+        this.rotationBg.map( item => {
+            this.rotationBgCount =  ( this.rotationBgCount + this.rotationBgStep ) % 360;
+            item.rotation( this.rotationBgCount );
+        });
+
+        this.stage.add( this.iconLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationBg() } );
     }
 
     getData(){

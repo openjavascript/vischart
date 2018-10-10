@@ -42,6 +42,11 @@ var VisChartBase = function () {
         this.rateWidth = 330;
         this.rateHeight = 330;
 
+        this.rotationBg = [];
+
+        this.rotationBgCount = 0;
+        this.rotationBgStep = 1;
+
         this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
     }
 
@@ -65,6 +70,7 @@ var VisChartBase = function () {
         value: function addImage(imgUrl, width, height) {
             var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+            var rotation = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
 
             //console.log( this.rateWidth, this.width );
             var rateW = this.min / this.rateWidth,
@@ -74,7 +80,8 @@ var VisChartBase = function () {
                 width: width * rateW,
                 height: height * rateH,
                 offsetX: offsetX,
-                offsetY: offsetY
+                offsetY: offsetY,
+                rotation: rotation
             });
 
             return this;
@@ -111,11 +118,14 @@ var VisChartBase = function () {
 
             if (this.data && this.data.background && this.data.background.length) {
                 this.data.background.map(function (val) {
-                    _this.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0);
+                    _this.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0, val.rotation || 0);
                 });
             }
 
+            this.rotationBg = [];
+
             this.images.map(function (item) {
+                console.log('item', item);
 
                 var img = new Image();
                 img.onload = function () {
@@ -132,6 +142,13 @@ var VisChartBase = function () {
 
                     _this.iconLayer.add(icon);
 
+                    if (item.rotation) {
+                        _this.rotationBg.push(icon);
+                        icon.x(_this.fixCx() - width / 2 + item.offsetX + width / 2);
+                        icon.y(_this.fixCy() - height / 2 + item.offsetY + height / 2);
+                        icon.offset({ x: width / 2, y: height / 2 });
+                        if (_this.rotationBg.length === 1) _this.animationBg();
+                    }
                     _this.stage.add(_this.iconLayer);
                 };
                 img.src = item.url;
@@ -226,6 +243,26 @@ var VisChartBase = function () {
     }, {
         key: 'animation',
         value: function animation() {}
+    }, {
+        key: 'animationBg',
+        value: function animationBg() {
+            var _this2 = this;
+
+            console.log('animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount);
+            if (this.isDestroy) return;
+            if (!this.rotationBg.length) return;
+
+            this.rotationBg.map(function (item) {
+                _this2.rotationBgCount = (_this2.rotationBgCount + _this2.rotationBgStep) % 360;
+                item.rotation(_this2.rotationBgCount);
+            });
+
+            this.stage.add(this.iconLayer);
+
+            window.requestAnimationFrame(function () {
+                _this2.animationBg();
+            });
+        }
     }, {
         key: 'getData',
         value: function getData() {
