@@ -19,7 +19,23 @@ export default class RoundStateText extends VisChartBase  {
         this.textOffsetX = -2;
         this.textOffsetY = -1;
 
+        this.circleLineRotation = 0;
+        this.circleLineRotationStep = 4;
+
         this.curColor = '#deaf5c';
+    }
+
+
+    animationCircleLine(){
+        if( this.isDestroy ) return;
+        if( !this.circleLine ) return;
+        
+        this.circleLineRotation += this.circleLineRotationStep; 
+
+        this.circleLine.rotation( this.circleLineRotation );
+        this.stage.add( this.layer );
+
+        window.requestAnimationFrame( ()=>{ this.animationCircleLine() } );
     }
 
     init(){
@@ -29,6 +45,8 @@ export default class RoundStateText extends VisChartBase  {
         //this.lineColor = this.curColor;
 
         this.initDataLayout();
+
+        this.animationCircleLine();
 
         return this;
     }
@@ -121,9 +139,6 @@ export default class RoundStateText extends VisChartBase  {
 
 
     reset(){
-    }
-
-    animation(){
     }
 
     calcDataPosition() {

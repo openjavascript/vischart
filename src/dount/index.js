@@ -22,12 +22,14 @@ export default class Dount extends VisChartBase  {
 
         this.circleLinePercent = .34;
         this.circlePercent = .31;
+        this.circleLineRotation = 0;
+        this.circleLineRotationStep = 4;
 
         this.animationStep = 8;
         this.angleStep = 5;
 
         this.textHeight = 26;
-        this.lineOffset = 42;
+        this.lineOffset = 50;
 
         this.path = [];
 
@@ -44,10 +46,11 @@ export default class Dount extends VisChartBase  {
 
         this.lineWidth = 45;
         this.lineSpace = 10;
-        this.lineAngle = 45;
+        this.lineAngle = 35;
         this.lineHeight = 20;
 
         this.loopSort = [ 4, 8, 1, 2 ];
+
 
         this.init();
     }
@@ -72,6 +75,7 @@ export default class Dount extends VisChartBase  {
         console.log( 'dount update', this.data, this, utils );
 
         this.animation();
+        this.animationCircleLine();
 
         return this;
     }
@@ -82,8 +86,22 @@ export default class Dount extends VisChartBase  {
         });
     }
 
+    animationCircleLine(){
+        if( this.isDestroy ) return;
+        if( !this.circleLine ) return;
+        
+        this.circleLineRotation += this.circleLineRotationStep; 
+
+        this.circleLine.rotation( this.circleLineRotation );
+        this.stage.add( this.layoutLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationCircleLine() } );
+    }
+
     animation(){
         if( this.isDestroy ) return;
+
+
         if( this.isDone ) return;
         //this.countAngle = this.totalAngle;
 

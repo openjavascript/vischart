@@ -165,7 +165,7 @@ var VisChartBase = function () {
                 switch (this.legend.direction()) {
                     case 'bottom':
                         {
-                            r = (this.height - this.legend.outerHeight() / 2) / 2;
+                            r = (this.height - this.legend.outerHeight() / 2) / 2 - 5;
                             break;
                         }
                 }

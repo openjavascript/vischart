@@ -34,6 +34,9 @@ export default class Gauge extends VisChartBase  {
         this.circleLinePercent = .26;
         this.circlePercent = .28;
 
+        this.circleLineRotation = 0;
+        this.circleLineRotationStep = 4;
+
         this.arcLinePercent = .39 / 2;
 
         this.arcOutPercent = .38 / 2;
@@ -268,6 +271,21 @@ export default class Gauge extends VisChartBase  {
             this.totalNumCount = 0;
             this.animationText();
         }
+
+        this.animationCircleLine();
+    }
+
+    animationCircleLine(){
+        //console.log( 'animationCircleLine' );
+        if( this.isDestroy ) return;
+        if( !this.circleLine ) return;
+        
+        this.circleLineRotation += this.circleLineRotationStep; 
+
+        this.circleLine.rotation( this.circleLineRotation );
+        this.stage.add( this.layoutLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationCircleLine() } );
     }
 
     drawText(){
@@ -625,4 +643,13 @@ export default class Gauge extends VisChartBase  {
 
     reset(){
     }
+
+    destroy(){
+        super.destroy();
+        this.textRoundAngle.map( ( val ) => {
+            if( val.ins ) val.ins.destroy();
+        });
+
+    }
+
 }

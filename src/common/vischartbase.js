@@ -156,7 +156,7 @@ export default class VisChartBase {
         if( this.legend ){
             switch( this.legend.direction() ){
                 case 'bottom': {
-                    r = ( this.height - this.legend.outerHeight() / 2 ) / 2;
+                    r = ( this.height - this.legend.outerHeight() / 2 ) / 2 - 5;
                     break;
                 }
             }

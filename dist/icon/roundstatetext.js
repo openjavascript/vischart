@@ -51,11 +51,31 @@ var RoundStateText = function (_VisChartBase) {
         _this.textOffsetX = -2;
         _this.textOffsetY = -1;
 
+        _this.circleLineRotation = 0;
+        _this.circleLineRotationStep = 4;
+
         _this.curColor = '#deaf5c';
         return _this;
     }
 
     _createClass(RoundStateText, [{
+        key: 'animationCircleLine',
+        value: function animationCircleLine() {
+            var _this2 = this;
+
+            if (this.isDestroy) return;
+            if (!this.circleLine) return;
+
+            this.circleLineRotation += this.circleLineRotationStep;
+
+            this.circleLine.rotation(this.circleLineRotation);
+            this.stage.add(this.layer);
+
+            window.requestAnimationFrame(function () {
+                _this2.animationCircleLine();
+            });
+        }
+    }, {
         key: 'init',
         value: function init() {
             //console.log( 'RoundStateText init', this );
@@ -64,6 +84,8 @@ var RoundStateText = function (_VisChartBase) {
             //this.lineColor = this.curColor;
 
             this.initDataLayout();
+
+            this.animationCircleLine();
 
             return this;
         }
@@ -160,9 +182,6 @@ var RoundStateText = function (_VisChartBase) {
     }, {
         key: 'reset',
         value: function reset() {}
-    }, {
-        key: 'animation',
-        value: function animation() {}
     }, {
         key: 'calcDataPosition',
         value: function calcDataPosition() {}

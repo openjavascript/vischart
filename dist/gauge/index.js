@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _vischartbase = require('../common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
@@ -70,6 +72,9 @@ var Gauge = function (_VisChartBase) {
 
         _this.circleLinePercent = .26;
         _this.circlePercent = .28;
+
+        _this.circleLineRotation = 0;
+        _this.circleLineRotationStep = 4;
 
         _this.arcLinePercent = .39 / 2;
 
@@ -320,6 +325,26 @@ var Gauge = function (_VisChartBase) {
                 this.totalNumCount = 0;
                 this.animationText();
             }
+
+            this.animationCircleLine();
+        }
+    }, {
+        key: 'animationCircleLine',
+        value: function animationCircleLine() {
+            var _this6 = this;
+
+            //console.log( 'animationCircleLine' );
+            if (this.isDestroy) return;
+            if (!this.circleLine) return;
+
+            this.circleLineRotation += this.circleLineRotationStep;
+
+            this.circleLine.rotation(this.circleLineRotation);
+            this.stage.add(this.layoutLayer);
+
+            window.requestAnimationFrame(function () {
+                _this6.animationCircleLine();
+            });
         }
     }, {
         key: 'drawText',
@@ -395,23 +420,23 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawArcText',
         value: function drawArcText() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (!(this.textAr && this.textAr.length)) return;
 
             this.textAr.map(function (val) {
                 var text = new _konva2.default.Text({
-                    x: val.point.x + _this6.cx,
-                    y: val.point.y + _this6.cy,
+                    x: val.point.x + _this7.cx,
+                    y: val.point.y + _this7.cy,
                     text: val.text + '',
                     fontSize: 11
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
-                    fill: _this6.lineColor
+                    fill: _this7.lineColor
                 });
                 text.rotation(val.angle + 90);
 
-                _this6.layoutLayer.add(text);
+                _this7.layoutLayer.add(text);
             });
         }
     }, {
@@ -580,7 +605,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'animation',
         value: function animation() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (this.isDestroy) return;
             if (this.angle > this.animationAngle) return;
@@ -598,13 +623,13 @@ var Gauge = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this7.animation();
+                _this8.animation();
             });
         }
     }, {
         key: 'animationText',
         value: function animationText() {
-            var _this8 = this;
+            var _this9 = this;
 
             if (this.isDestroy) return;
             if (this.totalNumCount >= this.totalNum) return;
@@ -618,7 +643,7 @@ var Gauge = function (_VisChartBase) {
             this.stage.add(this.layoutLayer);
 
             window.requestAnimationFrame(function () {
-                _this8.animationText();
+                _this9.animationText();
             });
         }
     }, {
@@ -688,6 +713,14 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'reset',
         value: function reset() {}
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            _get(Gauge.prototype.__proto__ || Object.getPrototypeOf(Gauge.prototype), 'destroy', this).call(this);
+            this.textRoundAngle.map(function (val) {
+                if (val.ins) val.ins.destroy();
+            });
+        }
     }]);
 
     return Gauge;
