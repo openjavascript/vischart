@@ -64,7 +64,7 @@ var Dount = function (_VisChartBase) {
         _this.angleStep = 5;
 
         _this.textHeight = 26;
-        _this.lineOffset = 40;
+        _this.lineOffset = 42;
 
         _this.path = [];
 
@@ -79,7 +79,7 @@ var Dount = function (_VisChartBase) {
             "8": []
         };
 
-        _this.lineWidth = 60;
+        _this.lineWidth = 45;
         _this.lineSpace = 10;
         _this.lineAngle = 45;
         _this.lineHeight = 20;
@@ -127,7 +127,7 @@ var Dount = function (_VisChartBase) {
             var _this2 = this;
 
             if (this.isDone) return;
-            this.countAngle = this.totalAngle;
+            //this.countAngle = this.totalAngle;
 
             var tmp = void 0,
                 tmppoint = void 0,
@@ -530,8 +530,8 @@ var Dount = function (_VisChartBase) {
                 if (this.lineLengthCount >= this.lineLength) {
 
                     /*
-                    this.addText( path, layer );
                     */
+                    this.addText(path, layer);
                     this.addIcon(path, layer);
                 } else {
                     window.requestAnimationFrame(function () {
@@ -560,62 +560,40 @@ var Dount = function (_VisChartBase) {
                 y: 0,
                 text: path.itemData.percent + '%',
                 fill: '#a3a7f3',
-                fontFamily: 'HuXiaoBoKuHei',
-                fontSize: 31
+                fontFamily: 'MicrosoftYaHei',
+                fontSize: 16
             });
-            var textX = this.cx + path.itemData.textPoint.x,
-                textY = this.cy + path.itemData.textPoint.y,
-                direct = path.itemData.pointDirection.auto();
 
-            //console.log( 'direct', direct );
-            switch (direct) {
-                case _pointat2.default.DIRE_NAME.leftTop:
-                    {
-                        textY -= text.textHeight + this.textOffset;
-                        textX -= text.textWidth / 2;
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.rightTop:
-                    {
-                        textY -= text.textHeight + this.textOffset;
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.topCenter:
-                    {
-                        textY -= text.textHeight + this.textOffset;
-                        textX -= text.textWidth / 2;
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.bottomCenter:
-                    {
-                        textX -= text.textWidth / 2;
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.rightMid:
-                    {
-                        if (textX + text.textWidth >= this.width) {
-                            textX = this.width - text.textWidth - 5;
-                        }
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.rightBottom:
-                    {
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.leftBottom:
-                    {
-                        textX -= text.textWidth / 2;
-                        break;
-                    }
-                case _pointat2.default.DIRE_NAME.leftMid:
-                    {
-                        textX -= text.textWidth;
-                        if (textX < 1) textX = 1;
-                        textY += this.textOffset;
-                        break;
-                    }
+            var textPoint = path.itemData.textPoint,
+                angleDirect = path.itemData.pointDirection.autoAngle();
 
+            textPoint = _jsonUtilsx2.default.clone(path.itemData.lineEnd);
+            textPoint.y -= text.textHeight + 2;
+
+            switch (angleDirect) {
+                case 1:
+                    {
+                        textPoint.x -= text.textWidth;
+                        break;
+                    }
+                case 2:
+                    {
+                        break;
+                    }
+                case 4:
+                    {
+                        break;
+                    }
+                case 8:
+                    {
+                        textPoint.x -= text.textWidth;
+                        break;
+                    }
             }
+
+            var textX = this.cx + textPoint.x,
+                textY = this.cy + textPoint.y,
+                direct = path.itemData.pointDirection.auto();
 
             text.x(textX);
             text.y(textY);
