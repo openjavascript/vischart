@@ -154,7 +154,12 @@ export default class VisChartBase {
         let r = this.cy;
 
         if( this.legend ){
-            r -= 15;
+            switch( this.legend.direction() ){
+                case 'bottom': {
+                    r = ( this.height - this.legend.outerHeight() / 2 ) / 2;
+                    break;
+                }
+            }
         }
 
         return r;
@@ -204,6 +209,10 @@ export default class VisChartBase {
     }
 
     animation(){
+    }
+
+    getData(){
+        return this.data || {};
     }
 
     layer(){

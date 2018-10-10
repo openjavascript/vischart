@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _vischartbase = require('../common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
@@ -46,14 +48,85 @@ var Legend = function (_VisChartBase) {
 
         _this.name = 'Legend ' + Date.now();
 
-        _this.init();
         return _this;
     }
 
     _createClass(Legend, [{
+        key: 'setStage',
+        value: function setStage(stage) {
+            _get(Legend.prototype.__proto__ || Object.getPrototypeOf(Legend.prototype), 'setStage', this).call(this, stage);
+
+            this.layer = new _konva2.default.Layer({});
+
+            stage.add(this.layer);
+        }
+    }, {
         key: 'init',
         value: function init() {
             return this;
+        }
+    }, {
+        key: 'update',
+        value: function update(data) {
+            this.data = data || {};
+
+            /*
+            console.log( 
+                this.column()
+                , this.row()
+                , this.direction() 
+                , this.outerHeight()
+            );
+            */
+
+            this.init();
+        }
+    }, {
+        key: 'outerHeight',
+        value: function outerHeight() {
+            return this.rowHeight() * this.row() + this.space();
+        }
+    }, {
+        key: 'total',
+        value: function total() {
+            var r = 0;
+
+            return r;
+        }
+    }, {
+        key: 'column',
+        value: function column() {
+            return this.data.column || 1;
+        }
+    }, {
+        key: 'space',
+        value: function space() {
+            return this.data.space || 5;
+        }
+    }, {
+        key: 'rowHeight',
+        value: function rowHeight() {
+            return this.data.rowHeight || 24;
+        }
+    }, {
+        key: 'row',
+        value: function row() {
+            return Math.ceil(this.data.data.length / this.column());
+        }
+    }, {
+        key: 'direction',
+        value: function direction() {
+            var r = 'top';
+
+            if (this.data.bottom) {
+                r = 'bottom';
+            } else if (this.data.left) {
+                r = 'left';
+            } else if (this.data.right) {
+                r = 'right';
+            }
+
+            return r;
         }
     }]);
 

@@ -95,7 +95,7 @@ var VisChart = function (_VisChartBase) {
             if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
                 this.legend = new _legend2.default(this.box, this.width, this.height);
                 this.legend.setStage(this.stage);
-                this.legend.update(this.data);
+                this.legend.update(this.data.legend);
             }
 
             this.data.series.map(function (val, key) {

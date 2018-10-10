@@ -162,7 +162,13 @@ var VisChartBase = function () {
             var r = this.cy;
 
             if (this.legend) {
-                r -= 15;
+                switch (this.legend.direction()) {
+                    case 'bottom':
+                        {
+                            r = (this.height - this.legend.outerHeight() / 2) / 2;
+                            break;
+                        }
+                }
             }
 
             return r;
@@ -220,6 +226,11 @@ var VisChartBase = function () {
     }, {
         key: 'animation',
         value: function animation() {}
+    }, {
+        key: 'getData',
+        value: function getData() {
+            return this.data || {};
+        }
     }, {
         key: 'layer',
         value: function layer() {

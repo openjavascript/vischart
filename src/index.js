@@ -52,7 +52,7 @@ export default class VisChart extends VisChartBase {
         if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length  ){
             this.legend = new Legend( this.box, this.width, this.height );
             this.legend.setStage( this.stage );
-            this.legend.update( this.data );
+            this.legend.update( this.data.legend );
         }
 
         this.data.series.map( ( val, key ) => {
