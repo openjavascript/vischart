@@ -233,7 +233,7 @@ export default class VisChartBase {
         if( !this.rotationBg.length ) return;
 
         this.rotationBg.map( item => {
-            this.rotationBgCount =  ( this.rotationBgCount + this.rotationBgStep ) % 360;
+            this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
             item.rotation( this.rotationBgCount );
         });
 

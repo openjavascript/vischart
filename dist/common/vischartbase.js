@@ -253,7 +253,7 @@ var VisChartBase = function () {
             if (!this.rotationBg.length) return;
 
             this.rotationBg.map(function (item) {
-                _this2.rotationBgCount = (_this2.rotationBgCount + _this2.rotationBgStep) % 360;
+                _this2.rotationBgCount = (_this2.rotationBgCount - _this2.rotationBgStep) % 360;
                 item.rotation(_this2.rotationBgCount);
             });
 
