@@ -56,6 +56,25 @@ export default class VisChartBase {
         this.legend = legend;
     }
 
+    animation(){
+    }
+
+    animationBg(){
+        //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
+        if( this.isDestroy ) return;
+        if( !this.rotationBg.length ) return;
+
+        this.rotationBg.map( item => {
+            this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
+            item.rotation( this.rotationBgCount );
+        });
+
+        this.stage.add( this.iconLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationBg() } );
+    }
+
+
     addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0 ){
         //console.log( this.rateWidth, this.width );
         let rateW = this.min / this.rateWidth
@@ -112,7 +131,7 @@ export default class VisChartBase {
         this.rotationBg = [];
 
         this.images.map( ( item ) => {
-            console.log( 'item', item );
+            //console.log( 'item', item );
             
             let img = new Image();
             img.onload = ()=>{
@@ -222,24 +241,6 @@ export default class VisChartBase {
     }
 
     reset(){
-    }
-
-    animation(){
-    }
-
-    animationBg(){
-        console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
-        if( this.isDestroy ) return;
-        if( !this.rotationBg.length ) return;
-
-        this.rotationBg.map( item => {
-            this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
-            item.rotation( this.rotationBgCount );
-        });
-
-        this.stage.add( this.iconLayer );
-
-        window.requestAnimationFrame( ()=>{ this.animationBg() } );
     }
 
     getData(){

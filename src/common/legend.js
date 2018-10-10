@@ -46,7 +46,7 @@ export default class Legend extends VisChartBase  {
                 case 'bottom': {
                     x = this.space() + ( this.space() + this.columnWidth() ) * ( key % this.column() ) ;
                     y = this.height - ( this.row() - curRow ) * ( this.spaceY() + this.rowHeight() );
-                    console.log( x, y, key, this.direction(), curRow );
+                    //console.log( x, y, key, this.direction(), curRow );
                     break;
                 }
             }
@@ -128,6 +128,7 @@ export default class Legend extends VisChartBase  {
         this.data = data || {};
         if( !( this.data && this.data.data && this.data.data.length ) ) return;
 
+        /*
         console.log( 
             this.column()
             , this.row()
@@ -136,6 +137,7 @@ export default class Legend extends VisChartBase  {
             , 'columnWidth:', this.columnWidth()
         );
         console.log( this.width, this.width - ( this.column() - 1  + 2 ) * this.space() );
+        */
 
         this.init();
     }

@@ -47,7 +47,8 @@ export default class Dount extends VisChartBase  {
         this.lineWidth = 45;
         this.lineSpace = 10;
         this.lineAngle = 35;
-        this.lineHeight = 20;
+        this.lineHeight = 21;
+        this.lineCurveLength = 40;
 
         this.loopSort = [ 4, 8, 1, 2 ];
 
@@ -72,7 +73,7 @@ export default class Dount extends VisChartBase  {
         this.calcDataPosition();
         this.initDataLayout();
 
-        console.log( 'dount update', this.data, this, utils );
+        //console.log( 'dount update', this.data, this, utils );
 
         this.animation();
         this.animationCircleLine();
@@ -350,11 +351,34 @@ export default class Dount extends VisChartBase  {
                 case 8: {
                     //val.lineEnd.x = this.lineLeft;
                     val.lineEnd.x = -( this.outRadius + this.lineSpace );
+
+                    let tmp = geometry.pointDistance( val.lineStart, val.lineEnd );
+                    if( tmp > this.lineCurveLength ){
+                        let tmpAngle = geometry.pointAngle( val.lineStart, val.lineEnd )
+                            , tmpPoint = geometry.distanceAngleToPoint( this.lineCurveLength, tmpAngle )
+                            ;
+                            tmpPoint = geometry.pointPlus( tmpPoint, val.lineStart );
+
+                        val.lineEnd.x = tmpPoint.x;
+                    }
+
                     val.lineExpend.x = val.lineEnd.x - this.lineWidth
+
                     break;
                 }
                 default: {
                     val.lineEnd.x = this.outRadius + this.lineSpace;
+                    let tmp = geometry.pointDistance( val.lineStart, val.lineEnd );
+                    if( tmp > this.lineCurveLength ){
+                        let tmpAngle = geometry.pointAngle( val.lineStart, val.lineEnd )
+                            , tmpPoint = geometry.distanceAngleToPoint( this.lineCurveLength, tmpAngle )
+                            ;
+                            tmpPoint = geometry.pointPlus( tmpPoint, val.lineStart );
+
+                        val.lineEnd.x = tmpPoint.x;
+                    }
+
+
                     val.lineExpend.x = val.lineEnd.x + this.lineWidth
                     break;
                 }
@@ -369,12 +393,7 @@ export default class Dount extends VisChartBase  {
             let needFix;
             for( let i = 1; i < item.length; i++ ){
                 let pre = item[ i - 1], cur = item[ i ];
-                //console.log( pre.lineEnd.y, cur.lineEnd.y );
                 if( Math.abs( cur.lineEnd.y - pre.lineEnd.y ) < this.lineHeight ){
-                    /*
-                    cur.lineEnd.y = pre.lineEnd.y + this.lineHeight;
-                    cur.lineExpend.y = cur.lineEnd.y;
-                    */
                     needFix = 1;
                     break;
                 }
@@ -382,7 +401,7 @@ export default class Dount extends VisChartBase  {
             switch( key ){
                 case 1: {
                     let tmpY = item[ 0 ].lineEnd.y;
-                    console.log( item );
+                    //console.log( item );
                     for( let i = item.length - 2; i >= 0; i-- ){
                         let pre = item[ i + 1], cur = item[ i ];
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y <= pre.lineEnd.y ){
@@ -406,8 +425,7 @@ export default class Dount extends VisChartBase  {
                         if( Math.abs( pre.lineEnd.y + this.fixCy() ) < this.lineHeight ){
                             pre.lineExpend.y = pre.lineEnd.y =  pre.lineExpend.y + this.lineHeight;
                         }
-
-                        if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight  || cur.lineEnd.y >= pre.lineEnd.y ){
+                        if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight   || cur.lineEnd.y <= pre.lineEnd.y  ){
 
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
@@ -427,7 +445,7 @@ export default class Dount extends VisChartBase  {
                     for( let i = 1; i < item.length; i++ ){
                         let pre = item[ i - 1], cur = item[ i ], zero = item[0];
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y <= pre.lineEnd.y ){
-                            console.log( pre.lineEnd.y, cur.lineEnd.y );
+                            //console.log( pre.lineEnd.y, cur.lineEnd.y );
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
@@ -533,7 +551,7 @@ export default class Dount extends VisChartBase  {
             ;
 
         textPoint = ju.clone( path.itemData.lineEnd );
-        textPoint.y -= text.textHeight + 2;
+        textPoint.y -= text.textHeight + 1;
 
         switch( angleDirect ){
             case 1: {
@@ -584,6 +602,6 @@ export default class Dount extends VisChartBase  {
         this.layer.map( item => {
             item.remove();
         });
-        console.log( 'destroy', Date.now() );
+        //console.log( 'destroy', Date.now() );
     }
 }

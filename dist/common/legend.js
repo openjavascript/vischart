@@ -84,7 +84,7 @@ var Legend = function (_VisChartBase) {
                         {
                             x = _this2.space() + (_this2.space() + _this2.columnWidth()) * (key % _this2.column());
                             y = _this2.height - (_this2.row() - curRow) * (_this2.spaceY() + _this2.rowHeight());
-                            console.log(x, y, key, _this2.direction(), curRow);
+                            //console.log( x, y, key, this.direction(), curRow );
                             break;
                         }
                 }
@@ -164,8 +164,16 @@ var Legend = function (_VisChartBase) {
             this.data = data || {};
             if (!(this.data && this.data.data && this.data.data.length)) return;
 
-            console.log(this.column(), this.row(), this.direction(), this.outerHeight(), 'columnWidth:', this.columnWidth());
-            console.log(this.width, this.width - (this.column() - 1 + 2) * this.space());
+            /*
+            console.log( 
+                this.column()
+                , this.row()
+                , this.direction() 
+                , this.outerHeight()
+                , 'columnWidth:', this.columnWidth()
+            );
+            console.log( this.width, this.width - ( this.column() - 1  + 2 ) * this.space() );
+            */
 
             this.init();
         }
