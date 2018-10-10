@@ -27,7 +27,7 @@ export default class Dount extends VisChartBase  {
         this.angleStep = 5;
 
         this.textHeight = 26;
-        this.lineOffset = 40;
+        this.lineOffset = 42;
 
         this.path = [];
 
@@ -42,7 +42,7 @@ export default class Dount extends VisChartBase  {
             , "8": []
         };
 
-        this.lineWidth = 60;
+        this.lineWidth = 45;
         this.lineSpace = 10;
         this.lineAngle = 45;
         this.lineHeight = 20;
@@ -82,7 +82,7 @@ export default class Dount extends VisChartBase  {
 
     animation(){
         if( this.isDone ) return;
-        this.countAngle = this.totalAngle;
+        //this.countAngle = this.totalAngle;
 
         let tmp, tmppoint, step = this.angleStep;
 
@@ -465,8 +465,8 @@ export default class Dount extends VisChartBase  {
             if( this.lineLengthCount >= this.lineLength ){
 
                 /*
-                this.addText( path, layer );
                 */
+                this.addText( path, layer );
                 this.addIcon( path, layer );
 
             }else{
@@ -492,55 +492,38 @@ export default class Dount extends VisChartBase  {
             , y: 0
             , text: `${path.itemData.percent}%`
             , fill: '#a3a7f3'
-            , fontFamily: 'HuXiaoBoKuHei'
-            , fontSize: 31
+            , fontFamily: 'MicrosoftYaHei'
+            , fontSize: 16
         });
-        let textX =  this.cx + path.itemData.textPoint.x
-            , textY =  this.cy + path.itemData.textPoint.y
-            , direct = path.itemData.pointDirection.auto()
+
+        let textPoint = path.itemData.textPoint
+            , angleDirect = path.itemData.pointDirection.autoAngle()
             ;
 
-        //console.log( 'direct', direct );
-        switch( direct ){
-            case PointAt.DIRE_NAME.leftTop: {
-                textY -= text.textHeight + this.textOffset;
-                textX -= text.textWidth / 2;
-                break;
-            }
-            case PointAt.DIRE_NAME.rightTop: {
-                textY -= text.textHeight + this.textOffset;
-                break;
-            }
-            case PointAt.DIRE_NAME.topCenter: {
-                textY -= text.textHeight + this.textOffset;
-                textX -= text.textWidth / 2;
-                break;
-            }
-            case PointAt.DIRE_NAME.bottomCenter: {
-                textX -= text.textWidth / 2;
-                break;
-            }
-            case PointAt.DIRE_NAME.rightMid: {
-                if( ( textX + text.textWidth ) >= this.width ){
-                    textX = this.width - text.textWidth - 5;
-                }
-                break;
-            }
-            case PointAt.DIRE_NAME.rightBottom: {
-                break;
-            }
-            case PointAt.DIRE_NAME.leftBottom: {
-                textX -= text.textWidth / 2;
-                break;
-            }
-            case PointAt.DIRE_NAME.leftMid: {
-                textX -= text.textWidth; 
-                if( textX < 1 ) textX = 1;
-                textY += this.textOffset;
-                break;
-            }
+        textPoint = ju.clone( path.itemData.lineEnd );
+        textPoint.y -= text.textHeight + 2;
 
+        switch( angleDirect ){
+            case 1: {
+                textPoint.x -= text.textWidth
+                break;
+            }
+            case 2: {
+                break;
+            }
+            case 4: {
+                break;
+            }
+            case 8: {
+                textPoint.x -= text.textWidth
+                break;
+            }
         }
+
+        let textX =  this.cx + textPoint.x
+            , textY =  this.cy + textPoint.y
+            , direct = path.itemData.pointDirection.auto()
+            ;
 
         text.x( textX );
         text.y( textY );
