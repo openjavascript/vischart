@@ -42,7 +42,7 @@ var RoundStateText = function (_VisChartBase) {
     function RoundStateText(box, width, height) {
         _classCallCheck(this, RoundStateText);
 
-        var _this = _possibleConstructorReturn(this, (RoundStateText.__proto__ || Object.getPrototypeOf(RoundStateText)).call(this, width, height));
+        var _this = _possibleConstructorReturn(this, (RoundStateText.__proto__ || Object.getPrototypeOf(RoundStateText)).call(this, box, width, height));
 
         _this.name = 'RoundStateText ' + Date.now();
 
@@ -80,6 +80,7 @@ var RoundStateText = function (_VisChartBase) {
         value: function init() {
             //console.log( 'RoundStateText init', this );
             this.circleRaidus = this.radius - 5;
+            this.circleRaidus *= this.sizeRate;
 
             //this.lineColor = this.curColor;
 
@@ -120,7 +121,7 @@ var RoundStateText = function (_VisChartBase) {
                 x: this.point.x,
                 y: this.point.y,
                 text: this.text,
-                fontSize: 32,
+                fontSize: 32 * this.sizeRate,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: this.lineColor,
                 fontStyle: 'italic'
@@ -149,6 +150,7 @@ var RoundStateText = function (_VisChartBase) {
         key: 'drawCircleLine',
         value: function drawCircleLine() {
             this.circleLineRadius = this.radius - 1;
+            this.circleLineRadius *= this.sizeRate;
 
             var points = [];
             points.push('M');

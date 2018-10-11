@@ -26,8 +26,8 @@ var VisChartBase = function () {
         this.width = width || box.offsetWidth;
         this.height = height || box.offsetHeight;
 
-        this.max = Math.max(this.width, this.height);
-        this.min = Math.min(this.width, this.height);
+        this.max = this.maxSize = Math.max(this.width, this.height);
+        this.min = this.minSize = Math.min(this.width, this.height);
 
         this.cx = this.width / 2;
         this.cy = this.height / 2;
@@ -46,6 +46,14 @@ var VisChartBase = function () {
 
         this.rotationBgCount = 0;
         this.rotationBgStep = 1;
+
+        this.sizeRate = 1;
+
+        this.standSize = 330;
+
+        if (this.min < this.standSize) {
+            this.sizeRate = this.min / this.standSize;
+        }
 
         this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
     }

@@ -58,6 +58,10 @@ var Gauge = function (_VisChartBase) {
 
         var _this = _possibleConstructorReturn(this, (Gauge.__proto__ || Object.getPrototypeOf(Gauge)).call(this, box, width, height));
 
+        _this.offsetCy = 15;
+
+        _this.cy += _this.offsetCy;
+
         _this.name = 'Gauge' + Date.now();
 
         _this.curRate = 0;
@@ -103,7 +107,7 @@ var Gauge = function (_VisChartBase) {
         _this.textRectWidthPercent = .5;
         _this.textRectHeightPercent = .11;
 
-        _this.textRoundPercent = .39;
+        _this.textRoundPercent = .41;
         _this.textRoundOffsetAngle = 160;
         _this.textRoundPlusAngle = 110;
         _this.textRoundMaxAngle = _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2;
@@ -184,23 +188,24 @@ var Gauge = function (_VisChartBase) {
         value: function init() {
             var _this3 = this;
 
-            this.textRoundRadius = this.width * this.textRoundPercent;
+            this.textRoundRadius = this.width * this.textRoundPercent * this.sizeRate;
 
-            this.roundRadius = this.width * this.roundRadiusPercent;
+            this.roundRadius = this.width * this.roundRadiusPercent * this.sizeRate;
 
-            this.arcInRadius = this.width * this.arcInPercent;
-            this.arcOutRadius = this.width * this.arcOutPercent;
+            this.arcInRadius = this.width * this.arcInPercent * this.sizeRate;
+            this.arcOutRadius = this.width * this.arcOutPercent * this.sizeRate;
 
-            this.arcLineRaidus = Math.ceil(this.arcLinePercent * this.max);
+            this.arcLineRaidus = Math.ceil(this.arcLinePercent * this.max) * this.sizeRate;
 
             this.textWidth = this.textRectWidthPercent * this.width;
-            this.textHeight = 38;
+            this.textHeight = 38 * this.sizeRate;
             this.textX = this.cx - this.textWidth / 2;
             this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
 
             this.textRoundAngle.map(function (val, key) {
                 var point = geometry.distanceAngleToPoint(_this3.textRoundRadius, val.angle);
                 val.point = geometry.pointPlus(point, _this3.cpoint);
+                val.point.y += _this3.offsetCy;
             });
 
             this.arcPartLineAr = [];
@@ -294,6 +299,7 @@ var Gauge = function (_VisChartBase) {
             var _this5 = this;
 
             this.stage.removeChildren();
+            _get(Gauge.prototype.__proto__ || Object.getPrototypeOf(Gauge.prototype), 'update', this).call(this, data, allData);
 
             //console.log( 123, data );
 
@@ -354,7 +360,7 @@ var Gauge = function (_VisChartBase) {
                 text: 0 + '',
                 x: this.cx,
                 y: this.textY,
-                fontSize: 26,
+                fontSize: 26 * this.sizeRate,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
                 fontStyle: 'italic'
@@ -429,7 +435,7 @@ var Gauge = function (_VisChartBase) {
                     x: val.point.x + _this7.cx,
                     y: val.point.y + _this7.cy,
                     text: val.text + '',
-                    fontSize: 11
+                    fontSize: 11 * _this7.sizeRate
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
                     fill: _this7.lineColor
@@ -525,7 +531,7 @@ var Gauge = function (_VisChartBase) {
                 x: this.cx,
                 y: this.cy,
                 text: this.getAttackText(),
-                fontSize: 18,
+                fontSize: 18 * this.sizeRate,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
                 fontStyle: 'italic'
@@ -664,7 +670,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
-            this.circleRadius = Math.ceil(this.circlePercent * this.max / 2);
+            this.circleRadius = Math.ceil(this.circlePercent * this.max / 2) * this.sizeRate;
 
             this.circle = new _konva2.default.Circle({
                 x: this.cx,
@@ -679,7 +685,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'drawCircleLine',
         value: function drawCircleLine() {
-            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.max / 2);
+            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.max / 2) * this.sizeRate;
 
             var points = [];
             points.push('M');

@@ -17,6 +17,10 @@ export default class Gauge extends VisChartBase  {
     constructor( box, width, height ){
         super( box, width, height );
 
+        this.offsetCy = 15;
+
+        this.cy += this.offsetCy;
+
         this.name = 'Gauge' + Date.now();
 
         this.curRate = 0;
@@ -24,8 +28,6 @@ export default class Gauge extends VisChartBase  {
         this.totalNumStep = 5;
 
         this.animationStep = 40 * 1;
-
-
 
         this.roundRadiusPercent = .085;
 
@@ -64,7 +66,7 @@ export default class Gauge extends VisChartBase  {
         this.textRectWidthPercent = .5;
         this.textRectHeightPercent = .11;
 
-        this.textRoundPercent = .39;
+        this.textRoundPercent = .41;
         this.textRoundOffsetAngle = 160;
         this.textRoundPlusAngle = 110;
         this.textRoundMaxAngle = this.textRoundOffsetAngle + this.textRoundPlusAngle * 2;
@@ -138,24 +140,24 @@ export default class Gauge extends VisChartBase  {
     }
 
     init(){
-        this.textRoundRadius = this.width * this.textRoundPercent;
+        this.textRoundRadius = this.width * this.textRoundPercent * this.sizeRate;
 
-        this.roundRadius = this.width * this.roundRadiusPercent;
+        this.roundRadius = this.width * this.roundRadiusPercent * this.sizeRate;
 
-        this.arcInRadius = this.width * this.arcInPercent;
-        this.arcOutRadius = this.width * this.arcOutPercent;
+        this.arcInRadius = this.width * this.arcInPercent * this.sizeRate;
+        this.arcOutRadius = this.width * this.arcOutPercent * this.sizeRate;
 
-        this.arcLineRaidus = Math.ceil( this.arcLinePercent * this.max )
+        this.arcLineRaidus = Math.ceil( this.arcLinePercent * this.max ) * this.sizeRate
 
-        this.textWidth = this.textRectWidthPercent * this.width;
-        this.textHeight = 38;
+        this.textWidth = this.textRectWidthPercent * this.width ;
+        this.textHeight = 38 * this.sizeRate;
         this.textX = this.cx - this.textWidth / 2; 
         this.textY = this.cy + this.arcLineRaidus + this.arcTextLength / 2 + 2;
-
 
         this.textRoundAngle.map( ( val, key ) => {
             let point = geometry.distanceAngleToPoint( this.textRoundRadius, val.angle )
             val.point = geometry.pointPlus( point, this.cpoint );
+            val.point.y += this.offsetCy;
         });
 
         this.arcPartLineAr = [];
@@ -240,6 +242,7 @@ export default class Gauge extends VisChartBase  {
     */
     update( data, allData ){
         this.stage.removeChildren();
+        super.update( data, allData );
 
         //console.log( 123, data );
 
@@ -294,7 +297,7 @@ export default class Gauge extends VisChartBase  {
             text: 0 + ''
             , x: this.cx
             , y: this.textY
-            , fontSize: 26
+            , fontSize: 26 * this.sizeRate
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
             , fontStyle: 'italic'
@@ -367,7 +370,7 @@ export default class Gauge extends VisChartBase  {
                 x: val.point.x + this.cx
                 , y: val.point.y + this.cy
                 , text: val.text + ''
-                , fontSize: 11
+                , fontSize: 11 * this.sizeRate
                 //, rotation: val.angle
                 , fontFamily: 'MicrosoftYaHei'
                 , fill: this.lineColor
@@ -466,7 +469,7 @@ export default class Gauge extends VisChartBase  {
             x: this.cx
             , y: this.cy
             , text: this.getAttackText()
-            , fontSize: 18
+            , fontSize: 18 * this.sizeRate
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
             , fontStyle: 'italic'
@@ -595,7 +598,7 @@ export default class Gauge extends VisChartBase  {
     calcLayoutPosition() {
     }
     drawCircle(){
-        this.circleRadius = Math.ceil( this.circlePercent * this.max / 2 )
+        this.circleRadius = Math.ceil( this.circlePercent * this.max / 2 ) * this.sizeRate;
 
         this.circle = new Konva.Circle( {
             x: this.cx
@@ -609,7 +612,7 @@ export default class Gauge extends VisChartBase  {
     }
 
     drawCircleLine(){
-        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.max / 2 )
+        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.max / 2 ) * this.sizeRate;
 
         let points = [];
             points.push( 'M' );

@@ -11,8 +11,8 @@ export default class VisChartBase {
         this.width = width  || box.offsetWidth;
         this.height = height || box.offsetHeight;
 
-        this.max = Math.max( this.width, this.height );
-        this.min = Math.min( this.width, this.height );
+        this.max = this.maxSize = Math.max( this.width, this.height );
+        this.min = this.minSize =  Math.min( this.width, this.height );
 
         this.cx = this.width / 2;
         this.cy = this.height / 2;
@@ -31,6 +31,14 @@ export default class VisChartBase {
 
         this.rotationBgCount = 0;
         this.rotationBgStep = 1;
+
+        this.sizeRate = 1;
+
+        this.standSize = 330;
+
+        if( this.min < this.standSize ){
+            this.sizeRate = this.min / this.standSize;
+        }
 
         this.colors = [
             '#f12575'

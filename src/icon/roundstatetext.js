@@ -10,7 +10,7 @@ import * as utils from '../common/utils.js';
 
 export default class RoundStateText extends VisChartBase  {
     constructor( box, width, height ){
-        super( width, height );
+        super( box, width, height );
 
         this.name = 'RoundStateText ' + Date.now();
 
@@ -41,6 +41,7 @@ export default class RoundStateText extends VisChartBase  {
     init(){
         //console.log( 'RoundStateText init', this );
         this.circleRaidus = this.radius - 5;
+        this.circleRaidus *= this.sizeRate;
 
         //this.lineColor = this.curColor;
 
@@ -78,7 +79,7 @@ export default class RoundStateText extends VisChartBase  {
             x: this.point.x
             , y: this.point.y
             , text: this.text
-            , fontSize: 32
+            , fontSize: 32 * this.sizeRate
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: this.lineColor
             , fontStyle: 'italic'
@@ -106,6 +107,7 @@ export default class RoundStateText extends VisChartBase  {
 
     drawCircleLine(){
         this.circleLineRadius = this.radius - 1;
+        this.circleLineRadius *= this.sizeRate;
 
         let points = [];
             points.push( 'M' );
