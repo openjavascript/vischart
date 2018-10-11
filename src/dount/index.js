@@ -44,11 +44,11 @@ export default class Dount extends VisChartBase  {
             , "8": []
         };
 
-        this.lineWidth = 45;
+        this.lineWidth = 40;
         this.lineSpace = 10;
         this.lineAngle = 35;
         this.lineHeight = 21;
-        this.lineCurveLength = 40;
+        this.lineCurveLength = 30;
 
         this.loopSort = [ 4, 8, 1, 2 ];
 
@@ -377,7 +377,6 @@ export default class Dount extends VisChartBase  {
 
                         val.lineEnd.x = tmpPoint.x;
                     }
-
 
                     val.lineExpend.x = val.lineEnd.x + this.lineWidth
                     break;

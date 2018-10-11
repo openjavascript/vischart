@@ -83,11 +83,11 @@ var Dount = function (_VisChartBase) {
             "8": []
         };
 
-        _this.lineWidth = 45;
+        _this.lineWidth = 40;
         _this.lineSpace = 10;
         _this.lineAngle = 35;
         _this.lineHeight = 21;
-        _this.lineCurveLength = 40;
+        _this.lineCurveLength = 30;
 
         _this.loopSort = [4, 8, 1, 2];
 
