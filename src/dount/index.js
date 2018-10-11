@@ -407,10 +407,12 @@ export default class Dount extends VisChartBase  {
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
+                            /*
                             if( cur.lineEnd.y < cur.lineStart.y ){
                                 //tmpY = cur.lineStart.y + this.lineHeight;
                                 //cur.lineEnd.y = tmpY;
                             }
+                            */
                             cur.lineExpend.y = tmpY;
                         }
                     }
@@ -429,10 +431,12 @@ export default class Dount extends VisChartBase  {
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
+                            /*
                             if( cur.lineEnd.y < cur.lineStart.y ){
                                 //tmpY = cur.lineStart.y + this.lineHeight;
                                 //cur.lineEnd.y = tmpY;
                             }
+                            */
                             cur.lineExpend.y = tmpY;
                         }
                     }
@@ -448,8 +452,10 @@ export default class Dount extends VisChartBase  {
                             tmpY = pre.lineEnd.y - this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
+                            /*
                             if( cur.lineEnd.y < cur.lineStart.y ){
                             }
+                            */
                             cur.lineExpend.y = tmpY;
                         }
                     }
@@ -463,9 +469,11 @@ export default class Dount extends VisChartBase  {
                             tmpY = pre.lineEnd.y - this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
+                            /*
                             if( cur.lineEnd.y < cur.lineStart.y ){
                                 //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
                             }
+                            */
                             cur.lineExpend.y = cur.lineEnd.y;
                         }
                     }

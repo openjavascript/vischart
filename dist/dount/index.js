@@ -468,10 +468,12 @@ var Dount = function (_VisChartBase) {
                                     tmpY = _pre.lineEnd.y + _this5.lineHeight;
                                     _cur.lineEnd.y = tmpY;
 
-                                    if (_cur.lineEnd.y < _cur.lineStart.y) {
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
                                         //tmpY = cur.lineStart.y + this.lineHeight;
                                         //cur.lineEnd.y = tmpY;
                                     }
+                                    */
                                     _cur.lineExpend.y = tmpY;
                                 }
                             }
@@ -493,10 +495,12 @@ var Dount = function (_VisChartBase) {
                                     _tmpY = _pre2.lineEnd.y + _this5.lineHeight;
                                     _cur2.lineEnd.y = _tmpY;
 
-                                    if (_cur2.lineEnd.y < _cur2.lineStart.y) {
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
                                         //tmpY = cur.lineStart.y + this.lineHeight;
                                         //cur.lineEnd.y = tmpY;
                                     }
+                                    */
                                     _cur2.lineExpend.y = _tmpY;
                                 }
                             }
@@ -514,7 +518,10 @@ var Dount = function (_VisChartBase) {
                                     _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
                                     _cur3.lineEnd.y = _tmpY2;
 
-                                    if (_cur3.lineEnd.y < _cur3.lineStart.y) {}
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
+                                    }
+                                    */
                                     _cur3.lineExpend.y = _tmpY2;
                                 }
                             }
@@ -530,9 +537,11 @@ var Dount = function (_VisChartBase) {
                                     _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
                                     _cur4.lineEnd.y = _tmpY3;
 
-                                    if (_cur4.lineEnd.y < _cur4.lineStart.y) {
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
                                         //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
                                     }
+                                    */
                                     _cur4.lineExpend.y = _cur4.lineEnd.y;
                                 }
                             }
