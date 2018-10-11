@@ -75,7 +75,7 @@ export default class VisChartBase {
     }
 
 
-    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0 ){
+    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0, isbase64 = false ){
         //console.log( this.rateWidth, this.width );
         let rateW = this.min / this.rateWidth
             , rateH = this.min / this.rateHeight
@@ -87,6 +87,7 @@ export default class VisChartBase {
             , offsetX: offsetX
             , offsetY: offsetY
             , rotation: rotation
+            , isbase64: isbase64
         });
 
         return this;
@@ -124,6 +125,7 @@ export default class VisChartBase {
                     , val.width, val.height
                     , val.offsetX || 0, val.offsetY || 0 
                     , val.rotation || 0
+                    , val.isbase64
                 );
             });
         }
@@ -131,7 +133,7 @@ export default class VisChartBase {
         this.rotationBg = [];
 
         this.images.map( ( item ) => {
-            //console.log( 'item', item );
+            console.log( 'item', item );
             
             let img = new Image();
             img.onload = ()=>{
@@ -159,7 +161,11 @@ export default class VisChartBase {
                 }
                 this.stage.add( this.iconLayer );
             }
-            img.src = item.url; 
+            if( item.isbase64 ){
+                img.src = ( item.base64prefix || 'data:image/png;base64,' ) + item.url;
+            }else{
+                img.src = item.url; 
+            }
         });
           
         return this;

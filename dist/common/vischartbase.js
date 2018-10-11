@@ -94,6 +94,7 @@ var VisChartBase = function () {
             var offsetX = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
             var rotation = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
+            var isbase64 = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
 
             //console.log( this.rateWidth, this.width );
             var rateW = this.min / this.rateWidth,
@@ -104,7 +105,8 @@ var VisChartBase = function () {
                 height: height * rateH,
                 offsetX: offsetX,
                 offsetY: offsetY,
-                rotation: rotation
+                rotation: rotation,
+                isbase64: isbase64
             });
 
             return this;
@@ -141,14 +143,14 @@ var VisChartBase = function () {
 
             if (this.data && this.data.background && this.data.background.length) {
                 this.data.background.map(function (val) {
-                    _this2.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0, val.rotation || 0);
+                    _this2.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0, val.rotation || 0, val.isbase64);
                 });
             }
 
             this.rotationBg = [];
 
             this.images.map(function (item) {
-                //console.log( 'item', item );
+                console.log('item', item);
 
                 var img = new Image();
                 img.onload = function () {
@@ -174,7 +176,11 @@ var VisChartBase = function () {
                     }
                     _this2.stage.add(_this2.iconLayer);
                 };
-                img.src = item.url;
+                if (item.isbase64) {
+                    img.src = (item.base64prefix || 'data:image/png;base64,') + item.url;
+                } else {
+                    img.src = item.url;
+                }
             });
 
             return this;
