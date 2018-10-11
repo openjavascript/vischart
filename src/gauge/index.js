@@ -66,7 +66,7 @@ export default class Gauge extends VisChartBase  {
         this.textRectWidthPercent = .5;
         this.textRectHeightPercent = .11;
 
-        this.textRoundPercent = .41;
+        this.textRoundPercent = .38;
         this.textRoundOffsetAngle = 160;
         this.textRoundPlusAngle = 110;
         this.textRoundMaxAngle = this.textRoundOffsetAngle + this.textRoundPlusAngle * 2;

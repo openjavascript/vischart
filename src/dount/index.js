@@ -440,17 +440,15 @@ export default class Dount extends VisChartBase  {
                     break;
                 }
                 case 4: {
-                    let tmpY = item[ 0 ].lineEnd.y;
-                    for( let i = 1; i < item.length; i++ ){
-                        let pre = item[ i - 1], cur = item[ i ], zero = item[0];
+                    let tmpY = 0;
+                    for( let i = item.length - 2; i >= 0 ; i-- ){
+                        let pre = item[ i + 1], cur = item[ i ];
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y <= pre.lineEnd.y ){
                             //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                            tmpY = pre.lineEnd.y + this.lineHeight;
+                            tmpY = pre.lineEnd.y - this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
                             if( cur.lineEnd.y < cur.lineStart.y ){
-                                tmpY = cur.lineStart.y + this.lineHeight;
-                                cur.lineEnd.y = tmpY;
                             }
                             cur.lineExpend.y = tmpY;
                         }
@@ -458,15 +456,15 @@ export default class Dount extends VisChartBase  {
                     break;
                 }
                 case 8: {
-                    let tmpY = item[ item.length - 1].lineEnd.y;
-                    for( let i = item.length - 2; i > 0; i-- ){
-                        let pre = item[ i + 1], cur = item[ i ];
+                    let tmpY = 0;
+                    for( let i = 1; i < item.length ; i++ ){
+                        let pre = item[ i - 1], cur = item[ i ];
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight  || cur.lineEnd.y <= pre.lineEnd.y ){
-                            tmpY = pre.lineEnd.y + this.lineHeight;
+                            tmpY = pre.lineEnd.y - this.lineHeight;
                             cur.lineEnd.y = tmpY;
 
                             if( cur.lineEnd.y < cur.lineStart.y ){
-                                cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
+                                //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
                             }
                             cur.lineExpend.y = cur.lineEnd.y;
                         }

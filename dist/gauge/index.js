@@ -107,7 +107,7 @@ var Gauge = function (_VisChartBase) {
         _this.textRectWidthPercent = .5;
         _this.textRectHeightPercent = .11;
 
-        _this.textRoundPercent = .41;
+        _this.textRoundPercent = .38;
         _this.textRoundOffsetAngle = 160;
         _this.textRoundPlusAngle = 110;
         _this.textRoundMaxAngle = _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2;

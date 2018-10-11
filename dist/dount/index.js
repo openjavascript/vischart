@@ -505,20 +505,16 @@ var Dount = function (_VisChartBase) {
                         }
                     case 4:
                         {
-                            var _tmpY2 = item[0].lineEnd.y;
-                            for (var _i6 = 1; _i6 < item.length; _i6++) {
-                                var _pre3 = item[_i6 - 1],
-                                    _cur3 = item[_i6],
-                                    _zero = item[0];
+                            var _tmpY2 = 0;
+                            for (var _i6 = item.length - 2; _i6 >= 0; _i6--) {
+                                var _pre3 = item[_i6 + 1],
+                                    _cur3 = item[_i6];
                                 if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
                                     //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                                    _tmpY2 = _pre3.lineEnd.y + _this5.lineHeight;
+                                    _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
                                     _cur3.lineEnd.y = _tmpY2;
 
-                                    if (_cur3.lineEnd.y < _cur3.lineStart.y) {
-                                        _tmpY2 = _cur3.lineStart.y + _this5.lineHeight;
-                                        _cur3.lineEnd.y = _tmpY2;
-                                    }
+                                    if (_cur3.lineEnd.y < _cur3.lineStart.y) {}
                                     _cur3.lineExpend.y = _tmpY2;
                                 }
                             }
@@ -526,16 +522,16 @@ var Dount = function (_VisChartBase) {
                         }
                     case 8:
                         {
-                            var _tmpY3 = item[item.length - 1].lineEnd.y;
-                            for (var _i7 = item.length - 2; _i7 > 0; _i7--) {
-                                var _pre4 = item[_i7 + 1],
+                            var _tmpY3 = 0;
+                            for (var _i7 = 1; _i7 < item.length; _i7++) {
+                                var _pre4 = item[_i7 - 1],
                                     _cur4 = item[_i7];
                                 if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
-                                    _tmpY3 = _pre4.lineEnd.y + _this5.lineHeight;
+                                    _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
                                     _cur4.lineEnd.y = _tmpY3;
 
                                     if (_cur4.lineEnd.y < _cur4.lineStart.y) {
-                                        _cur4.lineEnd.y = _cur4.lineStart.y + _this5.lineHeight;
+                                        //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
                                     }
                                     _cur4.lineExpend.y = _cur4.lineEnd.y;
                                 }

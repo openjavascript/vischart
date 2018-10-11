@@ -307,8 +307,7 @@ var VisChartBase = function () {
         key: 'destroy',
         value: function destroy() {
             this.setDestroy();
-            console.log('destroy', this.name);
-            this.iconLayer.remove();
+            this.iconLayer && this.iconLayer.remove();
         }
     }]);
 

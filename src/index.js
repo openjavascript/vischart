@@ -120,4 +120,10 @@ export default class VisChart extends VisChartBase {
 
         return data;
     }
+
+    destroy(){
+        super.destroy();
+        this.stage && this.stage.destroy();
+        this.stage = null;
+    }
 }

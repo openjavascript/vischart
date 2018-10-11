@@ -279,8 +279,7 @@ export default class VisChartBase {
 
     destroy(){
         this.setDestroy();
-        console.log( 'destroy', this.name );
-        this.iconLayer.remove();
+        this.iconLayer && this.iconLayer.remove();
     }
 
 }
