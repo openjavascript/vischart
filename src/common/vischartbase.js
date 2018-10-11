@@ -133,7 +133,7 @@ export default class VisChartBase {
         this.rotationBg = [];
 
         this.images.map( ( item ) => {
-            console.log( 'item', item );
+            //console.log( 'item', item );
             
             let img = new Image();
             img.onload = ()=>{
@@ -150,7 +150,6 @@ export default class VisChartBase {
                 });
 
                 this.iconLayer.add( icon );
-
 
                 if( item.rotation ) {
                     this.rotationBg.push( icon );

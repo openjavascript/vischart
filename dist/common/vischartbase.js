@@ -150,7 +150,7 @@ var VisChartBase = function () {
             this.rotationBg = [];
 
             this.images.map(function (item) {
-                console.log('item', item);
+                //console.log( 'item', item );
 
                 var img = new Image();
                 img.onload = function () {
