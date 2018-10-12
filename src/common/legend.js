@@ -22,6 +22,7 @@ export default class Legend extends VisChartBase  {
         this.icon = [];
         this.group = [];
 
+        this.destroyList = [];
     }
 
     setStage( stage ){
@@ -29,6 +30,7 @@ export default class Legend extends VisChartBase  {
 
         this.layer = new Konva.Layer({
         });
+        this.addDestroy( this.layer );
 
         stage.add( this.layer );
     }
@@ -67,6 +69,7 @@ export default class Legend extends VisChartBase  {
                 , height: this.itemHeight()
                 , fill: color
             });
+            this.addDestroy( rect  );
 
             let bg = new Konva.Rect( {
                 x: x
@@ -75,6 +78,7 @@ export default class Legend extends VisChartBase  {
                 , height: this.rowHeight()
                 , fill: '#ffffff00'
             });
+            this.addDestroy( bg );
 
             let text = new Konva.Text( {
                 text: label
@@ -84,8 +88,10 @@ export default class Legend extends VisChartBase  {
                 , fontFamily: 'MicrosoftYaHei'
                 , fontSize: 12
             });
+            this.addDestroy( text );
 
             let group  = new Konva.Group();
+            this.addDestroy( group );
             group.add( bg );
             group.add( rect );
             group.add( text );
@@ -115,9 +121,7 @@ export default class Legend extends VisChartBase  {
                 this.onChange && this.onChange( this.group );
             });
 
-
             this.layer.add( group );
-
         });
         this.stage.add( this.layer );
         
@@ -196,6 +200,18 @@ export default class Legend extends VisChartBase  {
         }
 
         return r;
+    }
+
+    destroy(){
+        super.destroy();
+        //console.log( this.name, 'destroy' );
+
+        this.group 
+            && this.group.length 
+            && this.group.map( item => {
+                //if( !item.ele ) return;
+                item.ele.off( 'click' );
+            });
     }
 
 }

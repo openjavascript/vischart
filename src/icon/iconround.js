@@ -43,6 +43,7 @@ export default class IconRound extends VisChartBase  {
             , width: this.outRadius * 2
             , height: this.outRadius * 2
         });
+        this.addDestroy( this.group );
 
         this.circle = new Konva.Circle( {
             radius: this.inRadius
@@ -51,6 +52,7 @@ export default class IconRound extends VisChartBase  {
             , x: 0
             , y: 0
         });
+        this.addDestroy( this.circle );
 
         this.outcircle = new Konva.Circle( {
             radius: this.outRadius
@@ -60,6 +62,7 @@ export default class IconRound extends VisChartBase  {
             , x: 0
             , y: 0
         });
+        this.addDestroy( this.outcircle );
 
         this.group.add( this.circle );
         this.group.add( this.outcircle );

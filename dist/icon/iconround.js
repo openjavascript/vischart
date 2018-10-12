@@ -79,6 +79,7 @@ var IconRound = function (_VisChartBase) {
                 width: this.outRadius * 2,
                 height: this.outRadius * 2
             });
+            this.addDestroy(this.group);
 
             this.circle = new _konva2.default.Circle({
                 radius: this.inRadius,
@@ -87,6 +88,7 @@ var IconRound = function (_VisChartBase) {
                 x: 0,
                 y: 0
             });
+            this.addDestroy(this.circle);
 
             this.outcircle = new _konva2.default.Circle({
                 radius: this.outRadius,
@@ -96,6 +98,7 @@ var IconRound = function (_VisChartBase) {
                 x: 0,
                 y: 0
             });
+            this.addDestroy(this.outcircle);
 
             this.group.add(this.circle);
             this.group.add(this.outcircle);

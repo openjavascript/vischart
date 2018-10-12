@@ -20,45 +20,55 @@ var VisChartBase = function () {
 
         this.box = box;
 
-        this.customWidth = width;
-        this.customHeight = height;
-
-        this.width = width || box.offsetWidth;
-        this.height = height || box.offsetHeight;
-
-        this.max = this.maxSize = Math.max(this.width, this.height);
-        this.min = this.minSize = Math.min(this.width, this.height);
-
-        this.cx = this.width / 2;
-        this.cy = this.height / 2;
-        this.cpoint = { x: this.cx, y: this.cy };
-
-        this.totalAngle = 360;
-        this.angleOffset = 0;
-        this.countAngle = 0;
-
-        this.images = [];
-
-        this.rateWidth = 330;
-        this.rateHeight = 330;
-
-        this.rotationBg = [];
-
-        this.rotationBgCount = 0;
-        this.rotationBgStep = 1;
-
-        this.sizeRate = 1;
-
-        this.standSize = 330;
-
-        if (this.min < this.standSize) {
-            this.sizeRate = this.min / this.standSize;
-        }
+        this.name = 'VisChartBase_' + Date.now();
 
         this.colors = ['#f12575', '#da432e', '#f3a42d', '#19af89', '#24a3ea', '#b56be8'];
+
+        this._setSize(width, height);
     }
 
     _createClass(VisChartBase, [{
+        key: '_setSize',
+        value: function _setSize(width, height) {
+
+            this.destroyList = [];
+
+            this.customWidth = width;
+            this.customHeight = height;
+
+            this.width = width || this.box.offsetWidth;
+            this.height = height || this.box.offsetHeight;
+
+            this.max = this.maxSize = Math.max(this.width, this.height);
+            this.min = this.minSize = Math.min(this.width, this.height);
+
+            this.cx = this.width / 2;
+            this.cy = this.height / 2;
+            this.cpoint = { x: this.cx, y: this.cy };
+
+            this.totalAngle = 360;
+            this.angleOffset = 0;
+            this.countAngle = 0;
+
+            this.images = [];
+
+            this.rateWidth = 330;
+            this.rateHeight = 330;
+
+            this.rotationBg = [];
+
+            this.rotationBgCount = 0;
+            this.rotationBgStep = 1;
+
+            this.sizeRate = 1;
+
+            this.standSize = 330;
+
+            if (this.min < this.standSize) {
+                this.sizeRate = this.min / this.standSize;
+            }
+        }
+    }, {
         key: 'update',
         value: function update(data, allData) {
             this.data = data;
@@ -146,6 +156,7 @@ var VisChartBase = function () {
 
             if (this.iconLayer) this.iconLayer.remove();
             this.iconLayer = new _konva2.default.Layer();
+            this.addDestroy(this.iconLayer);
 
             this.images = [];
 
@@ -172,6 +183,7 @@ var VisChartBase = function () {
                         width: width,
                         height: height
                     });
+                    _this2.addDestroy(icon);
 
                     _this2.iconLayer.add(icon);
 
@@ -299,6 +311,20 @@ var VisChartBase = function () {
             this.stage = stage;
         }
     }, {
+        key: 'resize',
+        value: function resize(width, height) {
+            var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+            var allData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            this.data = data || this.data;
+            this.allData = allData || this.allData;
+
+            this.width = width || this.box.offsetWidth || this.width;
+            this.height = height || this.box.offsetHeight || this.height;
+
+            this._setSize(this.width, this.height);
+        }
+    }, {
         key: 'setDestroy',
         value: function setDestroy() {
             this.isDestroy = 1;
@@ -307,7 +333,28 @@ var VisChartBase = function () {
         key: 'destroy',
         value: function destroy() {
             this.setDestroy();
-            this.iconLayer && this.iconLayer.remove();
+
+            //console.log( 'base destroyList.length', this.destroyList.length );
+
+            this.destroyList.map(function (item) {
+                if (item) {
+                    item.remove();
+                    item.destroy();
+                }
+            });
+        }
+    }, {
+        key: 'addDestroy',
+        value: function addDestroy() {
+            var _this3 = this;
+
+            for (var _len = arguments.length, item = Array(_len), _key = 0; _key < _len; _key++) {
+                item[_key] = arguments[_key];
+            }
+
+            item && item.length && item.map(function (val) {
+                _this3.destroyList.push(val);
+            });
         }
     }]);
 

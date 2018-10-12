@@ -84,6 +84,7 @@ export default class RoundStateText extends VisChartBase  {
             , fill: this.lineColor
             , fontStyle: 'italic'
         });
+        this.addDestroy( this.text );
 
         this.text.x( this.point.x - this.text.textWidth / 2 + this.textOffsetX );
         this.text.y( this.point.y - this.text.textHeight / 2 + this.textOffsetY );
@@ -101,6 +102,7 @@ export default class RoundStateText extends VisChartBase  {
             , strokeWidth: 2
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circle );
 
         this.layer.add( this.circle );
     }
@@ -135,6 +137,7 @@ export default class RoundStateText extends VisChartBase  {
             , strokeWidth: 2
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circleLine );
 
         this.layer.add( this.circleLine );
     }

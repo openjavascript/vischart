@@ -14,8 +14,13 @@ import IconCircle from '../icon/iconcircle.js';
 export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
         super( box, width, height );
+        this.name = 'Dount_' + Date.now();
 
-        this.name = 'Dount ' + Date.now();
+        this._setSize( width, height );
+    }
+
+    _setSize( width, height ){
+        super._setSize( width, height );
 
         this.outPercent = .53;
         this.inPercent = .37;
@@ -54,6 +59,7 @@ export default class Dount extends VisChartBase  {
 
 
         this.init();
+
     }
 
     init(){
@@ -179,6 +185,7 @@ export default class Dount extends VisChartBase  {
             , strokeWidth: 2.5
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circle );
         this.layoutLayer.add( this.circle );
     }
 
@@ -211,6 +218,7 @@ export default class Dount extends VisChartBase  {
             , strokeWidth: 2.5
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circleLine );
 
         this.layoutLayer.add( this.circleLine );
     }
@@ -223,6 +231,7 @@ export default class Dount extends VisChartBase  {
 
 
         this.layoutLayer = new Konva.Layer();
+        this.addDestroy( this.layoutLayer );
 
         this.drawCircle();
         this.drawCircleLine();
@@ -245,6 +254,7 @@ export default class Dount extends VisChartBase  {
               data: '',
               fill: color
             });
+            this.addDestroy( path );
 
             /*
             console.log( 
@@ -269,11 +279,13 @@ export default class Dount extends VisChartBase  {
               strokeWidth: 2
             });
             this.line.push( line );
+            this.addDestroy( line );
 
 
             let layer = new Konva.Layer();
             layer.add( path );
             layer.add( line );
+            this.addDestroy( layer );
 
             this.layer.push( layer );
         });
@@ -550,6 +562,7 @@ export default class Dount extends VisChartBase  {
             , fontSize: 16
             , fontStyle: 'italic'
         });
+        this.addDestroy( text );
 
         let textPoint = path.itemData.textPoint
             , angleDirect = path.itemData.pointDirection.autoAngle()
@@ -603,10 +616,5 @@ export default class Dount extends VisChartBase  {
 
     destroy(){
         super.destroy();
-        this.layoutLayer.remove();
-        this.layer.map( item => {
-            item.remove();
-        });
-        //console.log( 'destroy', Date.now() );
     }
 }

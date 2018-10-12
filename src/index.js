@@ -18,6 +18,11 @@ export default class VisChart extends VisChartBase {
         this.ins = [];
         this.legend = null;
 
+        this._setSize( width, height );
+    }
+
+    _setSize( width, height ){
+        super._setSize( width, height );
         this.init();
     }
 
@@ -38,22 +43,21 @@ export default class VisChart extends VisChartBase {
         return this;
     }
 
-    update( data ){
+    update( data, ignoreLegend ){
         this.data = data;
+        this.ignoreLegend = ignoreLegend;
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
-        this.ins.map( item => {
-            item.destroy();
-        });
 
+        this.clearUpdate();
 
         //console.log( ju );
 
-        this.stage.removeChildren();
+        //this.stage.removeChildren();
 
         //console.log( 'update data', data );
 
-        if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length  ){
+        if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length && !ignoreLegend ){
             this.legend = new Legend( this.box, this.width, this.height );
             this.legend.setStage( this.stage );
             this.legend.setOptions( {
@@ -63,7 +67,6 @@ export default class VisChart extends VisChartBase {
                 }
             });
             this.legend.update( this.data.legend );
-
         }
         this.initChart();
         return this;
@@ -123,7 +126,17 @@ export default class VisChart extends VisChartBase {
 
     destroy(){
         super.destroy();
+
+        this.clearUpdate();
+
         this.stage && this.stage.destroy();
         this.stage = null;
+    }
+
+    clearUpdate(){
+        this.ins.map( ( item ) => {
+            item.destroy();
+        });
+        this.legend && !this.ignoreLegend && this.legend.destroy();
     }
 }

@@ -9,7 +9,6 @@ import ju from 'json-utilsx';
 
 import * as utils from '../common/utils.js';
 
-import IconRound from '../icon/iconround.js';
 import RoundStateText from '../icon/roundstatetext.js';
 
 
@@ -17,11 +16,17 @@ export default class Gauge extends VisChartBase  {
     constructor( box, width, height ){
         super( box, width, height );
 
+        this.name = 'Gauge' + Date.now();
+
+        this._setSize( width, height );
+    }
+
+    _setSize( width, height ){
+        super._setSize( width, height );
+
         this.offsetCy = 15;
 
         this.cy += this.offsetCy;
-
-        this.name = 'Gauge' + Date.now();
 
         this.curRate = 0;
         this.totalNum = 0;
@@ -102,6 +107,7 @@ export default class Gauge extends VisChartBase  {
         ];
 
         this.init();
+
     }
 
     getAttackRateAngle(){
@@ -305,10 +311,13 @@ export default class Gauge extends VisChartBase  {
         tmp.text = this.totalNum; 
 
         this.totalText = new Konva.Text( params );
+        this.addDestroy( this.totalText );
+
         this.totalText.x( this.cx - this.totalText.textWidth / 2 );
         this.totalText.y( this.textY + 5 );
 
         this.tmpTotalText = new Konva.Text( tmp );
+        this.addDestroy( this.tmpTotalText );
         
 
     }
@@ -333,6 +342,7 @@ export default class Gauge extends VisChartBase  {
             , x: textX
             , y: this.textY
         });
+        this.addDestroy( this.textRect );
 
         let points = [];
         points.push( 'M', [ textX, this.textY + this.textLineLength ].join(',') );
@@ -356,6 +366,7 @@ export default class Gauge extends VisChartBase  {
             , stroke: this.lineColor
             , strokeWidth: 1
         });
+        this.addDestroy( this.textLinePath );
 
         this.layoutLayer.add( this.textLinePath );
         this.layoutLayer.add( this.textRect );
@@ -375,6 +386,7 @@ export default class Gauge extends VisChartBase  {
                 , fontFamily: 'MicrosoftYaHei'
                 , fill: this.lineColor
             });
+            this.addDestroy( text );
             text.rotation( val.angle + 90  );
 
             this.layoutLayer.add( text );
@@ -401,6 +413,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.arcLine );
 
         this.arcPartLine = new Konva.Path( {
             data: this.arcPartLineAr.join('')
@@ -410,6 +423,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.arcPartLine );
 
         this.arcOutlinePart = new Konva.Path( {
             data: this.arcOutlinePartAr.join('')
@@ -419,7 +433,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1
             , fill: '#ffffff00'
         });
-
+        this.addDestroy( this.arcOutlinePart );
 
         this.layoutLayer.add( this.arcLine );
         this.layoutLayer.add( this.arcPartLine );
@@ -448,13 +462,17 @@ export default class Gauge extends VisChartBase  {
             ]
         };
         this.arc = new Konva.Arc( params );
+        this.addDestroy( this.arc );
 
         this.layoutLayer.add( this.arc );
     }
 
     initDataLayout(){
         this.layer = new Konva.Layer();
+        this.addDestroy(this.layer );
+        
         this.layoutLayer = new Konva.Layer();
+        this.addDestroy( this.layoutLayer );
 
         this.roundLine = new Konva.Circle( {
             x: this.cx
@@ -464,6 +482,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 2.5
             , fill: 'rgba( 0, 0, 0, .5 )'
         });
+        this.addDestroy( this.roundLine );
 
         this.percentText = new Konva.Text( {
             x: this.cx
@@ -474,6 +493,7 @@ export default class Gauge extends VisChartBase  {
             , fill: '#ffffff'
             , fontStyle: 'italic'
         });
+        this.addDestroy( this.percentText );
         this.percentText.x( this.cx - this.percentText.textWidth / 2 + this.textOffsetX );
         this.percentText.y( this.cy - this.percentText.textHeight / 2 + this.textOffsetY );
 
@@ -487,6 +507,7 @@ export default class Gauge extends VisChartBase  {
             , fill: '#c7d6ff'
             , fontStyle: 'italic'
         });
+        this.addDestroy( this.percentSymbolText );
         this.percentSymbolText.x( this.percentText.attrs.x  + this.percentText.textWidth );
         this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
         */
@@ -503,6 +524,7 @@ export default class Gauge extends VisChartBase  {
           strokeWidth: 1,
           rotation: 90
         });
+        this.addDestroy( wedge );
 
        let wedge1 = new Konva.Wedge({
           x: 0,
@@ -514,12 +536,13 @@ export default class Gauge extends VisChartBase  {
           strokeWidth: 1,
           rotation: 65
         });
-
+        this.addDestroy( wedge1 );
 
         let group = new Konva.Group({
             x: this.cx
             , y: this.cy
         });
+        this.addDestroy( group );
 
         group.add( wedge1 );
         group.add( wedge );
@@ -608,6 +631,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circle );
         this.layoutLayer.add( this.circle );
     }
 
@@ -640,6 +664,7 @@ export default class Gauge extends VisChartBase  {
             , strokeWidth: 1.5
             , fill: '#ffffff00'
         });
+        this.addDestroy( this.circleLine );
 
         this.layoutLayer.add( this.circleLine );
     }

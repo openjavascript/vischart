@@ -32,10 +32,6 @@ var _utils = require('../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
-var _iconround = require('../icon/iconround.js');
-
-var _iconround2 = _interopRequireDefault(_iconround);
-
 var _roundstatetext = require('../icon/roundstatetext.js');
 
 var _roundstatetext2 = _interopRequireDefault(_roundstatetext);
@@ -58,91 +54,98 @@ var Gauge = function (_VisChartBase) {
 
         var _this = _possibleConstructorReturn(this, (Gauge.__proto__ || Object.getPrototypeOf(Gauge)).call(this, box, width, height));
 
-        _this.offsetCy = 15;
-
-        _this.cy += _this.offsetCy;
-
         _this.name = 'Gauge' + Date.now();
 
-        _this.curRate = 0;
-        _this.totalNum = 0;
-        _this.totalNumStep = 5;
-
-        _this.animationStep = 40 * 1;
-
-        _this.roundRadiusPercent = .085;
-
-        _this.lineColor = '#596ea7';
-
-        _this.circleLinePercent = .26;
-        _this.circlePercent = .28;
-
-        _this.circleLineRotation = 0;
-        _this.circleLineRotationStep = 4;
-
-        _this.arcLinePercent = .39 / 2;
-
-        _this.arcOutPercent = .38 / 2;
-        _this.arcInPercent = .305 / 2;
-
-        _this.arcLabelLength = 6;
-        _this.arcTextLength = 20;
-
-        _this.arcAngle = 280;
-        _this.part = 22;
-        _this.arcTotal = 1100;
-
-        _this.textOffset = 0;
-
-        _this.arcOffset = 90 + (360 - _this.arcAngle) / 2;
-        _this.arcOffsetPad = -5;
-        _this.partLabel = _this.part / 2;
-        _this.partAngle = _this.arcAngle / _this.part;
-        _this.partNum = _this.arcTotal / _this.part;
-
-        _this.textOffsetX = -1;
-        _this.textOffsetY = -8;
-        _this.textLineLength = 6;
-
-        _this.textRectWidthPercent = .5;
-        _this.textRectHeightPercent = .11;
-
-        _this.textRoundPercent = .38;
-        _this.textRoundOffsetAngle = 160;
-        _this.textRoundPlusAngle = 110;
-        _this.textRoundMaxAngle = _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2;
-        _this.roundStatusRaidus = 30;
-        _this.textRoundAngle = [{
-            angle: _this.textRoundOffsetAngle,
-            text: '低',
-            point: {},
-            min: 0,
-            max: 100,
-            radius: _this.roundStatusRaidus,
-            lineColor: _this.lineColor
-        }, {
-            angle: _this.textRoundOffsetAngle + _this.textRoundPlusAngle,
-            text: '中',
-            point: {},
-            min: 101,
-            max: 500,
-            radius: _this.roundStatusRaidus,
-            lineColor: _this.lineColor
-        }, {
-            angle: _this.textRoundOffsetAngle + _this.textRoundPlusAngle * 2,
-            text: '高',
-            point: {},
-            min: 501,
-            max: Math.pow(10, 10),
-            radius: _this.roundStatusRaidus,
-            lineColor: _this.lineColor
-        }];
-
-        _this.init();
+        _this._setSize(width, height);
         return _this;
     }
 
     _createClass(Gauge, [{
+        key: '_setSize',
+        value: function _setSize(width, height) {
+            _get(Gauge.prototype.__proto__ || Object.getPrototypeOf(Gauge.prototype), '_setSize', this).call(this, width, height);
+
+            this.offsetCy = 15;
+
+            this.cy += this.offsetCy;
+
+            this.curRate = 0;
+            this.totalNum = 0;
+            this.totalNumStep = 5;
+
+            this.animationStep = 40 * 1;
+
+            this.roundRadiusPercent = .085;
+
+            this.lineColor = '#596ea7';
+
+            this.circleLinePercent = .26;
+            this.circlePercent = .28;
+
+            this.circleLineRotation = 0;
+            this.circleLineRotationStep = 4;
+
+            this.arcLinePercent = .39 / 2;
+
+            this.arcOutPercent = .38 / 2;
+            this.arcInPercent = .305 / 2;
+
+            this.arcLabelLength = 6;
+            this.arcTextLength = 20;
+
+            this.arcAngle = 280;
+            this.part = 22;
+            this.arcTotal = 1100;
+
+            this.textOffset = 0;
+
+            this.arcOffset = 90 + (360 - this.arcAngle) / 2;
+            this.arcOffsetPad = -5;
+            this.partLabel = this.part / 2;
+            this.partAngle = this.arcAngle / this.part;
+            this.partNum = this.arcTotal / this.part;
+
+            this.textOffsetX = -1;
+            this.textOffsetY = -8;
+            this.textLineLength = 6;
+
+            this.textRectWidthPercent = .5;
+            this.textRectHeightPercent = .11;
+
+            this.textRoundPercent = .38;
+            this.textRoundOffsetAngle = 160;
+            this.textRoundPlusAngle = 110;
+            this.textRoundMaxAngle = this.textRoundOffsetAngle + this.textRoundPlusAngle * 2;
+            this.roundStatusRaidus = 30;
+            this.textRoundAngle = [{
+                angle: this.textRoundOffsetAngle,
+                text: '低',
+                point: {},
+                min: 0,
+                max: 100,
+                radius: this.roundStatusRaidus,
+                lineColor: this.lineColor
+            }, {
+                angle: this.textRoundOffsetAngle + this.textRoundPlusAngle,
+                text: '中',
+                point: {},
+                min: 101,
+                max: 500,
+                radius: this.roundStatusRaidus,
+                lineColor: this.lineColor
+            }, {
+                angle: this.textRoundOffsetAngle + this.textRoundPlusAngle * 2,
+                text: '高',
+                point: {},
+                min: 501,
+                max: Math.pow(10, 10),
+                radius: this.roundStatusRaidus,
+                lineColor: this.lineColor
+            }];
+
+            this.init();
+        }
+    }, {
         key: 'getAttackRateAngle',
         value: function getAttackRateAngle() {
             var r = 0;
@@ -369,10 +372,13 @@ var Gauge = function (_VisChartBase) {
             tmp.text = this.totalNum;
 
             this.totalText = new _konva2.default.Text(params);
+            this.addDestroy(this.totalText);
+
             this.totalText.x(this.cx - this.totalText.textWidth / 2);
             this.totalText.y(this.textY + 5);
 
             this.tmpTotalText = new _konva2.default.Text(tmp);
+            this.addDestroy(this.tmpTotalText);
         }
     }, {
         key: 'drawTextRect',
@@ -395,6 +401,7 @@ var Gauge = function (_VisChartBase) {
                 x: textX,
                 y: this.textY
             });
+            this.addDestroy(this.textRect);
 
             var points = [];
             points.push('M', [textX, this.textY + this.textLineLength].join(','));
@@ -418,6 +425,7 @@ var Gauge = function (_VisChartBase) {
                 stroke: this.lineColor,
                 strokeWidth: 1
             });
+            this.addDestroy(this.textLinePath);
 
             this.layoutLayer.add(this.textLinePath);
             this.layoutLayer.add(this.textRect);
@@ -440,6 +448,7 @@ var Gauge = function (_VisChartBase) {
                     , fontFamily: 'MicrosoftYaHei',
                     fill: _this7.lineColor
                 });
+                _this7.addDestroy(text);
                 text.rotation(val.angle + 90);
 
                 _this7.layoutLayer.add(text);
@@ -467,6 +476,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.arcLine);
 
             this.arcPartLine = new _konva2.default.Path({
                 data: this.arcPartLineAr.join(''),
@@ -476,6 +486,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.arcPartLine);
 
             this.arcOutlinePart = new _konva2.default.Path({
                 data: this.arcOutlinePartAr.join(''),
@@ -485,6 +496,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.arcOutlinePart);
 
             this.layoutLayer.add(this.arcLine);
             this.layoutLayer.add(this.arcPartLine);
@@ -509,6 +521,7 @@ var Gauge = function (_VisChartBase) {
                 fillLinearGradientColorStops: [0, '#ff9000', .5, '#64b185', 1, '#5a78ca']
             };
             this.arc = new _konva2.default.Arc(params);
+            this.addDestroy(this.arc);
 
             this.layoutLayer.add(this.arc);
         }
@@ -516,7 +529,10 @@ var Gauge = function (_VisChartBase) {
         key: 'initDataLayout',
         value: function initDataLayout() {
             this.layer = new _konva2.default.Layer();
+            this.addDestroy(this.layer);
+
             this.layoutLayer = new _konva2.default.Layer();
+            this.addDestroy(this.layoutLayer);
 
             this.roundLine = new _konva2.default.Circle({
                 x: this.cx,
@@ -526,6 +542,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 2.5,
                 fill: 'rgba( 0, 0, 0, .5 )'
             });
+            this.addDestroy(this.roundLine);
 
             this.percentText = new _konva2.default.Text({
                 x: this.cx,
@@ -536,6 +553,7 @@ var Gauge = function (_VisChartBase) {
                 fill: '#ffffff',
                 fontStyle: 'italic'
             });
+            this.addDestroy(this.percentText);
             this.percentText.x(this.cx - this.percentText.textWidth / 2 + this.textOffsetX);
             this.percentText.y(this.cy - this.percentText.textHeight / 2 + this.textOffsetY);
 
@@ -549,6 +567,7 @@ var Gauge = function (_VisChartBase) {
                 , fill: '#c7d6ff'
                 , fontStyle: 'italic'
             });
+            this.addDestroy( this.percentSymbolText );
             this.percentSymbolText.x( this.percentText.attrs.x  + this.percentText.textWidth );
             this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
             */
@@ -565,6 +584,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 rotation: 90
             });
+            this.addDestroy(wedge);
 
             var wedge1 = new _konva2.default.Wedge({
                 x: 0,
@@ -576,11 +596,13 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 rotation: 65
             });
+            this.addDestroy(wedge1);
 
             var group = new _konva2.default.Group({
                 x: this.cx,
                 y: this.cy
             });
+            this.addDestroy(group);
 
             group.add(wedge1);
             group.add(wedge);
@@ -680,6 +702,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.circle);
             this.layoutLayer.add(this.circle);
         }
     }, {
@@ -713,6 +736,7 @@ var Gauge = function (_VisChartBase) {
                 strokeWidth: 1.5,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.circleLine);
 
             this.layoutLayer.add(this.circleLine);
         }

@@ -54,48 +54,55 @@ var Dount = function (_VisChartBase) {
 
         var _this = _possibleConstructorReturn(this, (Dount.__proto__ || Object.getPrototypeOf(Dount)).call(this, box, width, height));
 
-        _this.name = 'Dount ' + Date.now();
+        _this.name = 'Dount_' + Date.now();
 
-        _this.outPercent = .53;
-        _this.inPercent = .37;
-
-        _this.circleLinePercent = .34;
-        _this.circlePercent = .31;
-        _this.circleLineRotation = 0;
-        _this.circleLineRotationStep = 4;
-
-        _this.animationStep = 8;
-        _this.angleStep = 5;
-
-        _this.textHeight = 26;
-        _this.lineOffset = 50;
-
-        _this.path = [];
-
-        _this.textOffset = 4;
-
-        _this.lineColor = '#24a3ea';
-
-        _this.lineRange = {
-            "1": [],
-            "2": [],
-            "4": [],
-            "8": []
-        };
-
-        _this.lineWidth = 40;
-        _this.lineSpace = 10;
-        _this.lineAngle = 35;
-        _this.lineHeight = 21;
-        _this.lineCurveLength = 30;
-
-        _this.loopSort = [4, 8, 1, 2];
-
-        _this.init();
+        _this._setSize(width, height);
         return _this;
     }
 
     _createClass(Dount, [{
+        key: '_setSize',
+        value: function _setSize(width, height) {
+            _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), '_setSize', this).call(this, width, height);
+
+            this.outPercent = .53;
+            this.inPercent = .37;
+
+            this.circleLinePercent = .34;
+            this.circlePercent = .31;
+            this.circleLineRotation = 0;
+            this.circleLineRotationStep = 4;
+
+            this.animationStep = 8;
+            this.angleStep = 5;
+
+            this.textHeight = 26;
+            this.lineOffset = 50;
+
+            this.path = [];
+
+            this.textOffset = 4;
+
+            this.lineColor = '#24a3ea';
+
+            this.lineRange = {
+                "1": [],
+                "2": [],
+                "4": [],
+                "8": []
+            };
+
+            this.lineWidth = 40;
+            this.lineSpace = 10;
+            this.lineAngle = 35;
+            this.lineHeight = 21;
+            this.lineCurveLength = 30;
+
+            this.loopSort = [4, 8, 1, 2];
+
+            this.init();
+        }
+    }, {
         key: 'init',
         value: function init() {
             this.calcLayoutPosition();
@@ -235,6 +242,7 @@ var Dount = function (_VisChartBase) {
                 strokeWidth: 2.5,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.circle);
             this.layoutLayer.add(this.circle);
         }
     }, {
@@ -268,6 +276,7 @@ var Dount = function (_VisChartBase) {
                 strokeWidth: 2.5,
                 fill: '#ffffff00'
             });
+            this.addDestroy(this.circleLine);
 
             this.layoutLayer.add(this.circleLine);
         }
@@ -281,6 +290,7 @@ var Dount = function (_VisChartBase) {
             this.line = [];
 
             this.layoutLayer = new _konva2.default.Layer();
+            this.addDestroy(this.layoutLayer);
 
             this.drawCircle();
             this.drawCircleLine();
@@ -303,6 +313,7 @@ var Dount = function (_VisChartBase) {
                     data: '',
                     fill: color
                 });
+                _this4.addDestroy(path);
 
                 /*
                 console.log( 
@@ -327,10 +338,12 @@ var Dount = function (_VisChartBase) {
                     strokeWidth: 2
                 });
                 _this4.line.push(line);
+                _this4.addDestroy(line);
 
                 var layer = new _konva2.default.Layer();
                 layer.add(path);
                 layer.add(line);
+                _this4.addDestroy(layer);
 
                 _this4.layer.push(layer);
             });
@@ -619,6 +632,7 @@ var Dount = function (_VisChartBase) {
                 fontSize: 16,
                 fontStyle: 'italic'
             });
+            this.addDestroy(text);
 
             var textPoint = path.itemData.textPoint,
                 angleDirect = path.itemData.pointDirection.autoAngle();
@@ -676,11 +690,6 @@ var Dount = function (_VisChartBase) {
         key: 'destroy',
         value: function destroy() {
             _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'destroy', this).call(this);
-            this.layoutLayer.remove();
-            this.layer.map(function (item) {
-                item.remove();
-            });
-            //console.log( 'destroy', Date.now() );
         }
     }]);
 

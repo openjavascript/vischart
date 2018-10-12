@@ -56,6 +56,7 @@ var Legend = function (_VisChartBase) {
         _this.icon = [];
         _this.group = [];
 
+        _this.destroyList = [];
         return _this;
     }
 
@@ -65,6 +66,7 @@ var Legend = function (_VisChartBase) {
             _get(Legend.prototype.__proto__ || Object.getPrototypeOf(Legend.prototype), 'setStage', this).call(this, stage);
 
             this.layer = new _konva2.default.Layer({});
+            this.addDestroy(this.layer);
 
             stage.add(this.layer);
         }
@@ -105,6 +107,7 @@ var Legend = function (_VisChartBase) {
                     height: _this2.itemHeight(),
                     fill: color
                 });
+                _this2.addDestroy(rect);
 
                 var bg = new _konva2.default.Rect({
                     x: x,
@@ -113,6 +116,7 @@ var Legend = function (_VisChartBase) {
                     height: _this2.rowHeight(),
                     fill: '#ffffff00'
                 });
+                _this2.addDestroy(bg);
 
                 var text = new _konva2.default.Text({
                     text: label,
@@ -122,8 +126,10 @@ var Legend = function (_VisChartBase) {
                     fontFamily: 'MicrosoftYaHei',
                     fontSize: 12
                 });
+                _this2.addDestroy(text);
 
                 var group = new _konva2.default.Group();
+                _this2.addDestroy(group);
                 group.add(bg);
                 group.add(rect);
                 group.add(text);
@@ -243,6 +249,17 @@ var Legend = function (_VisChartBase) {
             }
 
             return r;
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            _get(Legend.prototype.__proto__ || Object.getPrototypeOf(Legend.prototype), 'destroy', this).call(this);
+            //console.log( this.name, 'destroy' );
+
+            this.group && this.group.length && this.group.map(function (item) {
+                //if( !item.ele ) return;
+                item.ele.off('click');
+            });
         }
     }]);
 

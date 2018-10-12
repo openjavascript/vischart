@@ -5,11 +5,29 @@ export default class VisChartBase {
     constructor( box, width, height ){
         this.box = box;
 
+        this.name = 'VisChartBase_' + Date.now();
+
+        this.colors = [
+            '#f12575'
+            , '#da432e'
+            , '#f3a42d'
+            , '#19af89'
+            , '#24a3ea'
+            , '#b56be8'
+        ];
+
+        this._setSize( width, height );
+    }
+
+    _setSize( width, height ){
+
+        this.destroyList = [];
+
         this.customWidth = width;
         this.customHeight = height;
 
-        this.width = width  || box.offsetWidth;
-        this.height = height || box.offsetHeight;
+        this.width = width  || this.box.offsetWidth;
+        this.height = height || this.box.offsetHeight;
 
         this.max = this.maxSize = Math.max( this.width, this.height );
         this.min = this.minSize =  Math.min( this.width, this.height );
@@ -39,16 +57,6 @@ export default class VisChartBase {
         if( this.min < this.standSize ){
             this.sizeRate = this.min / this.standSize;
         }
-
-        this.colors = [
-            '#f12575'
-            , '#da432e'
-            , '#f3a42d'
-            , '#19af89'
-            , '#24a3ea'
-            , '#b56be8'
-        ];
-
     }
 
     update( data, allData ){
@@ -123,6 +131,7 @@ export default class VisChartBase {
 
         if( this.iconLayer ) this.iconLayer.remove();
         this.iconLayer = new Konva.Layer();
+        this.addDestroy( this.iconLayer );
 
         this.images = [];
 
@@ -156,6 +165,7 @@ export default class VisChartBase {
                     , width: width
                     , height: height
                 });
+                this.addDestroy( icon );
 
                 this.iconLayer.add( icon );
 
@@ -273,13 +283,37 @@ export default class VisChartBase {
         this.stage = stage;
     }
 
+    resize( width, height, data = null, allData = null ){
+        this.data = data || this.data;
+        this.allData = allData || this.allData;
+
+        this.width = width      || this.box.offsetWidth     || this.width;
+        this.height = height    || this.box.offsetHeight    || this.height;
+
+        this._setSize( this.width, this.height );
+    }
+
     setDestroy(){
         this.isDestroy = 1;
     }
 
     destroy(){
         this.setDestroy();
-        this.iconLayer && this.iconLayer.remove();
+
+        //console.log( 'base destroyList.length', this.destroyList.length );
+
+        this.destroyList.map( item => {
+            if( item ){
+                item.remove();
+                item.destroy();
+            }
+        });
+    }
+
+    addDestroy( ...item ){
+        item && item.length && item.map( val => {
+            this.destroyList.push( val );
+        });
     }
 
 }

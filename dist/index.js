@@ -57,11 +57,17 @@ var VisChart = function (_VisChartBase) {
         _this.ins = [];
         _this.legend = null;
 
-        _this.init();
+        _this._setSize(width, height);
         return _this;
     }
 
     _createClass(VisChart, [{
+        key: '_setSize',
+        value: function _setSize(width, height) {
+            _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), '_setSize', this).call(this, width, height);
+            this.init();
+        }
+    }, {
         key: 'init',
         value: function init() {
             //console.log( 'VisChartBase init', Date.now(), this.width, this.height, this.canvas );
@@ -81,23 +87,23 @@ var VisChart = function (_VisChartBase) {
         }
     }, {
         key: 'update',
-        value: function update(data) {
+        value: function update(data, ignoreLegend) {
             var _this2 = this;
 
             this.data = data;
+            this.ignoreLegend = ignoreLegend;
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
-            this.ins.map(function (item) {
-                item.destroy();
-            });
+
+            this.clearUpdate();
 
             //console.log( ju );
 
-            this.stage.removeChildren();
+            //this.stage.removeChildren();
 
             //console.log( 'update data', data );
 
-            if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
+            if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length && !ignoreLegend) {
                 this.legend = new _legend2.default(this.box, this.width, this.height);
                 this.legend.setStage(this.stage);
                 this.legend.setOptions({
@@ -171,8 +177,19 @@ var VisChart = function (_VisChartBase) {
         key: 'destroy',
         value: function destroy() {
             _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), 'destroy', this).call(this);
+
+            this.clearUpdate();
+
             this.stage && this.stage.destroy();
             this.stage = null;
+        }
+    }, {
+        key: 'clearUpdate',
+        value: function clearUpdate() {
+            this.ins.map(function (item) {
+                item.destroy();
+            });
+            this.legend && !this.ignoreLegend && this.legend.destroy();
         }
     }]);
 
