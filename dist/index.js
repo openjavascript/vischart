@@ -103,16 +103,18 @@ var VisChart = function (_VisChartBase) {
 
             //console.log( 'update data', data );
 
-            if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length && !ignoreLegend) {
-                this.legend = new _legend2.default(this.box, this.width, this.height);
-                this.legend.setStage(this.stage);
-                this.legend.setOptions({
-                    onChange: function onChange(group) {
-                        //console.log( 'legend onchange', group );
-                        _this2.initChart();
-                    }
-                });
-                this.legend.update(this.data.legend);
+            if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
+                if (this.legend && ignoreLegend) {} else {
+                    this.legend = new _legend2.default(this.box, this.width, this.height);
+                    this.legend.setStage(this.stage);
+                    this.legend.setOptions({
+                        onChange: function onChange(group) {
+                            //console.log( 'legend onchange', group );
+                            _this2.initChart();
+                        }
+                    });
+                    this.legend.update(this.data.legend);
+                }
             }
             this.initChart();
             return this;

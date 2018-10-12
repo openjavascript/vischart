@@ -159,7 +159,6 @@ var Dount = function (_VisChartBase) {
             var _this3 = this;
 
             if (this.isDestroy) return;
-
             if (this.isDone) return;
             //this.countAngle = this.totalAngle;
 
@@ -192,32 +191,9 @@ var Dount = function (_VisChartBase) {
 
                 if (tmpAngle < item.itemData.startAngle) continue;
 
-                item.pathData.push('M');
-                for (var _i = item.itemData.startAngle;; _i += step) {
-                    if (_i >= tmpAngle) _i = tmpAngle;
-
-                    tmppoint = tmp = geometry.distanceAngleToPoint(this.outRadius, _i);
-                    item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                    if (_i == item.itemData.startAngle) item.pathData.push('L');
-
-                    if (_i >= tmpAngle) break;
-                }
-                for (var _i2 = tmpAngle;; _i2 -= step) {
-                    if (_i2 <= item.itemData.startAngle) _i2 = item.itemData.startAngle;
-
-                    tmppoint = tmp = geometry.distanceAngleToPoint(this.inRadius, _i2);
-                    item.pathData.push([tmppoint.x, tmppoint.y].join(',') + ',');
-                    if (_i2 == item.itemData.startAngle) break;
-                }
-
-                item.pathData.push('z');
-
-                item.path.setData(item.pathData.join(''));
+                item.arc.angle(tmpAngle);
             }
-            this.layer.map(function (val, key) {
-                _this3.stage.add(val);
-                val.setZIndex(_this3.layer.length - key);
-            });
+            this.stage.add(this.arcLayer);
 
             window.requestAnimationFrame(function () {
                 _this3.animation();
@@ -260,10 +236,10 @@ var Dount = function (_VisChartBase) {
                 }
             }
             points.push('M');
-            for (var _i3 = 270; _i3 <= 360; _i3++) {
-                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i3);
+            for (var _i = 270; _i <= 360; _i++) {
+                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i);
                 points.push([_tmp.x, _tmp.y].join(',') + ',');
-                if (_i3 == 270) {
+                if (_i == 270) {
                     points.push('L');
                 }
             }
@@ -283,9 +259,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'initDataLayout',
         value: function initDataLayout() {
-            var _this4 = this;
 
-            this.layer = [];
             this.path = [];
             this.line = [];
 
@@ -297,70 +271,63 @@ var Dount = function (_VisChartBase) {
 
             this.stage.add(this.layoutLayer);
 
-            this.data.data.map(function (val, key) {
-                var color = _this4.colors[key % _this4.colors.length];
+            this.arcLayer = new _konva2.default.Layer();
+            this.addDestroy(this.arcLayer);
+
+            for (var ii = this.data.data.length - 1; ii >= 0; ii--) {
+                var val = this.data.data[ii],
+                    key = ii;
+
+                var color = this.colors[key % this.colors.length];
 
                 if (_jsonUtilsx2.default.jsonInData(val, 'itemStyle.color')) {
                     //path.fill( val.itemStyle.color );
                     color = val.itemStyle.color;
                 }
 
-                var path = new _konva2.default.Path({
-                    x: _this4.fixCx(),
-                    y: _this4.fixCy(),
-                    strokeWidth: 1,
-                    stroke: color,
-                    data: '',
-                    fill: color
-                });
-                _this4.addDestroy(path);
-
-                /*
-                console.log( 
-                    key % this.colors.length
-                    , this.colors[ key % this.colors.length] 
-                );
-                */
+                var params = {
+                    x: this.fixCx(),
+                    y: this.fixCy(),
+                    innerRadius: this.inRadius,
+                    outerRadius: this.outRadius,
+                    angle: this.countAngle,
+                    fill: color,
+                    stroke: '#ffffff00',
+                    strokeWidth: 0
+                    //, rotation: this.arcOffset
+                };
+                var arc = new _konva2.default.Arc(params);
+                this.addDestroy(arc);
 
                 var tmp = {
-                    path: path,
+                    arc: arc,
                     pathData: [],
                     itemData: val
                 };
 
-                _this4.path.push(tmp);
+                this.path.push(tmp);
 
                 var line = new _konva2.default.Line({
-                    x: _this4.fixCx(),
-                    y: _this4.fixCy(),
+                    x: this.fixCx(),
+                    y: this.fixCy(),
                     points: [0, 0, 0, 0],
                     stroke: '#ffffff',
                     strokeWidth: 2
                 });
-                _this4.line.push(line);
-                _this4.addDestroy(line);
+                this.line.push(line);
+                this.addDestroy(line);
 
-                var layer = new _konva2.default.Layer();
-                layer.add(path);
-                layer.add(line);
-                _this4.addDestroy(layer);
-
-                _this4.layer.push(layer);
-            });
-            this.layer.map(function (val, key) {
-                _this4.stage.add(val);
-            });
-
-            /*
-            window.requestAnimationFrame( ()=>{ this.tmpfunc() } );
-            */
+                this.arcLayer.add(arc);
+                this.arcLayer.add(line);
+            };
+            this.stage.add(this.arcLayer);
 
             return this;
         }
     }, {
         key: 'calcDataPosition',
         value: function calcDataPosition() {
-            var _this5 = this;
+            var _this4 = this;
 
             if (!this.data) return;
 
@@ -379,7 +346,7 @@ var Dount = function (_VisChartBase) {
 
                 val.percent = parseInt(val._percent * 100);
 
-                val.endAngle = _this5.totalAngle * val._totalPercent;
+                val.endAngle = _this4.totalAngle * val._totalPercent;
             });
 
             //修正浮点数精确度
@@ -403,17 +370,17 @@ var Dount = function (_VisChartBase) {
                 if (!key) {
                     val.startAngle = 0;
                 } else {
-                    val.startAngle = _this5.data.data[key - 1].endAngle;
+                    val.startAngle = _this4.data.data[key - 1].endAngle;
                 }
 
                 val.midAngle = val.startAngle + (val.endAngle - val.startAngle) / 2;
 
-                val.lineStart = geometry.distanceAngleToPoint(_this5.outRadius, val.midAngle);
-                val.lineEnd = geometry.distanceAngleToPoint(_this5.outRadius + _this5.lineLength, val.midAngle);
+                val.lineStart = geometry.distanceAngleToPoint(_this4.outRadius, val.midAngle);
+                val.lineEnd = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
 
-                val.textPoint = geometry.distanceAngleToPoint(_this5.outRadius + _this5.lineLength, val.midAngle);
+                val.textPoint = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
 
-                val.pointDirection = new _pointat2.default(_this5.fixWidth(), _this5.fixHeight(), geometry.pointPlus(val.textPoint, _this5.cpoint));
+                val.pointDirection = new _pointat2.default(_this4.fixWidth(), _this4.fixHeight(), geometry.pointPlus(val.textPoint, _this4.cpoint));
                 var lineAngle = val.pointDirection.autoAngle();
                 val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
 
@@ -422,49 +389,49 @@ var Dount = function (_VisChartBase) {
                     case 8:
                         {
                             //val.lineEnd.x = this.lineLeft;
-                            val.lineEnd.x = -(_this5.outRadius + _this5.lineSpace);
+                            val.lineEnd.x = -(_this4.outRadius + _this4.lineSpace);
 
                             var _tmp2 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp2 > _this5.lineCurveLength) {
+                            if (_tmp2 > _this4.lineCurveLength) {
                                 var tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
-                                    tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, tmpAngle);
+                                    tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, tmpAngle);
                                 tmpPoint = geometry.pointPlus(tmpPoint, val.lineStart);
 
                                 val.lineEnd.x = tmpPoint.x;
                             }
 
-                            val.lineExpend.x = val.lineEnd.x - _this5.lineWidth;
+                            val.lineExpend.x = val.lineEnd.x - _this4.lineWidth;
 
                             break;
                         }
                     default:
                         {
-                            val.lineEnd.x = _this5.outRadius + _this5.lineSpace;
+                            val.lineEnd.x = _this4.outRadius + _this4.lineSpace;
                             var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp3 > _this5.lineCurveLength) {
+                            if (_tmp3 > _this4.lineCurveLength) {
                                 var _tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
-                                    _tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, _tmpAngle);
+                                    _tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, _tmpAngle);
                                 _tmpPoint = geometry.pointPlus(_tmpPoint, val.lineStart);
 
                                 val.lineEnd.x = _tmpPoint.x;
                             }
 
-                            val.lineExpend.x = val.lineEnd.x + _this5.lineWidth;
+                            val.lineExpend.x = val.lineEnd.x + _this4.lineWidth;
                             break;
                         }
                 }
 
-                _this5.lineRange[lineAngle].push(val);
+                _this4.lineRange[lineAngle].push(val);
             });
 
             this.loopSort.map(function (key) {
-                var item = _this5.lineRange[key];
+                var item = _this4.lineRange[key];
                 if (!(item && item.length && item.length > 1)) return;
                 var needFix = void 0;
                 for (var i = 1; i < item.length; i++) {
                     var pre = item[i - 1],
                         cur = item[i];
-                    if (Math.abs(cur.lineEnd.y - pre.lineEnd.y) < _this5.lineHeight) {
+                    if (Math.abs(cur.lineEnd.y - pre.lineEnd.y) < _this4.lineHeight) {
                         needFix = 1;
                         break;
                     }
@@ -474,11 +441,11 @@ var Dount = function (_VisChartBase) {
                         {
                             var tmpY = item[0].lineEnd.y;
                             //console.log( item );
-                            for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
-                                var _pre = item[_i4 + 1],
-                                    _cur = item[_i4];
-                                if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this5.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
-                                    tmpY = _pre.lineEnd.y + _this5.lineHeight;
+                            for (var _i2 = item.length - 2; _i2 >= 0; _i2--) {
+                                var _pre = item[_i2 + 1],
+                                    _cur = item[_i2];
+                                if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this4.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
+                                    tmpY = _pre.lineEnd.y + _this4.lineHeight;
                                     _cur.lineEnd.y = tmpY;
 
                                     /*
@@ -495,17 +462,17 @@ var Dount = function (_VisChartBase) {
                     case 2:
                         {
                             var _tmpY = item[0].lineEnd.y;
-                            for (var _i5 = 1; _i5 < item.length; _i5++) {
-                                var _pre2 = item[_i5 - 1],
-                                    _cur2 = item[_i5],
+                            for (var _i3 = 1; _i3 < item.length; _i3++) {
+                                var _pre2 = item[_i3 - 1],
+                                    _cur2 = item[_i3],
                                     zero = item[0];
 
-                                if (Math.abs(_pre2.lineEnd.y + _this5.fixCy()) < _this5.lineHeight) {
-                                    _pre2.lineExpend.y = _pre2.lineEnd.y = _pre2.lineExpend.y + _this5.lineHeight;
+                                if (Math.abs(_pre2.lineEnd.y + _this4.fixCy()) < _this4.lineHeight) {
+                                    _pre2.lineExpend.y = _pre2.lineEnd.y = _pre2.lineExpend.y + _this4.lineHeight;
                                 }
-                                if (Math.abs(_pre2.lineEnd.y - _cur2.lineEnd.y) < _this5.lineHeight || _cur2.lineEnd.y <= _pre2.lineEnd.y) {
+                                if (Math.abs(_pre2.lineEnd.y - _cur2.lineEnd.y) < _this4.lineHeight || _cur2.lineEnd.y <= _pre2.lineEnd.y) {
 
-                                    _tmpY = _pre2.lineEnd.y + _this5.lineHeight;
+                                    _tmpY = _pre2.lineEnd.y + _this4.lineHeight;
                                     _cur2.lineEnd.y = _tmpY;
 
                                     /*
@@ -523,12 +490,12 @@ var Dount = function (_VisChartBase) {
                     case 4:
                         {
                             var _tmpY2 = 0;
-                            for (var _i6 = item.length - 2; _i6 >= 0; _i6--) {
-                                var _pre3 = item[_i6 + 1],
-                                    _cur3 = item[_i6];
-                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
+                            for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
+                                var _pre3 = item[_i4 + 1],
+                                    _cur3 = item[_i4];
+                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this4.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
                                     //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                                    _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
+                                    _tmpY2 = _pre3.lineEnd.y - _this4.lineHeight;
                                     _cur3.lineEnd.y = _tmpY2;
 
                                     /*
@@ -543,11 +510,11 @@ var Dount = function (_VisChartBase) {
                     case 8:
                         {
                             var _tmpY3 = 0;
-                            for (var _i7 = 1; _i7 < item.length; _i7++) {
-                                var _pre4 = item[_i7 - 1],
-                                    _cur4 = item[_i7];
-                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
-                                    _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
+                            for (var _i5 = 1; _i5 < item.length; _i5++) {
+                                var _pre4 = item[_i5 - 1],
+                                    _cur4 = item[_i5];
+                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this4.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
+                                    _tmpY3 = _pre4.lineEnd.y - _this4.lineHeight;
                                     _cur4.lineEnd.y = _tmpY3;
 
                                     /*
@@ -567,7 +534,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'animationLine',
         value: function animationLine() {
-            var _this6 = this;
+            var _this5 = this;
 
             if (this.lineLengthCount >= this.lineLength) {
                 return;
@@ -582,11 +549,8 @@ var Dount = function (_VisChartBase) {
 
             for (var i = 0; i < this.path.length; i++) {
                 var path = this.path[i];
-                var layer = this.layer[i];
+                var layer = this.arcLayer;
 
-                //console.log( path, path.itemData.pointDirection.auto(), path.itemData.pointDirection.autoAngle()  );
-
-                //let lineEnd = geometry.distanceAngleToPoint( this.outRadius + this.lineLengthCount, path.itemData.midAngle );
                 var lineEnd = path.itemData.lineEnd;
                 var lineExpend = path.itemData.lineExpend;
 
@@ -601,7 +565,7 @@ var Dount = function (_VisChartBase) {
                     this.addIcon(path, layer);
                 } else {
                     window.requestAnimationFrame(function () {
-                        _this6.animationLine();
+                        _this5.animationLine();
                     });
                 }
 
