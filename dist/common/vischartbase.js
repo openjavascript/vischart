@@ -76,6 +76,8 @@ var VisChartBase = function () {
 
             this.loadImage();
 
+            console.log(this.isAnimation(), allData);
+
             return this;
         }
     }, {
@@ -94,6 +96,7 @@ var VisChartBase = function () {
             //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
             if (this.isDestroy) return;
             if (!this.rotationBg.length) return;
+            if (!this.isAnimation()) return;
 
             this.rotationBg.map(function (item) {
                 _this.rotationBgCount = (_this.rotationBgCount - _this.rotationBgStep) % 360;
@@ -298,6 +301,21 @@ var VisChartBase = function () {
         key: 'layer',
         value: function layer() {
             return this.layer;
+        }
+    }, {
+        key: 'isAnimation',
+        value: function isAnimation() {
+            var r = true;
+
+            if (this.allData && 'animation' in this.allData) {
+                r = this.allData.animation;
+            }
+
+            if (this.data && 'animation' in this.data) {
+                r = this.data.animation;
+            }
+
+            return r;
         }
     }, {
         key: 'setLayer',

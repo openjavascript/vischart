@@ -66,6 +66,10 @@ var RoundStateText = function (_VisChartBase) {
             if (this.isDestroy) return;
             if (!this.circleLine) return;
 
+            if (!this.isAnimation()) {
+                return;
+            }
+
             this.circleLineRotation += this.circleLineRotationStep;
 
             this.circleLine.rotation(this.circleLineRotation);

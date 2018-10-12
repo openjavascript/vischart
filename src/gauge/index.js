@@ -224,6 +224,8 @@ export default class Gauge extends VisChartBase  {
             val.ins.setOptions( Object.assign( val, {
                 stage: this.stage
                 , layer: this.layoutLayer
+                , data: this.data
+                , allData: this.allData
             }) );
             val.ins.init( );
             val.ins.update( this.curRate );
@@ -290,6 +292,10 @@ export default class Gauge extends VisChartBase  {
         //console.log( 'animationCircleLine' );
         if( this.isDestroy ) return;
         if( !this.circleLine ) return;
+
+        if( !this.isAnimation() ){
+            return;
+        }
         
         this.circleLineRotation += this.circleLineRotationStep; 
 
@@ -577,8 +583,10 @@ export default class Gauge extends VisChartBase  {
         //console.log( this.angle, this.animationAngle );
         if( this.isDestroy ) return;
         if( this.angle > this.animationAngle ) return;
+
         this.angle += this.rateStep;
-        if( this.angle >= this.animationAngle ) {
+
+        if( this.angle >= this.animationAngle || !this.isAnimation() ) {
             this.angle = this.animationAngle;
         };
 
@@ -600,9 +608,11 @@ export default class Gauge extends VisChartBase  {
 
     animationText(){
         if( this.isDestroy ) return;
+
         if( this.totalNumCount >= this.totalNum ) return;
         this.totalNumCount += this.totalNumStep;
-        if( this.totalNumCount >= this.totalNum ) {
+
+        if( this.totalNumCount >= this.totalNum || !this.isAnimation() ) {
             this.totalNumCount = this.totalNum;
         };
 

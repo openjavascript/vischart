@@ -29,6 +29,10 @@ export default class RoundStateText extends VisChartBase  {
     animationCircleLine(){
         if( this.isDestroy ) return;
         if( !this.circleLine ) return;
+
+        if( !this.isAnimation() ){
+            return;
+        }
         
         this.circleLineRotation += this.circleLineRotationStep; 
 

@@ -273,7 +273,9 @@ var Gauge = function (_VisChartBase) {
                 val.ins = new _roundstatetext2.default(_this4.box, _this4.width, _this4.height);
                 val.ins.setOptions(Object.assign(val, {
                     stage: _this4.stage,
-                    layer: _this4.layoutLayer
+                    layer: _this4.layoutLayer,
+                    data: _this4.data,
+                    allData: _this4.allData
                 }));
                 val.ins.init();
                 val.ins.update(_this4.curRate);
@@ -347,6 +349,10 @@ var Gauge = function (_VisChartBase) {
             //console.log( 'animationCircleLine' );
             if (this.isDestroy) return;
             if (!this.circleLine) return;
+
+            if (!this.isAnimation()) {
+                return;
+            }
 
             this.circleLineRotation += this.circleLineRotationStep;
 
@@ -640,8 +646,10 @@ var Gauge = function (_VisChartBase) {
             //console.log( this.angle, this.animationAngle );
             if (this.isDestroy) return;
             if (this.angle > this.animationAngle) return;
+
             this.angle += this.rateStep;
-            if (this.angle >= this.animationAngle) {
+
+            if (this.angle >= this.animationAngle || !this.isAnimation()) {
                 this.angle = this.animationAngle;
             };
 
@@ -669,9 +677,11 @@ var Gauge = function (_VisChartBase) {
             var _this9 = this;
 
             if (this.isDestroy) return;
+
             if (this.totalNumCount >= this.totalNum) return;
             this.totalNumCount += this.totalNumStep;
-            if (this.totalNumCount >= this.totalNum) {
+
+            if (this.totalNumCount >= this.totalNum || !this.isAnimation()) {
                 this.totalNumCount = this.totalNum;
             };
 

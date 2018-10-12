@@ -65,6 +65,9 @@ export default class VisChartBase {
 
         this.loadImage();
 
+
+        console.log( this.isAnimation(), allData );
+
         return this;
     }
 
@@ -79,6 +82,7 @@ export default class VisChartBase {
         //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
         if( this.isDestroy ) return;
         if( !this.rotationBg.length ) return;
+        if( !this.isAnimation() ) return;
 
         this.rotationBg.map( item => {
             this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
@@ -272,6 +276,20 @@ export default class VisChartBase {
 
     layer(){
         return this.layer;
+    }
+
+    isAnimation(){
+        let r = true;
+
+        if( this.allData && 'animation' in this.allData ){
+            r = this.allData.animation;
+        }
+
+        if( this.data && 'animation' in this.data ){
+            r = this.data.animation;
+        }
+
+        return r;
     }
 
     setLayer( layer ){

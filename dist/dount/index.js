@@ -144,6 +144,10 @@ var Dount = function (_VisChartBase) {
             if (this.isDestroy) return;
             if (!this.circleLine) return;
 
+            if (!this.isAnimation()) {
+                return;
+            }
+
             this.circleLineRotation += this.circleLineRotationStep;
 
             this.circleLine.rotation(this.circleLineRotation);
@@ -160,7 +164,6 @@ var Dount = function (_VisChartBase) {
 
             if (this.isDestroy) return;
             if (this.isDone) return;
-            //this.countAngle = this.totalAngle;
 
             var tmp = void 0,
                 tmppoint = void 0,
@@ -169,7 +172,7 @@ var Dount = function (_VisChartBase) {
             this.countAngle += this.animationStep;
             //this.countAngle += 350;
 
-            if (this.countAngle >= this.totalAngle) {
+            if (this.countAngle >= this.totalAngle || !this.isAnimation()) {
                 this.countAngle = this.totalAngle;
                 this.isDone = 1;
             }
@@ -543,7 +546,7 @@ var Dount = function (_VisChartBase) {
 
             this.lineLengthCount += this.lineLengthStep;
 
-            if (this.lineLengthCount >= this.lineLength) {
+            if (this.lineLengthCount >= this.lineLength || !this.isAnimation()) {
                 this.lineLengthCount = this.lineLength;
             }
 

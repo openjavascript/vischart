@@ -96,6 +96,10 @@ export default class Dount extends VisChartBase  {
     animationCircleLine(){
         if( this.isDestroy ) return;
         if( !this.circleLine ) return;
+
+        if( !this.isAnimation() ){
+            return;
+        }
         
         this.circleLineRotation += this.circleLineRotationStep; 
 
@@ -108,14 +112,13 @@ export default class Dount extends VisChartBase  {
     animation(){
         if( this.isDestroy ) return;
         if( this.isDone ) return;
-        //this.countAngle = this.totalAngle;
 
         let tmp, tmppoint, step = this.angleStep;
 
         this.countAngle += this.animationStep;
         //this.countAngle += 350;
 
-        if( this.countAngle >= this.totalAngle ){
+        if( this.countAngle >= this.totalAngle || !this.isAnimation() ){
             this.countAngle = this.totalAngle;
             this.isDone = 1;
         }
@@ -468,7 +471,7 @@ export default class Dount extends VisChartBase  {
         
         this.lineLengthCount += this.lineLengthStep;
 
-        if( this.lineLengthCount >= this.lineLength ){
+        if( this.lineLengthCount >= this.lineLength || !this.isAnimation()  ){
             this.lineLengthCount = this.lineLength;
         }
 
