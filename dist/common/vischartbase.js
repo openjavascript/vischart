@@ -76,8 +76,6 @@ var VisChartBase = function () {
 
             this.loadImage();
 
-            console.log(this.isAnimation(), allData);
-
             return this;
         }
     }, {

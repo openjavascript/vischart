@@ -65,9 +65,6 @@ export default class VisChartBase {
 
         this.loadImage();
 
-
-        console.log( this.isAnimation(), allData );
-
         return this;
     }
 

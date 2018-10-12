@@ -238,6 +238,7 @@ export default class Dount extends VisChartBase  {
                 , strokeWidth: 0
                 //, rotation: this.arcOffset
             };
+            console.log( color, ii );
             let arc = new Konva.Arc( params );
             this.addDestroy( arc );
                 

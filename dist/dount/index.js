@@ -299,6 +299,7 @@ var Dount = function (_VisChartBase) {
                     strokeWidth: 0
                     //, rotation: this.arcOffset
                 };
+                console.log(color, ii);
                 var arc = new _konva2.default.Arc(params);
                 this.addDestroy(arc);
 
