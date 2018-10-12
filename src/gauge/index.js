@@ -271,6 +271,8 @@ export default class Gauge extends VisChartBase  {
         this.animationAngle =  this.getAttackRateAngle() + this.arcOffsetPad;
         //console.log( this.angle, this.animationAngle );
 
+        this.updateWedge();
+
         if( this.curRate ){
             this.rateStep = Math.floor( this.curRate / ( this.animationStep * 2 ) )
             this.animation();
@@ -572,6 +574,7 @@ export default class Gauge extends VisChartBase  {
 
     }
     animation(){
+        //console.log( this.angle, this.animationAngle );
         if( this.isDestroy ) return;
         if( this.angle > this.animationAngle ) return;
         this.angle += this.rateStep;
@@ -579,15 +582,20 @@ export default class Gauge extends VisChartBase  {
             this.angle = this.animationAngle;
         };
 
+        this.updateWedge();
+
+        this.stage.add( this.layer );
+
+        window.requestAnimationFrame( ()=>{ this.animation() } );
+    }
+
+    updateWedge(){
         let point = geometry.distanceAngleToPoint(  this.roundRadius + 6, this.angle )
         this.group.x( this.cx + point.x );
         this.group.y( this.cy + point.y );
         this.group.rotation( this.angle + 90 );
         this.group.rotation( this.angle + 90 );
-
         this.stage.add( this.layer );
-
-        window.requestAnimationFrame( ()=>{ this.animation() } );
     }
 
     animationText(){

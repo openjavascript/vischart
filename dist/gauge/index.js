@@ -325,6 +325,8 @@ var Gauge = function (_VisChartBase) {
             this.animationAngle = this.getAttackRateAngle() + this.arcOffsetPad;
             //console.log( this.angle, this.animationAngle );
 
+            this.updateWedge();
+
             if (this.curRate) {
                 this.rateStep = Math.floor(this.curRate / (this.animationStep * 2));
                 this.animation();
@@ -635,6 +637,7 @@ var Gauge = function (_VisChartBase) {
         value: function animation() {
             var _this8 = this;
 
+            //console.log( this.angle, this.animationAngle );
             if (this.isDestroy) return;
             if (this.angle > this.animationAngle) return;
             this.angle += this.rateStep;
@@ -642,17 +645,23 @@ var Gauge = function (_VisChartBase) {
                 this.angle = this.animationAngle;
             };
 
-            var point = geometry.distanceAngleToPoint(this.roundRadius + 6, this.angle);
-            this.group.x(this.cx + point.x);
-            this.group.y(this.cy + point.y);
-            this.group.rotation(this.angle + 90);
-            this.group.rotation(this.angle + 90);
+            this.updateWedge();
 
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
                 _this8.animation();
             });
+        }
+    }, {
+        key: 'updateWedge',
+        value: function updateWedge() {
+            var point = geometry.distanceAngleToPoint(this.roundRadius + 6, this.angle);
+            this.group.x(this.cx + point.x);
+            this.group.y(this.cy + point.y);
+            this.group.rotation(this.angle + 90);
+            this.group.rotation(this.angle + 90);
+            this.stage.add(this.layer);
         }
     }, {
         key: 'animationText',
