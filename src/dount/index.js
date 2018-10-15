@@ -116,7 +116,10 @@ export default class Dount extends VisChartBase  {
         let tmp, tmppoint, step = this.angleStep;
 
         this.countAngle += this.animationStep;
-        //this.countAngle += 350;
+
+        if( !this.isSeriesAnimation() ){
+            this.countAngle = this.totalAngle;
+        }
 
         if( this.countAngle >= this.totalAngle || !this.isAnimation() ){
             this.countAngle = this.totalAngle;
@@ -234,7 +237,7 @@ export default class Dount extends VisChartBase  {
                 , outerRadius: this.outRadius
                 , angle: this.countAngle
                 , fill: color
-                , stroke: '#ffffff00'
+                , stroke: color
                 , strokeWidth: 0
                 //, rotation: this.arcOffset
             };

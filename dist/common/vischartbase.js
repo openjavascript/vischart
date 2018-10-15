@@ -316,6 +316,17 @@ var VisChartBase = function () {
             return r;
         }
     }, {
+        key: 'isSeriesAnimation',
+        value: function isSeriesAnimation() {
+            var r = true;
+
+            if (this.data && 'seriesAnimation' in this.data) {
+                r = this.data.seriesAnimation;
+            }
+
+            return r;
+        }
+    }, {
         key: 'setLayer',
         value: function setLayer(layer) {
             this.layer = layer;

@@ -289,6 +289,18 @@ export default class VisChartBase {
         return r;
     }
 
+    isSeriesAnimation(){
+        let r = true;
+
+        if( this.data && 'seriesAnimation' in this.data ){
+            r = this.data.seriesAnimation;
+        }
+
+        return r;
+    }
+
+
+
     setLayer( layer ){
         this.layer = layer;
         return this;
