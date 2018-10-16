@@ -109,6 +109,10 @@ var RoundStateText = function (_VisChartBase) {
             this.circle.stroke(color);
             this.circleLine.stroke(color);
 
+            this.stage.add(this.layer);
+
+            //console.log( 'rate', rate );
+
             return this;
         }
     }, {

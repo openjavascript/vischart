@@ -64,8 +64,16 @@ var VisChart = function (_VisChartBase) {
     _createClass(VisChart, [{
         key: '_setSize',
         value: function _setSize(width, height) {
+
             _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), '_setSize', this).call(this, width, height);
             this.init();
+
+            if (this.legend && this.data && this.data.legend) {
+                this.legend.resize(this.width, this.height);
+                this.legend.update(this.data.legend);
+            }
+
+            this.update(this.data, this.ignoreLegend, this.redraw);
         }
     }, {
         key: 'init',
@@ -74,11 +82,16 @@ var VisChart = function (_VisChartBase) {
 
             if (!this.box) return;
 
-            this.stage = new _konva2.default.Stage({
-                container: this.box,
-                width: this.width,
-                height: this.height
-            });
+            if (!this.stage) {
+                this.stage = new _konva2.default.Stage({
+                    container: this.box,
+                    width: this.width,
+                    height: this.height
+                });
+            } else {
+                this.stage.width(this.width);
+                this.stage.height(this.height);
+            }
 
             this.customWidth && (this.box.style.width = this.customWidth + 'px');
             this.customHeight && (this.box.style.height = this.customHeight + 'px');
@@ -90,8 +103,11 @@ var VisChart = function (_VisChartBase) {
         value: function update(data, ignoreLegend) {
             var _this2 = this;
 
+            var redraw = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
             this.data = data;
             this.ignoreLegend = ignoreLegend;
+            this.redraw = redraw;
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
@@ -124,35 +140,45 @@ var VisChart = function (_VisChartBase) {
         value: function initChart() {
             var _this3 = this;
 
-            this.ins.map(function (item) {
-                item.destroy();
-            });
-
-            this.ins = [];
+            if (this.ins && this.ins.length && !this.redraw) {} else {
+                this.ins.map(function (item) {
+                    item.destroy();
+                });
+                this.ins = [];
+            }
 
             this.data.series.map(function (val, key) {
                 //console.log( val, constant );
                 var ins = void 0;
 
-                switch (val.type) {
-                    case constant.CHART_TYPE.dount:
-                        {
-                            ins = new _index2.default(_this3.box, _this3.width, _this3.height);
-                            break;
-                        }
-                    case constant.CHART_TYPE.gauge:
-                        {
-                            ins = new _index4.default(_this3.box, _this3.width, _this3.height);
-                            break;
-                        }
+                if (_this3.ins && _this3.ins.length && _this3.ins[key] && !_this3.redraw) {
+                    ins = _this3.ins[key];
+                } else {
+                    switch (val.type) {
+                        case constant.CHART_TYPE.dount:
+                            {
+                                ins = new _index2.default(_this3.box, _this3.width, _this3.height);
+                                break;
+                            }
+                        case constant.CHART_TYPE.gauge:
+                            {
+                                ins = new _index4.default(_this3.box, _this3.width, _this3.height);
+                                break;
+                            }
+                    }
+                    if (ins) {
+                        _this3.legend && ins.setLegend(_this3.legend);
+                        ins.setStage(_this3.stage);
+                    }
                 }
 
                 if (ins) {
-                    _this3.legend && ins.setLegend(_this3.legend);
                     _this3.options && ins.setOptions(_this3.options);
-                    ins.setStage(_this3.stage);
                     ins.update(_this3.getLegendData(val), _jsonUtilsx2.default.clone(_this3.data));
-                    _this3.ins.push(ins);
+
+                    if (!_this3.ins[key]) {
+                        _this3.ins[key] = ins;
+                    }
                 }
             });
         }
@@ -180,7 +206,11 @@ var VisChart = function (_VisChartBase) {
         value: function destroy() {
             _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), 'destroy', this).call(this);
 
-            this.clearUpdate();
+            //this.clearUpdate();
+            this.ins.map(function (item) {
+                item.destroy();
+            });
+            this.legend && this.legend.destroy();
 
             this.stage && this.stage.destroy();
             this.stage = null;
@@ -188,9 +218,6 @@ var VisChart = function (_VisChartBase) {
     }, {
         key: 'clearUpdate',
         value: function clearUpdate() {
-            this.ins.map(function (item) {
-                item.destroy();
-            });
             this.legend && !this.ignoreLegend && this.legend.destroy();
         }
     }]);

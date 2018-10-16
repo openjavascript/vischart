@@ -22,8 +22,21 @@ export default class VisChart extends VisChartBase {
     }
 
     _setSize( width, height ){
+
         super._setSize( width, height );
         this.init();
+
+        if( 
+            this.legend
+            && this.data 
+            && this.data.legend 
+        ){
+            this.legend.resize( this.width, this.height );
+            this.legend.update( this.data.legend );
+        }
+
+
+        this.update( this.data, this.ignoreLegend, this.redraw );
     }
 
     init(){
@@ -31,11 +44,16 @@ export default class VisChart extends VisChartBase {
 
         if( !this.box ) return;
 
-        this.stage = new Konva.Stage( {
-            container: this.box
-            , width: this.width
-            , height: this.height
-        });
+        if( !this.stage ){
+            this.stage = new Konva.Stage( {
+                container: this.box
+                , width: this.width
+                , height: this.height
+            });
+        }else{
+            this.stage.width( this.width );
+            this.stage.height( this.height );
+        }
 
         this.customWidth && ( this.box.style.width = this.customWidth + 'px' );
         this.customHeight && ( this.box.style.height = this.customHeight + 'px' );
@@ -43,9 +61,10 @@ export default class VisChart extends VisChartBase {
         return this;
     }
 
-    update( data, ignoreLegend ){
+    update( data, ignoreLegend, redraw = true ){
         this.data = data;
         this.ignoreLegend = ignoreLegend;
+        this.redraw = redraw;
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
@@ -77,33 +96,44 @@ export default class VisChart extends VisChartBase {
 
     initChart(){
 
-        this.ins.map( item => {
-            item.destroy();
-        });
-
-        this.ins = [];
+        if( this.ins && this.ins.length &&  !this.redraw  ){
+        }else{
+            this.ins.map( item => {
+                item.destroy();
+            });
+            this.ins = [];
+        }
 
         this.data.series.map( ( val, key ) => {
             //console.log( val, constant );
             let ins;
 
-            switch( val.type ){
-                case constant.CHART_TYPE.dount: {
-                    ins = new Dount( this.box, this.width, this.height );
-                    break;
+            if( this.ins && this.ins.length && this.ins[key] &&  !this.redraw  ){
+                ins = this.ins[key];
+            }else{
+                switch( val.type ){
+                    case constant.CHART_TYPE.dount: {
+                        ins = new Dount( this.box, this.width, this.height );
+                        break;
+                    }
+                    case constant.CHART_TYPE.gauge: {
+                        ins = new Gauge( this.box, this.width, this.height );
+                        break;
+                    }
                 }
-                case constant.CHART_TYPE.gauge: {
-                    ins = new Gauge( this.box, this.width, this.height );
-                    break;
+                if( ins ){
+                    this.legend && ins.setLegend( this.legend );
+                    ins.setStage( this.stage );
                 }
             }
 
             if( ins ){
-                this.legend && ins.setLegend( this.legend );
                 this.options && ( ins.setOptions( this.options ) );
-                ins.setStage( this.stage );
                 ins.update( this.getLegendData( val ), ju.clone( this.data ) );
-                this.ins.push( ins );
+
+                if( !this.ins[key]  ){
+                    this.ins[key] = ins;
+                }
             }
         });
     }
@@ -130,16 +160,17 @@ export default class VisChart extends VisChartBase {
     destroy(){
         super.destroy();
 
-        this.clearUpdate();
+        //this.clearUpdate();
+        this.ins.map( ( item ) => {
+            item.destroy();
+        });
+        this.legend && this.legend.destroy();
 
         this.stage && this.stage.destroy();
         this.stage = null;
     }
 
     clearUpdate(){
-        this.ins.map( ( item ) => {
-            item.destroy();
-        });
         this.legend && !this.ignoreLegend && this.legend.destroy();
     }
 }

@@ -79,6 +79,9 @@ var VisChartBase = function () {
             return this;
         }
     }, {
+        key: 'opacity',
+        value: function opacity(num) {}
+    }, {
         key: 'setLegend',
         value: function setLegend(legend) {
             this.legend = legend;
@@ -154,6 +157,8 @@ var VisChartBase = function () {
         key: 'loadImage',
         value: function loadImage() {
             var _this2 = this;
+
+            if (this.images.length) return;
 
             if (this.iconLayer) this.iconLayer.remove();
             this.iconLayer = new _konva2.default.Layer();
@@ -349,8 +354,13 @@ var VisChartBase = function () {
             this.width = width || this.box.offsetWidth || this.width;
             this.height = height || this.box.offsetHeight || this.height;
 
+            //console.log( this.width, this.height );
+
             this._setSize(this.width, this.height);
         }
+    }, {
+        key: 'remove',
+        value: function remove() {}
     }, {
         key: 'setDestroy',
         value: function setDestroy() {
@@ -361,10 +371,9 @@ var VisChartBase = function () {
         value: function destroy() {
             this.setDestroy();
 
-            //console.log( 'base destroyList.length', this.destroyList.length );
-
             this.destroyList.map(function (item) {
                 if (item) {
+                    //console.log( 'item', item );
                     item.remove();
                     item.destroy();
                 }

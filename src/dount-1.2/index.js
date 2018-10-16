@@ -37,7 +37,6 @@ export default class Dount extends VisChartBase  {
         this.lineOffset = 50;
 
         this.path = [];
-        this.line = [];
 
         this.textOffset = 4;
 
@@ -75,10 +74,6 @@ export default class Dount extends VisChartBase  {
         this.data = data;
         this.allData = allData;
 
-        this.countAngle = 0;
-        this.isDone = 0;
-        this.lineLengthCount = 0;
-
         if( !ju.jsonInData( this.data, 'data' ) ) return;
 
         this.calcDataPosition();
@@ -87,9 +82,7 @@ export default class Dount extends VisChartBase  {
         //console.log( 'dount update', this.data, this, utils );
 
         this.animation();
-        !this.inited && this.animationCircleLine();
-
-        this.inited = 1;
+        this.animationCircleLine();
 
         return this;
     }
@@ -140,7 +133,7 @@ export default class Dount extends VisChartBase  {
             //let i = 2;
             let item = this.path[ i ];
 
-            //console.log( i, item, item.itemData.endAngle, item.itemData.value );
+            //console.log( i, item );
 
             let tmpAngle = this.countAngle;
 
@@ -212,28 +205,23 @@ export default class Dount extends VisChartBase  {
 
     initDataLayout(){
  
-        /*
         this.path = [];
         this.line = [];
-        */
 
 
-        if( !this.inited ){
-            this.layoutLayer = new Konva.Layer();
-            this.addDestroy( this.layoutLayer );
+        this.layoutLayer = new Konva.Layer();
+        this.addDestroy( this.layoutLayer );
 
-            this.drawCircle();
-            this.drawCircleLine();
+        this.drawCircle();
+        this.drawCircleLine();
 
-            this.stage.add( this.layoutLayer );
+        this.stage.add( this.layoutLayer );
 
-            this.arcLayer = new Konva.Layer();
-            this.addDestroy( this.arcLayer );
-        }
+        this.arcLayer = new Konva.Layer();
+        this.addDestroy( this.arcLayer );
 
         for( let ii = this.data.data.length - 1; ii >= 0; ii-- ){
             let val = this.data.data[ii], key = ii;
-            let pathindex = this.data.data.length - 1 - ii;
 
             let color = this.colors[ key % this.colors.length];
 
@@ -241,60 +229,43 @@ export default class Dount extends VisChartBase  {
                 //path.fill( val.itemStyle.color );
                 color = val.itemStyle.color;
             }
-            //console.log(  ii, pathindex );
 
-            //console.log( this.path[pathindex], pathindex, this.path );
+            let params = {
+                x: this.fixCx()
+                , y: this.fixCy()
+                , innerRadius: this.inRadius
+                , outerRadius: this.outRadius
+                , angle: this.countAngle
+                , fill: color
+                , stroke: color
+                , strokeWidth: 0
+                //, rotation: this.arcOffset
+            };
+            let arc = new Konva.Arc( params );
+            this.addDestroy( arc );
+                
+            let tmp = { 
+                arc: arc
+                , pathData: [] 
+                , itemData: val
+            };
 
-            if( !this.path[pathindex] ){
-                let params = {
-                    x: this.fixCx()
-                    , y: this.fixCy()
-                    , innerRadius: this.inRadius
-                    , outerRadius: this.outRadius
-                    , angle: this.countAngle
-                    , fill: color
-                    , stroke: color
-                    , strokeWidth: 0
-                    //, rotation: this.arcOffset
-                };
-                let arc = new Konva.Arc( params );
-                this.addDestroy( arc );
+            this.path.push( tmp );
 
-                let line = new Konva.Line({
-                  x: this.fixCx(),
-                  y: this.fixCy(),
-                  points: [ 0, 0, 0, 0 ],
-                  stroke: '#ffffff',
-                  strokeWidth: 2
-                });
-                this.line.push( line );
+            let line = new Konva.Line({
+              x: this.fixCx(),
+              y: this.fixCy(),
+              points: [ 0, 0, 0, 0 ],
+              stroke: '#ffffff',
+              strokeWidth: 2
+            });
+            this.line.push( line );
+            this.addDestroy( line );
 
-                this.addDestroy( line );
-
-                let tmp = { 
-                    arc: arc
-                    , pathData: [] 
-                    , itemData: val
-                    , line: line
-                };
-
-                this.path.push( tmp );
-
-                this.arcLayer.add( arc );
-                this.arcLayer.add( line );
-            }else{
-                let tmp = this.path[pathindex];
-                tmp.arc.angle( 0 );
-                tmp.itemData = val;
-
-                tmp.text && tmp.text.opacity( 0 );
-                tmp.line && tmp.line.opacity( 0 );
-                tmp.lineicon && tmp.lineicon.opacity( 0 );
-            }
+            this.arcLayer.add( arc );
+            this.arcLayer.add( line );
         };
-
         this.stage.add( this.arcLayer );
-
 
         return this;
     }
@@ -305,7 +276,6 @@ export default class Dount extends VisChartBase  {
         let total = 0, tmp = 0;
 
         this.data.data.map( ( val ) => {
-            //console.log( val );
             total += val.value;
         });
         this.total = total;
@@ -501,8 +471,6 @@ export default class Dount extends VisChartBase  {
             return;
         }
         this.lineLengthCount = this.lineLength;
-
-        //console.log( 'line', Date.now(), this.lineLengthCount, this.lineLength );
         
         this.lineLengthCount += this.lineLengthStep;
 
@@ -513,8 +481,6 @@ export default class Dount extends VisChartBase  {
         for( let i = 0; i < this.path.length; i++ ){
             let path = this.path[i];
             let layer = this.arcLayer;
-
-            path.line && path.line.opacity( 1 );
 
             let lineEnd = path.itemData.lineEnd;
             let lineExpend = path.itemData.lineExpend;
@@ -527,6 +493,9 @@ export default class Dount extends VisChartBase  {
             ] );
 
             if( this.lineLengthCount >= this.lineLength ){
+
+                /*
+                */
                 this.addText( path, layer );
                 this.addIcon( path, layer );
 
@@ -539,12 +508,7 @@ export default class Dount extends VisChartBase  {
     }
 
     addIcon( path, layer ){
-        if( !path.lineicon ){
-            path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
-            this.addDestroy( path.lineicon );
-        }
-        let icon = path.lineicon;
-        icon.opacity( 1 );
+        let icon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
         icon.setOptions( {
             stage: this.stage
             , layer: layer
@@ -555,20 +519,16 @@ export default class Dount extends VisChartBase  {
     }
 
     addText( path, layer ){
-        if( !path.text ){
-            path.text = new Konva.Text( {
-                x: 0
-                , y: 0
-                , text: `${path.itemData.percent}%`
-                , fill: '#a3a7f3'
-                , fontFamily: 'MicrosoftYaHei'
-                , fontSize: 16
-                , fontStyle: 'italic'
-            });
-            this.addDestroy( text );
-        }
-        let text = path.text;
-        text.opacity( 1 );
+        let text = new Konva.Text( {
+            x: 0
+            , y: 0
+            , text: `${path.itemData.percent}%`
+            , fill: '#a3a7f3'
+            , fontFamily: 'MicrosoftYaHei'
+            , fontSize: 16
+            , fontStyle: 'italic'
+        });
+        this.addDestroy( text );
 
         let textPoint = path.itemData.textPoint
             , angleDirect = path.itemData.pointDirection.autoAngle()

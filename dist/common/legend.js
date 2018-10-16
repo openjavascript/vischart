@@ -100,65 +100,83 @@ var Legend = function (_VisChartBase) {
                     color = item.textStyle.color;
                 }
 
-                var rect = new _konva2.default.Rect({
-                    x: x,
-                    y: y,
-                    width: _this2.itemWidth(),
-                    height: _this2.itemHeight(),
-                    fill: color
-                });
-                _this2.addDestroy(rect);
+                if (!_this2.inited) {
+                    var rect = new _konva2.default.Rect({
+                        x: x,
+                        y: y,
+                        width: _this2.itemWidth(),
+                        height: _this2.itemHeight(),
+                        fill: color
+                    });
+                    _this2.addDestroy(rect);
 
-                var bg = new _konva2.default.Rect({
-                    x: x,
-                    y: y,
-                    width: _this2.columnWidth(),
-                    height: _this2.rowHeight(),
-                    fill: '#ffffff00'
-                });
-                _this2.addDestroy(bg);
+                    var bg = new _konva2.default.Rect({
+                        x: x,
+                        y: y,
+                        width: _this2.columnWidth(),
+                        height: _this2.rowHeight(),
+                        fill: '#ffffff00'
+                    });
+                    _this2.addDestroy(bg);
 
-                var text = new _konva2.default.Text({
-                    text: label,
-                    x: x + _this2.iconSpace + rect.width(),
-                    y: y,
-                    fill: _this2.textColor,
-                    fontFamily: 'MicrosoftYaHei',
-                    fontSize: 12
-                });
-                _this2.addDestroy(text);
+                    var text = new _konva2.default.Text({
+                        text: label,
+                        x: x + _this2.iconSpace + rect.width(),
+                        y: y,
+                        fill: _this2.textColor,
+                        fontFamily: 'MicrosoftYaHei',
+                        fontSize: 12
+                    });
+                    _this2.addDestroy(text);
 
-                var group = new _konva2.default.Group();
-                _this2.addDestroy(group);
-                group.add(bg);
-                group.add(rect);
-                group.add(text);
+                    var group = new _konva2.default.Group();
+                    _this2.addDestroy(group);
+                    group.add(bg);
+                    group.add(rect);
+                    group.add(text);
 
-                var data = {
-                    ele: group,
-                    item: item,
-                    text: text,
-                    disabled: false
-                };
+                    var data = {
+                        ele: group,
+                        item: item,
+                        disabled: false,
+                        rect: rect,
+                        bg: bg,
+                        text: text
+                    };
 
-                _this2.group.push(data);
+                    _this2.group.push(data);
+                    group.on('click', function () {
+                        //console.log( 'click', key, data, group, item );
+                        data.disabled = !data.disabled;
 
-                group.on('click', function () {
-                    //console.log( 'click', key, data, group, item );
-                    data.disabled = !data.disabled;
+                        if (data.disabled) {
+                            group.opacity(.6);
+                        } else {
+                            group.opacity(1);
+                        }
 
-                    if (data.disabled) {
-                        group.opacity(.6);
-                    } else {
-                        group.opacity(1);
-                    }
+                        _this2.stage.add(_this2.layer);
 
-                    _this2.stage.add(_this2.layer);
+                        _this2.onChange && _this2.onChange(_this2.group);
+                    });
 
-                    _this2.onChange && _this2.onChange(_this2.group);
-                });
+                    _this2.layer.add(group);
+                } else {
+                    var curgroup = _this2.group[key];
 
-                _this2.layer.add(group);
+                    curgroup.rect.x(x);
+                    curgroup.rect.y(y);
+                    curgroup.rect.width(_this2.itemWidth());
+                    curgroup.rect.height(_this2.itemHeight());
+
+                    curgroup.bg.x(x);
+                    curgroup.bg.y(y);
+                    curgroup.bg.width(_this2.itemWidth());
+                    curgroup.bg.height(_this2.itemHeight());
+
+                    curgroup.text.x(x + _this2.iconSpace + curgroup.rect.width());
+                    curgroup.text.y(y);
+                }
             });
             this.stage.add(this.layer);
 
@@ -182,6 +200,8 @@ var Legend = function (_VisChartBase) {
             */
 
             this.init();
+
+            this.inited = 1;
         }
     }, {
         key: 'outerHeight',

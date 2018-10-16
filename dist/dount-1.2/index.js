@@ -80,7 +80,6 @@ var Dount = function (_VisChartBase) {
             this.lineOffset = 50;
 
             this.path = [];
-            this.line = [];
 
             this.textOffset = 4;
 
@@ -118,10 +117,6 @@ var Dount = function (_VisChartBase) {
             this.data = data;
             this.allData = allData;
 
-            this.countAngle = 0;
-            this.isDone = 0;
-            this.lineLengthCount = 0;
-
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'data')) return;
 
             this.calcDataPosition();
@@ -130,9 +125,7 @@ var Dount = function (_VisChartBase) {
             //console.log( 'dount update', this.data, this, utils );
 
             this.animation();
-            !this.inited && this.animationCircleLine();
-
-            this.inited = 1;
+            this.animationCircleLine();
 
             return this;
         }
@@ -194,7 +187,7 @@ var Dount = function (_VisChartBase) {
                 //let i = 2;
                 var item = this.path[i];
 
-                //console.log( i, item, item.itemData.endAngle, item.itemData.value );
+                //console.log( i, item );
 
                 var tmpAngle = this.countAngle;
 
@@ -273,28 +266,23 @@ var Dount = function (_VisChartBase) {
         key: 'initDataLayout',
         value: function initDataLayout() {
 
-            /*
             this.path = [];
             this.line = [];
-            */
 
-            if (!this.inited) {
-                this.layoutLayer = new _konva2.default.Layer();
-                this.addDestroy(this.layoutLayer);
+            this.layoutLayer = new _konva2.default.Layer();
+            this.addDestroy(this.layoutLayer);
 
-                this.drawCircle();
-                this.drawCircleLine();
+            this.drawCircle();
+            this.drawCircleLine();
 
-                this.stage.add(this.layoutLayer);
+            this.stage.add(this.layoutLayer);
 
-                this.arcLayer = new _konva2.default.Layer();
-                this.addDestroy(this.arcLayer);
-            }
+            this.arcLayer = new _konva2.default.Layer();
+            this.addDestroy(this.arcLayer);
 
             for (var ii = this.data.data.length - 1; ii >= 0; ii--) {
                 var val = this.data.data[ii],
                     key = ii;
-                var pathindex = this.data.data.length - 1 - ii;
 
                 var color = this.colors[key % this.colors.length];
 
@@ -302,58 +290,42 @@ var Dount = function (_VisChartBase) {
                     //path.fill( val.itemStyle.color );
                     color = val.itemStyle.color;
                 }
-                //console.log(  ii, pathindex );
 
-                //console.log( this.path[pathindex], pathindex, this.path );
+                var params = {
+                    x: this.fixCx(),
+                    y: this.fixCy(),
+                    innerRadius: this.inRadius,
+                    outerRadius: this.outRadius,
+                    angle: this.countAngle,
+                    fill: color,
+                    stroke: color,
+                    strokeWidth: 0
+                    //, rotation: this.arcOffset
+                };
+                var arc = new _konva2.default.Arc(params);
+                this.addDestroy(arc);
 
-                if (!this.path[pathindex]) {
-                    var params = {
-                        x: this.fixCx(),
-                        y: this.fixCy(),
-                        innerRadius: this.inRadius,
-                        outerRadius: this.outRadius,
-                        angle: this.countAngle,
-                        fill: color,
-                        stroke: color,
-                        strokeWidth: 0
-                        //, rotation: this.arcOffset
-                    };
-                    var arc = new _konva2.default.Arc(params);
-                    this.addDestroy(arc);
+                var tmp = {
+                    arc: arc,
+                    pathData: [],
+                    itemData: val
+                };
 
-                    var line = new _konva2.default.Line({
-                        x: this.fixCx(),
-                        y: this.fixCy(),
-                        points: [0, 0, 0, 0],
-                        stroke: '#ffffff',
-                        strokeWidth: 2
-                    });
-                    this.line.push(line);
+                this.path.push(tmp);
 
-                    this.addDestroy(line);
+                var line = new _konva2.default.Line({
+                    x: this.fixCx(),
+                    y: this.fixCy(),
+                    points: [0, 0, 0, 0],
+                    stroke: '#ffffff',
+                    strokeWidth: 2
+                });
+                this.line.push(line);
+                this.addDestroy(line);
 
-                    var tmp = {
-                        arc: arc,
-                        pathData: [],
-                        itemData: val,
-                        line: line
-                    };
-
-                    this.path.push(tmp);
-
-                    this.arcLayer.add(arc);
-                    this.arcLayer.add(line);
-                } else {
-                    var _tmp2 = this.path[pathindex];
-                    _tmp2.arc.angle(0);
-                    _tmp2.itemData = val;
-
-                    _tmp2.text && _tmp2.text.opacity(0);
-                    _tmp2.line && _tmp2.line.opacity(0);
-                    _tmp2.lineicon && _tmp2.lineicon.opacity(0);
-                }
+                this.arcLayer.add(arc);
+                this.arcLayer.add(line);
             };
-
             this.stage.add(this.arcLayer);
 
             return this;
@@ -369,7 +341,6 @@ var Dount = function (_VisChartBase) {
                 tmp = 0;
 
             this.data.data.map(function (val) {
-                //console.log( val );
                 total += val.value;
             });
             this.total = total;
@@ -426,8 +397,8 @@ var Dount = function (_VisChartBase) {
                             //val.lineEnd.x = this.lineLeft;
                             val.lineEnd.x = -(_this4.outRadius + _this4.lineSpace);
 
-                            var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp3 > _this4.lineCurveLength) {
+                            var _tmp2 = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp2 > _this4.lineCurveLength) {
                                 var tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
                                     tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, tmpAngle);
                                 tmpPoint = geometry.pointPlus(tmpPoint, val.lineStart);
@@ -442,8 +413,8 @@ var Dount = function (_VisChartBase) {
                     default:
                         {
                             val.lineEnd.x = _this4.outRadius + _this4.lineSpace;
-                            var _tmp4 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp4 > _this4.lineCurveLength) {
+                            var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp3 > _this4.lineCurveLength) {
                                 var _tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
                                     _tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, _tmpAngle);
                                 _tmpPoint = geometry.pointPlus(_tmpPoint, val.lineStart);
@@ -576,8 +547,6 @@ var Dount = function (_VisChartBase) {
             }
             this.lineLengthCount = this.lineLength;
 
-            //console.log( 'line', Date.now(), this.lineLengthCount, this.lineLength );
-
             this.lineLengthCount += this.lineLengthStep;
 
             if (this.lineLengthCount >= this.lineLength || !this.isAnimation()) {
@@ -588,8 +557,6 @@ var Dount = function (_VisChartBase) {
                 var path = this.path[i];
                 var layer = this.arcLayer;
 
-                path.line && path.line.opacity(1);
-
                 var lineEnd = path.itemData.lineEnd;
                 var lineExpend = path.itemData.lineExpend;
 
@@ -597,6 +564,9 @@ var Dount = function (_VisChartBase) {
                 line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y, lineExpend.x, lineExpend.y]);
 
                 if (this.lineLengthCount >= this.lineLength) {
+
+                    /*
+                    */
                     this.addText(path, layer);
                     this.addIcon(path, layer);
                 } else {
@@ -611,12 +581,7 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addIcon',
         value: function addIcon(path, layer) {
-            if (!path.lineicon) {
-                path.lineicon = new _iconcircle2.default(this.box, this.fixWidth(), this.fixHeight());
-                this.addDestroy(path.lineicon);
-            }
-            var icon = path.lineicon;
-            icon.opacity(1);
+            var icon = new _iconcircle2.default(this.box, this.fixWidth(), this.fixHeight());
             icon.setOptions({
                 stage: this.stage,
                 layer: layer,
@@ -628,20 +593,16 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addText',
         value: function addText(path, layer) {
-            if (!path.text) {
-                path.text = new _konva2.default.Text({
-                    x: 0,
-                    y: 0,
-                    text: path.itemData.percent + '%',
-                    fill: '#a3a7f3',
-                    fontFamily: 'MicrosoftYaHei',
-                    fontSize: 16,
-                    fontStyle: 'italic'
-                });
-                this.addDestroy(text);
-            }
-            var text = path.text;
-            text.opacity(1);
+            var text = new _konva2.default.Text({
+                x: 0,
+                y: 0,
+                text: path.itemData.percent + '%',
+                fill: '#a3a7f3',
+                fontFamily: 'MicrosoftYaHei',
+                fontSize: 16,
+                fontStyle: 'italic'
+            });
+            this.addDestroy(text);
 
             var textPoint = path.itemData.textPoint,
                 angleDirect = path.itemData.pointDirection.autoAngle();

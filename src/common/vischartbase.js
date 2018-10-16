@@ -68,6 +68,9 @@ export default class VisChartBase {
         return this;
     }
 
+    opacity( num ){
+    }
+
     setLegend( legend ){
         this.legend = legend;
     }
@@ -130,9 +133,12 @@ export default class VisChartBase {
 */
     loadImage(){
 
+        if( this.images.length ) return;
+
         if( this.iconLayer ) this.iconLayer.remove();
         this.iconLayer = new Konva.Layer();
         this.addDestroy( this.iconLayer );
+        
 
         this.images = [];
 
@@ -317,7 +323,12 @@ export default class VisChartBase {
         this.width = width      || this.box.offsetWidth     || this.width;
         this.height = height    || this.box.offsetHeight    || this.height;
 
+        //console.log( this.width, this.height );
+
         this._setSize( this.width, this.height );
+    }
+
+    remove() {
     }
 
     setDestroy(){
@@ -327,10 +338,9 @@ export default class VisChartBase {
     destroy(){
         this.setDestroy();
 
-        //console.log( 'base destroyList.length', this.destroyList.length );
-
         this.destroyList.map( item => {
             if( item ){
+                //console.log( 'item', item );
                 item.remove();
                 item.destroy();
             }

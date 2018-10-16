@@ -34,43 +34,52 @@ export default class IconCircle extends VisChartBase  {
         return this;
     }
 
+    opacity( num ){
+        this.group && this.group.opacity( num );
+
+        return this;
+    }
+
     update( point ){
         this.point = point;
 
-        this.group = new Konva.Group({
-            x: this.point.x + this.cx
-            , y: this.point.y + this.cy
-            , width: this.outRadius * 2
-            , height: this.outRadius * 2
-        });
-        this.addDestroy( this.group );
+        if( !this.inited ){
+            this.group = new Konva.Group({
+                x: this.point.x + this.cx
+                , y: this.point.y + this.cy
+                , width: this.outRadius * 2
+                , height: this.outRadius * 2
+            });
+            this.addDestroy( this.group );
 
-        this.circle = new Konva.Circle( {
-            radius: this.inRadius
-            , fill: this.color
-            , stroke: this.color
-            , x: 0
-            , y: 0
-        });
-        this.addDestroy( this.circle );
+            this.circle = new Konva.Circle( {
+                radius: this.inRadius
+                , fill: this.color
+                , stroke: this.color
+                , x: 0
+                , y: 0
+            });
+            this.addDestroy( this.circle );
 
-        this.outcircle = new Konva.Circle( {
-            radius: this.outRadius
-            , fill: '#ffffff00'
-            , stroke: this.color
-            , strokeWidth: 1
-            , x: 0
-            , y: 0
-        });
-        this.addDestroy( this.outcircle );
+            this.outcircle = new Konva.Circle( {
+                radius: this.outRadius
+                , fill: '#ffffff00'
+                , stroke: this.color
+                , strokeWidth: 1
+                , x: 0
+                , y: 0
+            });
+            this.addDestroy( this.outcircle );
+        }else{
+            this.group.x( this.point.x + this.cx );
+            this.group.y( this.point.y + this.cy );
+        }
 
         this.group.add( this.circle );
-        //this.group.add( this.outcircle );
-
         this.group.scale( { x: this.cur, y: this.cur } );
-
         this.layer.add( this.group );
 
+        this.inited = 1;
         //window.requestAnimationFrame( ()=>{ this.animation() } );
     }
 
