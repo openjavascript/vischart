@@ -24,6 +24,7 @@ export default class VisChart extends VisChartBase {
     _setSize( width, height ){
 
         super._setSize( width, height );
+
         this.init();
 
         if( 
@@ -55,6 +56,9 @@ export default class VisChart extends VisChartBase {
             this.stage.height( this.height );
         }
 
+        console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
+        console.log( this );
+
         this.customWidth && ( this.box.style.width = this.customWidth + 'px' );
         this.customHeight && ( this.box.style.height = this.customHeight + 'px' );
 
@@ -78,6 +82,7 @@ export default class VisChart extends VisChartBase {
 
         if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length ){
             if( this.legend && ignoreLegend ){
+                this.emptyblock = 'kao';
             }else{
                 this.legend = new Legend( this.box, this.width, this.height );
                 this.legend.setStage( this.stage );
@@ -97,6 +102,7 @@ export default class VisChart extends VisChartBase {
     initChart(){
 
         if( this.ins && this.ins.length &&  !this.redraw  ){
+                this.emptyblock = 'kao';
         }else{
             this.ins.map( item => {
                 item.destroy();
@@ -110,6 +116,8 @@ export default class VisChart extends VisChartBase {
 
             if( this.ins && this.ins.length && this.ins[key] &&  !this.redraw  ){
                 ins = this.ins[key];
+                ins.width = this.width;
+                ins.height = this.height;
             }else{
                 switch( val.type ){
                     case constant.CHART_TYPE.dount: {

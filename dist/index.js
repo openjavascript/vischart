@@ -66,6 +66,13 @@ var VisChart = function (_VisChartBase) {
         value: function _setSize(width, height) {
 
             _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), '_setSize', this).call(this, width, height);
+
+            width = width || this.width;
+            height = height || this.height;
+
+            this.width = width;
+            this.height = height;
+
             this.init();
 
             if (this.legend && this.data && this.data.legend) {
@@ -92,6 +99,9 @@ var VisChart = function (_VisChartBase) {
                 this.stage.width(this.width);
                 this.stage.height(this.height);
             }
+
+            console.log(this.width, this.height, this.box.offsetWidth, this.box.offsetHeight);
+            console.log(this);
 
             this.customWidth && (this.box.style.width = this.customWidth + 'px');
             this.customHeight && (this.box.style.height = this.customHeight + 'px');
@@ -120,7 +130,9 @@ var VisChart = function (_VisChartBase) {
             //console.log( 'update data', data );
 
             if (_jsonUtilsx2.default.jsonInData(this.data, 'legend.data') && this.data.legend.data.length) {
-                if (this.legend && ignoreLegend) {} else {
+                if (this.legend && ignoreLegend) {
+                    this.emptyblock = 'kao';
+                } else {
                     this.legend = new _legend2.default(this.box, this.width, this.height);
                     this.legend.setStage(this.stage);
                     this.legend.setOptions({
@@ -140,7 +152,9 @@ var VisChart = function (_VisChartBase) {
         value: function initChart() {
             var _this3 = this;
 
-            if (this.ins && this.ins.length && !this.redraw) {} else {
+            if (this.ins && this.ins.length && !this.redraw) {
+                this.emptyblock = 'kao';
+            } else {
                 this.ins.map(function (item) {
                     item.destroy();
                 });
@@ -153,6 +167,8 @@ var VisChart = function (_VisChartBase) {
 
                 if (_this3.ins && _this3.ins.length && _this3.ins[key] && !_this3.redraw) {
                     ins = _this3.ins[key];
+                    ins.width = _this3.width;
+                    ins.height = _this3.height;
                 } else {
                     switch (val.type) {
                         case constant.CHART_TYPE.dount:

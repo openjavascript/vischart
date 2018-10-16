@@ -23,11 +23,16 @@ export default class VisChartBase {
 
         this.destroyList = [];
 
-        this.customWidth = width;
-        this.customHeight = height;
+        width = width  || this.box.offsetWidth
+        height = height || this.box.offsetHeight;
 
         this.width = width  || this.box.offsetWidth;
         this.height = height || this.box.offsetHeight;
+
+        this.customWidth = width ||  this.width;
+        this.customHeight = height || this.height;
+
+        //console.log( this.width, this.height );
 
         this.max = this.maxSize = Math.max( this.width, this.height );
         this.min = this.minSize =  Math.min( this.width, this.height );
@@ -60,6 +65,8 @@ export default class VisChartBase {
     }
 
     update( data, allData ){
+        console.log( 'update', this.name, Date.now(), this.width, this.height );
+
         this.data = data;
         this.allData = allData;
 
@@ -317,6 +324,11 @@ export default class VisChartBase {
     }
 
     resize( width, height, data = null, allData = null ){
+        //console.log( 'resize', this.name, Date.now(), width, height );
+
+        this.customWidth = width || this.width;
+        this.customHeight = height || this.height;
+
         this.data = data || this.data;
         this.allData = allData || this.allData;
 

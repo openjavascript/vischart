@@ -33,11 +33,16 @@ var VisChartBase = function () {
 
             this.destroyList = [];
 
-            this.customWidth = width;
-            this.customHeight = height;
+            width = width || this.box.offsetWidth;
+            height = height || this.box.offsetHeight;
 
             this.width = width || this.box.offsetWidth;
             this.height = height || this.box.offsetHeight;
+
+            this.customWidth = width || this.width;
+            this.customHeight = height || this.height;
+
+            //console.log( this.width, this.height );
 
             this.max = this.maxSize = Math.max(this.width, this.height);
             this.min = this.minSize = Math.min(this.width, this.height);
@@ -71,6 +76,8 @@ var VisChartBase = function () {
     }, {
         key: 'update',
         value: function update(data, allData) {
+            console.log('update', this.name, Date.now(), this.width, this.height);
+
             this.data = data;
             this.allData = allData;
 
@@ -347,6 +354,11 @@ var VisChartBase = function () {
         value: function resize(width, height) {
             var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
             var allData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            //console.log( 'resize', this.name, Date.now(), width, height );
+
+            this.customWidth = width || this.width;
+            this.customHeight = height || this.height;
 
             this.data = data || this.data;
             this.allData = allData || this.allData;
