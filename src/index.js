@@ -36,8 +36,9 @@ export default class VisChart extends VisChartBase {
             this.legend.update( this.data.legend );
         }
 
-
-        this.update( this.data, this.ignoreLegend, this.redraw );
+        let tmpredraw = this.redraw;
+        this.update( this.data, this.ignoreLegend );
+        this.redraw = tmpredraw;
     }
 
     init(){
@@ -56,8 +57,8 @@ export default class VisChart extends VisChartBase {
             this.stage.height( this.height );
         }
 
-        console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
-        console.log( this );
+        //console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
+        //console.log( this );
 
         this.customWidth && ( this.box.style.width = this.customWidth + 'px' );
         this.customHeight && ( this.box.style.height = this.customHeight + 'px' );
@@ -71,6 +72,25 @@ export default class VisChart extends VisChartBase {
         this.redraw = redraw;
 
         if( !ju.jsonInData( this.data, 'series' ) ) return;
+
+        this.data
+        && this.data.legend
+        && this.data.legend.data
+        && this.data.legend.data.legend
+        && this.data.legend.data.map( ( item, key )=> {
+            item.realIndex = key;
+        });
+
+
+        this.data
+        && this.data.series 
+        && this.data.series.length 
+        && this.data.series.map( sitem => {
+            sitem.data && sitem.data.length 
+            && sitem.data.map( ( item, key ) => {
+                item.realIndex = key;
+            });
+        });
 
         this.clearUpdate();
 
@@ -160,7 +180,6 @@ export default class VisChart extends VisChartBase {
             });
             data.data = tmp;
         }
-
 
         return data;
     }

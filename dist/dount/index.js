@@ -101,6 +101,8 @@ var Dount = function (_VisChartBase) {
 
             this.loopSort = [4, 8, 1, 2];
 
+            this.clearList = [];
+
             this.init();
         }
     }, {
@@ -124,6 +126,7 @@ var Dount = function (_VisChartBase) {
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'data')) return;
 
+            this.clearItems();
             this.calcDataPosition();
             this.initDataLayout();
 
@@ -273,11 +276,6 @@ var Dount = function (_VisChartBase) {
         key: 'initDataLayout',
         value: function initDataLayout() {
 
-            /*
-            this.path = [];
-            this.line = [];
-            */
-
             if (!this.inited) {
                 this.layoutLayer = new _konva2.default.Layer();
                 this.addDestroy(this.layoutLayer);
@@ -290,6 +288,9 @@ var Dount = function (_VisChartBase) {
                 this.arcLayer = new _konva2.default.Layer();
                 this.addDestroy(this.arcLayer);
             }
+
+            this.path = [];
+            this.line = [];
 
             for (var ii = this.data.data.length - 1; ii >= 0; ii--) {
                 var val = this.data.data[ii],
@@ -306,52 +307,41 @@ var Dount = function (_VisChartBase) {
 
                 //console.log( this.path[pathindex], pathindex, this.path );
 
-                if (!this.path[pathindex]) {
-                    var params = {
-                        x: this.fixCx(),
-                        y: this.fixCy(),
-                        innerRadius: this.inRadius,
-                        outerRadius: this.outRadius,
-                        angle: this.countAngle,
-                        fill: color,
-                        stroke: color,
-                        strokeWidth: 0
-                        //, rotation: this.arcOffset
-                    };
-                    var arc = new _konva2.default.Arc(params);
-                    this.addDestroy(arc);
+                var params = {
+                    x: this.fixCx(),
+                    y: this.fixCy(),
+                    innerRadius: this.inRadius,
+                    outerRadius: this.outRadius,
+                    angle: this.countAngle,
+                    fill: color,
+                    stroke: color,
+                    strokeWidth: 0
+                    //, rotation: this.arcOffset
+                };
+                var arc = new _konva2.default.Arc(params);
+                this.clearList.push(arc);
 
-                    var line = new _konva2.default.Line({
-                        x: this.fixCx(),
-                        y: this.fixCy(),
-                        points: [0, 0, 0, 0],
-                        stroke: '#ffffff',
-                        strokeWidth: 2
-                    });
-                    this.line.push(line);
+                var line = new _konva2.default.Line({
+                    x: this.fixCx(),
+                    y: this.fixCy(),
+                    points: [0, 0, 0, 0],
+                    stroke: '#ffffff',
+                    strokeWidth: 2
+                });
+                this.line.push(line);
+                this.clearList.push(line);
 
-                    this.addDestroy(line);
+                var tmp = {
+                    arc: arc,
+                    pathData: [],
+                    itemData: val,
+                    line: line
+                };
 
-                    var tmp = {
-                        arc: arc,
-                        pathData: [],
-                        itemData: val,
-                        line: line
-                    };
+                this.path.push(tmp);
 
-                    this.path.push(tmp);
-
-                    this.arcLayer.add(arc);
-                    this.arcLayer.add(line);
-                } else {
-                    var _tmp2 = this.path[pathindex];
-                    _tmp2.arc.angle(0);
-                    _tmp2.itemData = val;
-
-                    _tmp2.text && _tmp2.text.opacity(0);
-                    _tmp2.line && _tmp2.line.opacity(0);
-                    _tmp2.lineicon && _tmp2.lineicon.opacity(0);
-                }
+                this.arcLayer.add(arc);
+                this.arcLayer.add(line);
             };
 
             this.stage.add(this.arcLayer);
@@ -359,236 +349,23 @@ var Dount = function (_VisChartBase) {
             return this;
         }
     }, {
-        key: 'calcDataPosition',
-        value: function calcDataPosition() {
-            var _this4 = this;
-
-            if (!this.data) return;
-
-            var total = 0,
-                tmp = 0;
-
-            this.data.data.map(function (val) {
-                //console.log( val );
-                total += val.value;
-            });
-            this.total = total;
-
-            this.data.data.map(function (val) {
-                val._percent = utils.parseFinance(val.value / total);
-                tmp = utils.parseFinance(tmp + val._percent);
-                val._totalPercent = tmp;
-
-                val.percent = parseInt(val._percent * 100);
-
-                val.endAngle = _this4.totalAngle * val._totalPercent;
-            });
-
-            //修正浮点数精确度
-            if (this.data.data.length) {
-                var item = this.data.data[this.data.data.length - 1];
-                tmp = tmp - item._percent;
-
-                item._percent = 1 - tmp;
-                item.percent = parseInt(item._percent * 100);
-                item._totalPercent = 1;
-                item.endAngle = this.totalAngle;
-            }
-
-            this.lineRange = {
-                "1": [],
-                "2": [],
-                "4": [],
-                "8": []
-                //计算开始角度, 计算指示线的2端
-            };this.data.data.map(function (val, key) {
-                if (!key) {
-                    val.startAngle = 0;
-                } else {
-                    val.startAngle = _this4.data.data[key - 1].endAngle;
-                }
-
-                val.midAngle = val.startAngle + (val.endAngle - val.startAngle) / 2;
-
-                val.lineStart = geometry.distanceAngleToPoint(_this4.outRadius, val.midAngle);
-                val.lineEnd = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
-
-                val.textPoint = geometry.distanceAngleToPoint(_this4.outRadius + _this4.lineLength, val.midAngle);
-
-                val.pointDirection = new _pointat2.default(_this4.fixWidth(), _this4.fixHeight(), geometry.pointPlus(val.textPoint, _this4.cpoint));
-                var lineAngle = val.pointDirection.autoAngle();
-                val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
-
-                switch (lineAngle) {
-                    case 1:
-                    case 8:
-                        {
-                            //val.lineEnd.x = this.lineLeft;
-                            val.lineEnd.x = -(_this4.outRadius + _this4.lineSpace);
-
-                            var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp3 > _this4.lineCurveLength) {
-                                var tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
-                                    tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, tmpAngle);
-                                tmpPoint = geometry.pointPlus(tmpPoint, val.lineStart);
-
-                                val.lineEnd.x = tmpPoint.x;
-                            }
-
-                            val.lineExpend.x = val.lineEnd.x - _this4.lineWidth;
-
-                            break;
-                        }
-                    default:
-                        {
-                            val.lineEnd.x = _this4.outRadius + _this4.lineSpace;
-                            var _tmp4 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp4 > _this4.lineCurveLength) {
-                                var _tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
-                                    _tmpPoint = geometry.distanceAngleToPoint(_this4.lineCurveLength, _tmpAngle);
-                                _tmpPoint = geometry.pointPlus(_tmpPoint, val.lineStart);
-
-                                val.lineEnd.x = _tmpPoint.x;
-                            }
-
-                            val.lineExpend.x = val.lineEnd.x + _this4.lineWidth;
-                            break;
-                        }
-                }
-
-                _this4.lineRange[lineAngle].push(val);
-            });
-
-            this.loopSort.map(function (key) {
-                var item = _this4.lineRange[key];
-                if (!(item && item.length && item.length > 1)) return;
-                var needFix = void 0;
-                for (var i = 1; i < item.length; i++) {
-                    var pre = item[i - 1],
-                        cur = item[i];
-                    if (Math.abs(cur.lineEnd.y - pre.lineEnd.y) < _this4.lineHeight) {
-                        needFix = 1;
-                        break;
-                    }
-                }
-                switch (key) {
-                    case 1:
-                        {
-                            var tmpY = item[0].lineEnd.y;
-                            //console.log( item );
-                            for (var _i2 = item.length - 2; _i2 >= 0; _i2--) {
-                                var _pre = item[_i2 + 1],
-                                    _cur = item[_i2];
-                                if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this4.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
-                                    tmpY = _pre.lineEnd.y + _this4.lineHeight;
-                                    _cur.lineEnd.y = tmpY;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //tmpY = cur.lineStart.y + this.lineHeight;
-                                        //cur.lineEnd.y = tmpY;
-                                    }
-                                    */
-                                    _cur.lineExpend.y = tmpY;
-                                }
-                            }
-                            break;
-                        }
-                    case 2:
-                        {
-                            var _tmpY = item[0].lineEnd.y;
-                            for (var _i3 = 1; _i3 < item.length; _i3++) {
-                                var _pre2 = item[_i3 - 1],
-                                    _cur2 = item[_i3],
-                                    zero = item[0];
-
-                                if (Math.abs(_pre2.lineEnd.y + _this4.fixCy()) < _this4.lineHeight) {
-                                    _pre2.lineExpend.y = _pre2.lineEnd.y = _pre2.lineExpend.y + _this4.lineHeight;
-                                }
-                                if (Math.abs(_pre2.lineEnd.y - _cur2.lineEnd.y) < _this4.lineHeight || _cur2.lineEnd.y <= _pre2.lineEnd.y) {
-
-                                    _tmpY = _pre2.lineEnd.y + _this4.lineHeight;
-                                    _cur2.lineEnd.y = _tmpY;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //tmpY = cur.lineStart.y + this.lineHeight;
-                                        //cur.lineEnd.y = tmpY;
-                                    }
-                                    */
-                                    _cur2.lineExpend.y = _tmpY;
-                                }
-                            }
-
-                            break;
-                        }
-                    case 4:
-                        {
-                            var _tmpY2 = 0;
-                            for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
-                                var _pre3 = item[_i4 + 1],
-                                    _cur3 = item[_i4];
-                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this4.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
-                                    //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                                    _tmpY2 = _pre3.lineEnd.y - _this4.lineHeight;
-                                    _cur3.lineEnd.y = _tmpY2;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                    }
-                                    */
-                                    _cur3.lineExpend.y = _tmpY2;
-                                }
-                            }
-                            break;
-                        }
-                    case 8:
-                        {
-                            var _tmpY3 = 0;
-                            for (var _i5 = 1; _i5 < item.length; _i5++) {
-                                var _pre4 = item[_i5 - 1],
-                                    _cur4 = item[_i5];
-                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this4.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
-                                    _tmpY3 = _pre4.lineEnd.y - _this4.lineHeight;
-                                    _cur4.lineEnd.y = _tmpY3;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
-                                    }
-                                    */
-                                    _cur4.lineExpend.y = _cur4.lineEnd.y;
-                                }
-                            }
-
-                            break;
-                        }
-                }
-            });
-        }
-    }, {
         key: 'animationLine',
         value: function animationLine() {
-            var _this5 = this;
+            var _this4 = this;
 
             if (this.lineLengthCount >= this.lineLength) {
                 return;
             }
             this.lineLengthCount = this.lineLength;
 
-            //console.log( 'line', Date.now(), this.lineLengthCount, this.lineLength );
-
             this.lineLengthCount += this.lineLengthStep;
 
             if (this.lineLengthCount >= this.lineLength || !this.isAnimation()) {
                 this.lineLengthCount = this.lineLength;
             }
-
             for (var i = 0; i < this.path.length; i++) {
                 var path = this.path[i];
                 var layer = this.arcLayer;
-
-                path.line && path.line.opacity(1);
 
                 var lineEnd = path.itemData.lineEnd;
                 var lineExpend = path.itemData.lineExpend;
@@ -601,7 +378,7 @@ var Dount = function (_VisChartBase) {
                     this.addIcon(path, layer);
                 } else {
                     window.requestAnimationFrame(function () {
-                        _this5.animationLine();
+                        _this4.animationLine();
                     });
                 }
 
@@ -613,10 +390,10 @@ var Dount = function (_VisChartBase) {
         value: function addIcon(path, layer) {
             if (!path.lineicon) {
                 path.lineicon = new _iconcircle2.default(this.box, this.fixWidth(), this.fixHeight());
-                this.addDestroy(path.lineicon);
+                this.clearList.push(path.lineicon);
             }
+            //console.log( path );
             var icon = path.lineicon;
-            icon.opacity(1);
             icon.setOptions({
                 stage: this.stage,
                 layer: layer,
@@ -629,7 +406,7 @@ var Dount = function (_VisChartBase) {
         key: 'addText',
         value: function addText(path, layer) {
             if (!path.text) {
-                path.text = new _konva2.default.Text({
+                var tmp = path.text = new _konva2.default.Text({
                     x: 0,
                     y: 0,
                     text: path.itemData.percent + '%',
@@ -638,10 +415,9 @@ var Dount = function (_VisChartBase) {
                     fontSize: 16,
                     fontStyle: 'italic'
                 });
-                this.addDestroy(text);
+                this.clearList.push(tmp);
             }
             var text = path.text;
-            text.opacity(1);
 
             var textPoint = path.itemData.textPoint,
                 angleDirect = path.itemData.pointDirection.autoAngle();
@@ -698,7 +474,225 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'destroy',
         value: function destroy() {
+            this.clearItems();
             _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'destroy', this).call(this);
+        }
+    }, {
+        key: 'clearItems',
+        value: function clearItems() {
+            this.clearList.map(function (item) {
+                item.remove();
+                item.destroy();
+            });
+            this.clearList = [];
+        }
+    }, {
+        key: 'calcDataPosition',
+        value: function calcDataPosition() {
+            var _this5 = this;
+
+            if (!this.data) return;
+
+            var total = 0,
+                tmp = 0;
+
+            this.data.data.map(function (val) {
+                //console.log( val );
+                total += val.value;
+            });
+            this.total = total;
+
+            this.data.data.map(function (val) {
+                val._percent = utils.parseFinance(val.value / total);
+                tmp = utils.parseFinance(tmp + val._percent);
+                val._totalPercent = tmp;
+
+                val.percent = parseInt(val._percent * 100);
+
+                val.endAngle = _this5.totalAngle * val._totalPercent;
+            });
+
+            //修正浮点数精确度
+            if (this.data.data.length) {
+                var item = this.data.data[this.data.data.length - 1];
+                tmp = tmp - item._percent;
+
+                item._percent = 1 - tmp;
+                item.percent = parseInt(item._percent * 100);
+                item._totalPercent = 1;
+                item.endAngle = this.totalAngle;
+            }
+
+            this.lineRange = {
+                "1": [],
+                "2": [],
+                "4": [],
+                "8": []
+                //计算开始角度, 计算指示线的2端
+            };this.data.data.map(function (val, key) {
+                if (!key) {
+                    val.startAngle = 0;
+                } else {
+                    val.startAngle = _this5.data.data[key - 1].endAngle;
+                }
+
+                val.midAngle = val.startAngle + (val.endAngle - val.startAngle) / 2;
+
+                val.lineStart = geometry.distanceAngleToPoint(_this5.outRadius, val.midAngle);
+                val.lineEnd = geometry.distanceAngleToPoint(_this5.outRadius + _this5.lineLength, val.midAngle);
+
+                val.textPoint = geometry.distanceAngleToPoint(_this5.outRadius + _this5.lineLength, val.midAngle);
+
+                val.pointDirection = new _pointat2.default(_this5.fixWidth(), _this5.fixHeight(), geometry.pointPlus(val.textPoint, _this5.cpoint));
+                var lineAngle = val.pointDirection.autoAngle();
+                val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
+
+                switch (lineAngle) {
+                    case 1:
+                    case 8:
+                        {
+                            //val.lineEnd.x = this.lineLeft;
+                            val.lineEnd.x = -(_this5.outRadius + _this5.lineSpace);
+
+                            var _tmp2 = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp2 > _this5.lineCurveLength) {
+                                var tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
+                                    tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, tmpAngle);
+                                tmpPoint = geometry.pointPlus(tmpPoint, val.lineStart);
+
+                                val.lineEnd.x = tmpPoint.x;
+                            }
+
+                            val.lineExpend.x = val.lineEnd.x - _this5.lineWidth;
+
+                            break;
+                        }
+                    default:
+                        {
+                            val.lineEnd.x = _this5.outRadius + _this5.lineSpace;
+                            var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp3 > _this5.lineCurveLength) {
+                                var _tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
+                                    _tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, _tmpAngle);
+                                _tmpPoint = geometry.pointPlus(_tmpPoint, val.lineStart);
+
+                                val.lineEnd.x = _tmpPoint.x;
+                            }
+
+                            val.lineExpend.x = val.lineEnd.x + _this5.lineWidth;
+                            break;
+                        }
+                }
+
+                _this5.lineRange[lineAngle].push(val);
+            });
+
+            this.loopSort.map(function (key) {
+                var item = _this5.lineRange[key];
+                if (!(item && item.length && item.length > 1)) return;
+                var needFix = void 0;
+                for (var i = 1; i < item.length; i++) {
+                    var pre = item[i - 1],
+                        cur = item[i];
+                    if (Math.abs(cur.lineEnd.y - pre.lineEnd.y) < _this5.lineHeight) {
+                        needFix = 1;
+                        break;
+                    }
+                }
+                switch (key) {
+                    case 1:
+                        {
+                            var tmpY = item[0].lineEnd.y;
+                            //console.log( item );
+                            for (var _i2 = item.length - 2; _i2 >= 0; _i2--) {
+                                var _pre = item[_i2 + 1],
+                                    _cur = item[_i2];
+                                if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this5.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
+                                    tmpY = _pre.lineEnd.y + _this5.lineHeight;
+                                    _cur.lineEnd.y = tmpY;
+
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
+                                        //tmpY = cur.lineStart.y + this.lineHeight;
+                                        //cur.lineEnd.y = tmpY;
+                                    }
+                                    */
+                                    _cur.lineExpend.y = tmpY;
+                                }
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            var _tmpY = item[0].lineEnd.y;
+                            for (var _i3 = 1; _i3 < item.length; _i3++) {
+                                var _pre2 = item[_i3 - 1],
+                                    _cur2 = item[_i3],
+                                    zero = item[0];
+
+                                if (Math.abs(_pre2.lineEnd.y + _this5.fixCy()) < _this5.lineHeight) {
+                                    _pre2.lineExpend.y = _pre2.lineEnd.y = _pre2.lineExpend.y + _this5.lineHeight;
+                                }
+                                if (Math.abs(_pre2.lineEnd.y - _cur2.lineEnd.y) < _this5.lineHeight || _cur2.lineEnd.y <= _pre2.lineEnd.y) {
+
+                                    _tmpY = _pre2.lineEnd.y + _this5.lineHeight;
+                                    _cur2.lineEnd.y = _tmpY;
+
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
+                                        //tmpY = cur.lineStart.y + this.lineHeight;
+                                        //cur.lineEnd.y = tmpY;
+                                    }
+                                    */
+                                    _cur2.lineExpend.y = _tmpY;
+                                }
+                            }
+
+                            break;
+                        }
+                    case 4:
+                        {
+                            var _tmpY2 = 0;
+                            for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
+                                var _pre3 = item[_i4 + 1],
+                                    _cur3 = item[_i4];
+                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
+                                    //console.log( pre.lineEnd.y, cur.lineEnd.y );
+                                    _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
+                                    _cur3.lineEnd.y = _tmpY2;
+
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
+                                    }
+                                    */
+                                    _cur3.lineExpend.y = _tmpY2;
+                                }
+                            }
+                            break;
+                        }
+                    case 8:
+                        {
+                            var _tmpY3 = 0;
+                            for (var _i5 = 1; _i5 < item.length; _i5++) {
+                                var _pre4 = item[_i5 - 1],
+                                    _cur4 = item[_i5];
+                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
+                                    _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
+                                    _cur4.lineEnd.y = _tmpY3;
+
+                                    /*
+                                    if( cur.lineEnd.y < cur.lineStart.y ){
+                                        //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
+                                    }
+                                    */
+                                    _cur4.lineExpend.y = _cur4.lineEnd.y;
+                                }
+                            }
+
+                            break;
+                        }
+                }
+            });
         }
     }]);
 

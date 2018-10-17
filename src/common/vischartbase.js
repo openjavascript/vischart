@@ -65,7 +65,7 @@ export default class VisChartBase {
     }
 
     update( data, allData ){
-        console.log( 'update', this.name, Date.now(), this.width, this.height );
+        //console.log( 'update', this.name, Date.now(), this.width, this.height );
 
         this.data = data;
         this.allData = allData;

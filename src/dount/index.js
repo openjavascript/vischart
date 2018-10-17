@@ -58,6 +58,8 @@ export default class Dount extends VisChartBase  {
 
         this.loopSort = [ 4, 8, 1, 2 ];
 
+        this.clearList = [];
+
 
         this.init();
 
@@ -81,6 +83,7 @@ export default class Dount extends VisChartBase  {
 
         if( !ju.jsonInData( this.data, 'data' ) ) return;
 
+        this.clearItems();
         this.calcDataPosition();
         this.initDataLayout();
 
@@ -212,12 +215,6 @@ export default class Dount extends VisChartBase  {
 
     initDataLayout(){
  
-        /*
-        this.path = [];
-        this.line = [];
-        */
-
-
         if( !this.inited ){
             this.layoutLayer = new Konva.Layer();
             this.addDestroy( this.layoutLayer );
@@ -230,6 +227,9 @@ export default class Dount extends VisChartBase  {
             this.arcLayer = new Konva.Layer();
             this.addDestroy( this.arcLayer );
         }
+
+        this.path = [];
+        this.line = [];
 
         for( let ii = this.data.data.length - 1; ii >= 0; ii-- ){
             let val = this.data.data[ii], key = ii;
@@ -245,58 +245,178 @@ export default class Dount extends VisChartBase  {
 
             //console.log( this.path[pathindex], pathindex, this.path );
 
-            if( !this.path[pathindex] ){
-                let params = {
-                    x: this.fixCx()
-                    , y: this.fixCy()
-                    , innerRadius: this.inRadius
-                    , outerRadius: this.outRadius
-                    , angle: this.countAngle
-                    , fill: color
-                    , stroke: color
-                    , strokeWidth: 0
-                    //, rotation: this.arcOffset
-                };
-                let arc = new Konva.Arc( params );
-                this.addDestroy( arc );
+            let params = {
+                x: this.fixCx()
+                , y: this.fixCy()
+                , innerRadius: this.inRadius
+                , outerRadius: this.outRadius
+                , angle: this.countAngle
+                , fill: color
+                , stroke: color
+                , strokeWidth: 0
+                //, rotation: this.arcOffset
+            };
+            let arc = new Konva.Arc( params );
+            this.clearList.push( arc );
 
-                let line = new Konva.Line({
-                  x: this.fixCx(),
-                  y: this.fixCy(),
-                  points: [ 0, 0, 0, 0 ],
-                  stroke: '#ffffff',
-                  strokeWidth: 2
-                });
-                this.line.push( line );
+            let line = new Konva.Line({
+              x: this.fixCx(),
+              y: this.fixCy(),
+              points: [ 0, 0, 0, 0 ],
+              stroke: '#ffffff',
+              strokeWidth: 2
+            });
+            this.line.push( line );
+            this.clearList.push( line );
 
-                this.addDestroy( line );
+            let tmp = { 
+                arc: arc
+                , pathData: [] 
+                , itemData: val
+                , line: line
+            };
 
-                let tmp = { 
-                    arc: arc
-                    , pathData: [] 
-                    , itemData: val
-                    , line: line
-                };
+            this.path.push( tmp );
 
-                this.path.push( tmp );
-
-                this.arcLayer.add( arc );
-                this.arcLayer.add( line );
-            }else{
-                let tmp = this.path[pathindex];
-                tmp.arc.angle( 0 );
-                tmp.itemData = val;
-
-                tmp.text && tmp.text.opacity( 0 );
-                tmp.line && tmp.line.opacity( 0 );
-                tmp.lineicon && tmp.lineicon.opacity( 0 );
-            }
+            this.arcLayer.add( arc );
+            this.arcLayer.add( line );
         };
 
         this.stage.add( this.arcLayer );
 
 
         return this;
+    }
+    animationLine(){
+
+        if( this.lineLengthCount >= this.lineLength ){
+            return;
+        }
+        this.lineLengthCount = this.lineLength;
+
+        this.lineLengthCount += this.lineLengthStep;
+
+        if( this.lineLengthCount >= this.lineLength || !this.isAnimation()  ){
+            this.lineLengthCount = this.lineLength;
+        }
+        for( let i = 0; i < this.path.length; i++ ){
+            let path = this.path[i];
+            let layer = this.arcLayer;
+
+            let lineEnd = path.itemData.lineEnd;
+            let lineExpend = path.itemData.lineExpend;
+
+            let line = this.line[ i ];
+            line.points( [ 
+                path.itemData.lineStart.x, path.itemData.lineStart.y
+                , lineEnd.x, lineEnd.y 
+                , lineExpend.x,lineExpend.y 
+            ] );
+
+            if( this.lineLengthCount >= this.lineLength ){
+                this.addText( path, layer );
+                this.addIcon( path, layer );
+
+            }else{
+                window.requestAnimationFrame( ()=>{ this.animationLine() } );
+            }
+
+            this.stage.add( layer );
+        }
+    }
+
+    addIcon( path, layer ){
+        if( !path.lineicon ){
+            path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
+            this.clearList.push( path.lineicon );
+        }
+        //console.log( path );
+        let icon = path.lineicon;
+        icon.setOptions( {
+            stage: this.stage
+            , layer: layer
+            , cx: this.fixCx()
+            , cy: this.fixCy()
+        });
+        icon.update( path.itemData.lineExpend );
+    }
+
+    addText( path, layer ){
+        if( !path.text ){
+            let tmp = path.text = new Konva.Text( {
+                x: 0
+                , y: 0
+                , text: `${path.itemData.percent}%`
+                , fill: '#a3a7f3'
+                , fontFamily: 'MicrosoftYaHei'
+                , fontSize: 16
+                , fontStyle: 'italic'
+            });
+            this.clearList.push( tmp );
+        }
+        let text = path.text;
+
+        let textPoint = path.itemData.textPoint
+            , angleDirect = path.itemData.pointDirection.autoAngle()
+            ;
+
+        textPoint = ju.clone( path.itemData.lineEnd );
+        textPoint.y -= text.textHeight + 1;
+
+        switch( angleDirect ){
+            case 1: {
+                textPoint.x -= text.textWidth
+                break;
+            }
+            case 2: {
+                break;
+            }
+            case 4: {
+                break;
+            }
+            case 8: {
+                textPoint.x -= text.textWidth
+                break;
+            }
+        }
+
+        let textX =  this.fixCx() + textPoint.x
+            , textY =  this.fixCy() + textPoint.y
+            , direct = path.itemData.pointDirection.auto()
+            ;
+
+        text.x( textX );
+        text.y( textY );
+        layer.add( text );
+    }
+
+    calcLayoutPosition() {
+        //console.log( 'calcLayoutPosition', Date.now() );
+
+        this.outRadius = Math.ceil( this.outPercent * this.min / 2 );
+        this.inRadius = Math.ceil( this.inPercent * this.min / 2 );
+
+        this.lineLength = ( Math.min( this.fixWidth(), this.fixHeight() ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
+        this.lineLengthCount = 1;
+        this.lineLengthStep = .5;
+
+        this.lineLeft = this.fixCx() - this.outRadius - this.lineSpace;
+        this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
+
+        return this;
+    }
+
+    destroy(){
+        this.clearItems();
+        super.destroy();
+    }
+
+    clearItems(){
+        this.clearList.map( item => {
+            item.remove();
+            item.destroy();
+        });
+        this.clearList = [];
     }
 
     calcDataPosition() {
@@ -495,132 +615,5 @@ export default class Dount extends VisChartBase  {
         });
     }
 
-    animationLine(){
 
-        if( this.lineLengthCount >= this.lineLength ){
-            return;
-        }
-        this.lineLengthCount = this.lineLength;
-
-        //console.log( 'line', Date.now(), this.lineLengthCount, this.lineLength );
-        
-        this.lineLengthCount += this.lineLengthStep;
-
-        if( this.lineLengthCount >= this.lineLength || !this.isAnimation()  ){
-            this.lineLengthCount = this.lineLength;
-        }
-
-        for( let i = 0; i < this.path.length; i++ ){
-            let path = this.path[i];
-            let layer = this.arcLayer;
-
-            path.line && path.line.opacity( 1 );
-
-            let lineEnd = path.itemData.lineEnd;
-            let lineExpend = path.itemData.lineExpend;
-
-            let line = this.line[ i ];
-            line.points( [ 
-                path.itemData.lineStart.x, path.itemData.lineStart.y
-                , lineEnd.x, lineEnd.y 
-                , lineExpend.x,lineExpend.y 
-            ] );
-
-            if( this.lineLengthCount >= this.lineLength ){
-                this.addText( path, layer );
-                this.addIcon( path, layer );
-
-            }else{
-                window.requestAnimationFrame( ()=>{ this.animationLine() } );
-            }
-
-            this.stage.add( layer );
-        }
-    }
-
-    addIcon( path, layer ){
-        if( !path.lineicon ){
-            path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
-            this.addDestroy( path.lineicon );
-        }
-        let icon = path.lineicon;
-        icon.opacity( 1 );
-        icon.setOptions( {
-            stage: this.stage
-            , layer: layer
-            , cx: this.fixCx()
-            , cy: this.fixCy()
-        });
-        icon.update( path.itemData.lineExpend );
-    }
-
-    addText( path, layer ){
-        if( !path.text ){
-            path.text = new Konva.Text( {
-                x: 0
-                , y: 0
-                , text: `${path.itemData.percent}%`
-                , fill: '#a3a7f3'
-                , fontFamily: 'MicrosoftYaHei'
-                , fontSize: 16
-                , fontStyle: 'italic'
-            });
-            this.addDestroy( text );
-        }
-        let text = path.text;
-        text.opacity( 1 );
-
-        let textPoint = path.itemData.textPoint
-            , angleDirect = path.itemData.pointDirection.autoAngle()
-            ;
-
-        textPoint = ju.clone( path.itemData.lineEnd );
-        textPoint.y -= text.textHeight + 1;
-
-        switch( angleDirect ){
-            case 1: {
-                textPoint.x -= text.textWidth
-                break;
-            }
-            case 2: {
-                break;
-            }
-            case 4: {
-                break;
-            }
-            case 8: {
-                textPoint.x -= text.textWidth
-                break;
-            }
-        }
-
-        let textX =  this.fixCx() + textPoint.x
-            , textY =  this.fixCy() + textPoint.y
-            , direct = path.itemData.pointDirection.auto()
-            ;
-
-        text.x( textX );
-        text.y( textY );
-        layer.add( text );
-    }
-
-    calcLayoutPosition() {
-        //console.log( 'calcLayoutPosition', Date.now() );
-
-        this.outRadius = Math.ceil( this.outPercent * this.min / 2 );
-        this.inRadius = Math.ceil( this.inPercent * this.min / 2 );
-
-        this.lineLength = ( Math.min( this.fixWidth(), this.fixHeight() ) - this.outRadius * 2 ) / 2 - this.lineOffset ;
-        this.lineLengthCount = 1;
-        this.lineLengthStep = .5;
-
-        this.lineLeft = this.fixCx() - this.outRadius - this.lineSpace;
-        this.lineRight = this.fixCx() + this.outRadius + this.lineSpace;
-
-        return this;
-    }
-
-    destroy(){
-        super.destroy();
-    }
 }

@@ -67,12 +67,6 @@ var VisChart = function (_VisChartBase) {
 
             _get(VisChart.prototype.__proto__ || Object.getPrototypeOf(VisChart.prototype), '_setSize', this).call(this, width, height);
 
-            width = width || this.width;
-            height = height || this.height;
-
-            this.width = width;
-            this.height = height;
-
             this.init();
 
             if (this.legend && this.data && this.data.legend) {
@@ -80,7 +74,9 @@ var VisChart = function (_VisChartBase) {
                 this.legend.update(this.data.legend);
             }
 
-            this.update(this.data, this.ignoreLegend, this.redraw);
+            var tmpredraw = this.redraw;
+            this.update(this.data, this.ignoreLegend);
+            this.redraw = tmpredraw;
         }
     }, {
         key: 'init',
@@ -100,8 +96,8 @@ var VisChart = function (_VisChartBase) {
                 this.stage.height(this.height);
             }
 
-            console.log(this.width, this.height, this.box.offsetWidth, this.box.offsetHeight);
-            console.log(this);
+            //console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
+            //console.log( this );
 
             this.customWidth && (this.box.style.width = this.customWidth + 'px');
             this.customHeight && (this.box.style.height = this.customHeight + 'px');
@@ -120,6 +116,16 @@ var VisChart = function (_VisChartBase) {
             this.redraw = redraw;
 
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
+
+            this.data && this.data.legend && this.data.legend.data && this.data.legend.data.legend && this.data.legend.data.map(function (item, key) {
+                item.realIndex = key;
+            });
+
+            this.data && this.data.series && this.data.series.length && this.data.series.map(function (sitem) {
+                sitem.data && sitem.data.length && sitem.data.map(function (item, key) {
+                    item.realIndex = key;
+                });
+            });
 
             this.clearUpdate();
 
