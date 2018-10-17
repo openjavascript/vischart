@@ -11,6 +11,9 @@ import ju from 'json-utilsx';
 import * as constant from './common/constant.js';
 import Legend from './common/legend.js';
 
+import VisThree from '../src-three/index.js';
+
+
 export default class VisChart extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );
@@ -201,3 +204,5 @@ export default class VisChart extends VisChartBase {
         this.legend && !this.ignoreLegend && this.legend.destroy();
     }
 }
+
+VisChart.three = VisThree;
