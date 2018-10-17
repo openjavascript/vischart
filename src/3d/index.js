@@ -20,18 +20,16 @@ export default class VisThree extends VisChartBase {
 
         this.scene = new THREE.Scene();
 
-        //this.scene.background = new THREE.Color( 0xffffff );
-
-        this.camera = new THREE.PerspectiveCamera( 80, this.width / this.height, 1, 1000 );
+        this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 10000 );
         this.camera.position.set( 0, 0, 100 )
 
 
         var loader = new THREE.SVGLoader();
         loader.load( './img/dount-in.svg', paths => {
-            var group = new THREE.Group();
             /*
-            group.scale.multiplyScalar( 0.25 );
             */
+            var group = new THREE.Group();
+            //group.scale.multiplyScalar( -1 );
             group.position.x = -58;
             group.position.y = 65;
             group.scale.y *= -1;
@@ -57,6 +55,11 @@ export default class VisThree extends VisChartBase {
             this.scene.add( group );
 
             this.group = group;
+
+            /*
+            this.group = new THREE.SVGObject( paths );
+            this.scene.add( this.group );
+            */
             
             console.log( 'group', this.group );
 
@@ -64,7 +67,7 @@ export default class VisThree extends VisChartBase {
         } );
 
 
-        let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+        let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         //renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize( this.width - 2, this.height - 2 );
 
@@ -77,7 +80,7 @@ export default class VisThree extends VisChartBase {
 
     animate() {
 
-        this.group && ( this.group.rotation.y += 0.01 );
+        //this.group && ( this.group.rotation.y += 0.01 );
 
         this.render();
 
