@@ -12,11 +12,11 @@ var _vischartbase = require('./common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
 
-var _index = require('./dount/index.js');
+var _index = require('./2d/dount/index.js');
 
 var _index2 = _interopRequireDefault(_index);
 
-var _index3 = require('./gauge/index.js');
+var _index3 = require('./2d/gauge/index.js');
 
 var _index4 = _interopRequireDefault(_index3);
 
@@ -36,7 +36,7 @@ var _legend = require('./common/legend.js');
 
 var _legend2 = _interopRequireDefault(_legend);
 
-var _index5 = require('../src-three/index.js');
+var _index5 = require('./3d/index.js');
 
 var _index6 = _interopRequireDefault(_index5);
 
@@ -78,9 +78,11 @@ var VisChart = function (_VisChartBase) {
                 this.legend.update(this.data.legend);
             }
 
-            var tmpredraw = this.redraw;
-            this.update(this.data, this.ignoreLegend);
-            this.redraw = tmpredraw;
+            if (this.data) {
+                var tmpredraw = this.redraw;
+                this.update(this.data, this.ignoreLegend);
+                this.redraw = tmpredraw;
+            }
         }
     }, {
         key: 'init',

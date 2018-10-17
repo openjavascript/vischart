@@ -1,13 +1,9 @@
 
-
-
-
 import VisChartBase from './common/threebase.js';
-
 
 import ju from 'json-utilsx';
 
-import three from './utils/three.js';
+import three from '../utils/three.js';
 
 export default class VisThree extends VisChartBase {
     constructor( box, width, height ){
@@ -21,4 +17,9 @@ export default class VisThree extends VisChartBase {
         console.log( 222 );
 
     }
+
+    
+    update( data, ignoreLegend, redraw = true ){
+    }
 }
+

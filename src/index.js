@@ -2,8 +2,8 @@
 
 import VisChartBase from './common/vischartbase.js';
 
-import Dount from './dount/index.js';
-import Gauge from './gauge/index.js';
+import Dount from './2d/dount/index.js';
+import Gauge from './2d/gauge/index.js';
 
 import Konva from 'konva';
 import ju from 'json-utilsx';
@@ -11,7 +11,7 @@ import ju from 'json-utilsx';
 import * as constant from './common/constant.js';
 import Legend from './common/legend.js';
 
-import VisThree from '../src-three/index.js';
+import VisThree from './3d/index.js';
 
 
 export default class VisChart extends VisChartBase {
@@ -39,9 +39,11 @@ export default class VisChart extends VisChartBase {
             this.legend.update( this.data.legend );
         }
 
-        let tmpredraw = this.redraw;
-        this.update( this.data, this.ignoreLegend );
-        this.redraw = tmpredraw;
+        if( this.data ){
+            let tmpredraw = this.redraw;
+            this.update( this.data, this.ignoreLegend );
+            this.redraw = tmpredraw;
+        }
     }
 
     init(){

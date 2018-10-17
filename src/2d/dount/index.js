@@ -1,13 +1,13 @@
 
-import VisChartBase from '../common/vischartbase.js';
-import * as geometry from '../geometry/geometry.js';
+import VisChartBase from '../common/konvabase.js';
+import * as geometry from '../../geometry/geometry.js';
 
-import PointAt from '../common/pointat.js';
+import PointAt from '../../common/pointat.js';
 
 import Konva from 'konva';
 import ju from 'json-utilsx';
 
-import * as utils from '../common/utils.js';
+import * as utils from '../../common/utils.js';
 
 import IconCircle from '../icon/iconcircle.js';
 
