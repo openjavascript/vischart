@@ -24,6 +24,12 @@ export default class VisThree extends VisChartBase {
         this.camera.position.set( 0, 0, 20 )
 
 
+        let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+        //let renderer = this.renderer = new THREE.SVGRenderer( );
+        //renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( this.width - 2, this.height - 2 );
+
+
         var loader = new THREE.SVGLoader();
 
         var options = {
@@ -37,10 +43,11 @@ export default class VisThree extends VisChartBase {
         };
 
         //loader.load( './img/dount-in.svg', ( paths ) => {
-        loader.load( './img/dount-big-all.svg', ( paths ) => {
+        //loader.load( './img/dount-big-all.svg', ( paths ) => {
         //loader.load( './img/dount-mid.svg', ( paths ) => {
         //loader.load( './img/tiger.svg', ( paths ) => {
-            console.log( paths );
+            var paths = loader.parse( data.background[0].url );
+            console.log( 'paths', paths );
 
             var group = new THREE.Group();
             group.scale.multiplyScalar( 0.1 );
@@ -59,17 +66,15 @@ export default class VisThree extends VisChartBase {
                     //var geometry = new THREE.ExtrudeGeometry( shape, options);
                     var mesh = new THREE.Mesh( geometry, material );
 
-                    /*
                     //viewbox 118, 117 - dount-in.svg
                     mesh.position.x = -118/2;
                     mesh.position.y = -117/2;
-                    */
 
                     /*
-                    */
                     //viewbox 250 248 - dount-big-all.svg
                     mesh.position.x = -250/2;
                     mesh.position.y = -248/2;
+                    */
 
                     /*
                     //viewbox 107, 106 - dount-mid.svg
@@ -92,7 +97,7 @@ export default class VisThree extends VisChartBase {
             console.log( 'group', this.group  );
 
             this.render();
-        } );
+        //} );
 
 
         /*
@@ -103,12 +108,6 @@ export default class VisThree extends VisChartBase {
         console.log( this.sphere, material, geometry );
         this.scene.add( this.sphere );
         */
-
-
-        let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
-        //let renderer = this.renderer = new THREE.SVGRenderer( );
-        //renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( this.width - 2, this.height - 2 );
 
         this.render();
 
