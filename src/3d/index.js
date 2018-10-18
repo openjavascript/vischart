@@ -20,25 +20,19 @@ export default class VisThree extends VisChartBase {
 
         this.scene = new THREE.Scene();
 
-        this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 10000 );
-        this.camera.position.set( 0, 0, 100 )
+        this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 1000 );
+        this.camera.position.set( 0, 0, 20 )
 
 
         var loader = new THREE.SVGLoader();
-        loader.load( './img/dount-in.svg', paths => {
-            /*
-            */
-            var group = new THREE.Group();
-            //group.scale.multiplyScalar( -1 );
-            group.position.x = -58;
-            group.position.y = 65;
-            group.scale.y *= -1;
+        loader.load( './img/dount-in.svg', ( paths ) => {
+        //loader.load( './img/tiger.svg', ( paths ) => {
 
-            console.log( 1111111111111 );
+            var group = new THREE.Group();
+            group.scale.multiplyScalar( 0.1 );
+            group.scale.y *= -1;
             for ( var i = 0; i < paths.length; i ++ ) {
                 var path = paths[ i ];
-
-                //console.log( i, path );
                 var material = new THREE.MeshBasicMaterial( {
                     color: path.color,
                     side: THREE.DoubleSide,
@@ -49,25 +43,32 @@ export default class VisThree extends VisChartBase {
                     var shape = shapes[ j ];
                     var geometry = new THREE.ShapeBufferGeometry( shape );
                     var mesh = new THREE.Mesh( geometry, material );
+                    mesh.position.x = -59.5;
+                    mesh.position.y = -65;
                     group.add( mesh );
                 }
             }
+            this.group = group;
             this.scene.add( group );
 
-            this.group = group;
-
-            /*
-            this.group = new THREE.SVGObject( paths );
-            this.scene.add( this.group );
-            */
-            
-            console.log( 'group', this.group );
+            console.log( 'group', this.group  );
 
             this.render();
         } );
 
 
+        /*
+        var geometry = new THREE.SphereGeometry( 30, 32, 32 );
+        var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        material.wireframe = true;
+        this.sphere = new THREE.Mesh( geometry, material );
+        console.log( this.sphere, material, geometry );
+        this.scene.add( this.sphere );
+        */
+
+
         let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+        //let renderer = this.renderer = new THREE.SVGRenderer( );
         //renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize( this.width - 2, this.height - 2 );
 
@@ -80,7 +81,8 @@ export default class VisThree extends VisChartBase {
 
     animate() {
 
-        //this.group && ( this.group.rotation.y += 0.01 );
+        this.group && ( this.group.rotation.y -= 0.03 );
+        this.sphere && ( this.sphere.rotation.y += 0.01 );
 
         this.render();
 

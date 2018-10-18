@@ -52,24 +52,18 @@ var VisThree = function (_VisChartBase) {
 
             this.scene = new _three2.default.Scene();
 
-            this.camera = new _three2.default.PerspectiveCamera(50, this.width / this.height, 1, 10000);
-            this.camera.position.set(0, 0, 100);
+            this.camera = new _three2.default.PerspectiveCamera(50, this.width / this.height, 1, 1000);
+            this.camera.position.set(0, 0, 20);
 
             var loader = new _three2.default.SVGLoader();
             loader.load('./img/dount-in.svg', function (paths) {
-                /*
-                */
-                var group = new _three2.default.Group();
-                //group.scale.multiplyScalar( -1 );
-                group.position.x = -58;
-                group.position.y = 65;
-                group.scale.y *= -1;
+                //loader.load( './img/tiger.svg', ( paths ) => {
 
-                console.log(1111111111111);
+                var group = new _three2.default.Group();
+                group.scale.multiplyScalar(0.1);
+                group.scale.y *= -1;
                 for (var i = 0; i < paths.length; i++) {
                     var path = paths[i];
-
-                    //console.log( i, path );
                     var material = new _three2.default.MeshBasicMaterial({
                         color: path.color,
                         side: _three2.default.DoubleSide,
@@ -80,24 +74,30 @@ var VisThree = function (_VisChartBase) {
                         var shape = shapes[j];
                         var geometry = new _three2.default.ShapeBufferGeometry(shape);
                         var mesh = new _three2.default.Mesh(geometry, material);
+                        mesh.position.x = -59.5;
+                        mesh.position.y = -65;
                         group.add(mesh);
                     }
                 }
-                _this2.scene.add(group);
-
                 _this2.group = group;
-
-                /*
-                this.group = new THREE.SVGObject( paths );
-                this.scene.add( this.group );
-                */
+                _this2.scene.add(group);
 
                 console.log('group', _this2.group);
 
                 _this2.render();
             });
 
+            /*
+            var geometry = new THREE.SphereGeometry( 30, 32, 32 );
+            var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+            material.wireframe = true;
+            this.sphere = new THREE.Mesh( geometry, material );
+            console.log( this.sphere, material, geometry );
+            this.scene.add( this.sphere );
+            */
+
             var renderer = this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
+            //let renderer = this.renderer = new THREE.SVGRenderer( );
             //renderer.setPixelRatio( window.devicePixelRatio );
             renderer.setSize(this.width - 2, this.height - 2);
 
@@ -112,7 +112,8 @@ var VisThree = function (_VisChartBase) {
         value: function animate() {
             var _this3 = this;
 
-            //this.group && ( this.group.rotation.y += 0.01 );
+            this.group && (this.group.rotation.y -= 0.03);
+            this.sphere && (this.sphere.rotation.y += 0.01);
 
             this.render();
 
