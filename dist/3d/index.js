@@ -52,12 +52,26 @@ var VisThree = function (_VisChartBase) {
 
             this.scene = new _three2.default.Scene();
 
-            this.camera = new _three2.default.PerspectiveCamera(50, this.width / this.height, 1, 1000);
+            this.camera = new _three2.default.PerspectiveCamera(40, this.width / this.height, 1, 1000);
             this.camera.position.set(0, 0, 20);
 
             var loader = new _three2.default.SVGLoader();
-            loader.load('./img/dount-in.svg', function (paths) {
+
+            var options = {
+                depth: 1,
+                bevelThickness: 1,
+                bevelSize: .5,
+                bevelSegments: 1,
+                bevelEnabled: true,
+                curveSegments: 12,
+                steps: 1
+            };
+
+            //loader.load( './img/dount-in.svg', ( paths ) => {
+            loader.load('./img/dount-big-all.svg', function (paths) {
+                //loader.load( './img/dount-mid.svg', ( paths ) => {
                 //loader.load( './img/tiger.svg', ( paths ) => {
+                console.log(paths);
 
                 var group = new _three2.default.Group();
                 group.scale.multiplyScalar(0.1);
@@ -73,9 +87,33 @@ var VisThree = function (_VisChartBase) {
                     for (var j = 0; j < shapes.length; j++) {
                         var shape = shapes[j];
                         var geometry = new _three2.default.ShapeBufferGeometry(shape);
+                        //var geometry = new THREE.ExtrudeGeometry( shape, options);
                         var mesh = new _three2.default.Mesh(geometry, material);
-                        mesh.position.x = -59.5;
-                        mesh.position.y = -65;
+
+                        /*
+                        //viewbox 118, 117 - dount-in.svg
+                        mesh.position.x = -118/2;
+                        mesh.position.y = -117/2;
+                        */
+
+                        /*
+                        */
+                        //viewbox 250 248 - dount-big-all.svg
+                        mesh.position.x = -250 / 2;
+                        mesh.position.y = -248 / 2;
+
+                        /*
+                        //viewbox 107, 106 - dount-mid.svg
+                        mesh.position.x = -107/2;
+                        mesh.position.y = -106/2;
+                        */
+
+                        /*
+                        //viewbox tiger.svg
+                        mesh.position.x = -46.5;
+                        mesh.position.y = -( 54.5 + 55 / 2 );
+                        */
+
                         group.add(mesh);
                     }
                 }
@@ -112,7 +150,7 @@ var VisThree = function (_VisChartBase) {
         value: function animate() {
             var _this3 = this;
 
-            this.group && (this.group.rotation.y -= 0.03);
+            this.group && (this.group.rotation.y += 0.03);
             this.sphere && (this.sphere.rotation.y += 0.01);
 
             this.render();
