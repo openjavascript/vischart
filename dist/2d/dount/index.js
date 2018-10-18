@@ -671,7 +671,7 @@ var Dount = function (_VisChartBase) {
                             for (var _i5 = 1; _i5 < item.length; _i5++) {
                                 var _pre4 = item[_i5 - 1],
                                     _cur4 = item[_i5];
-                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y <= _pre4.lineEnd.y) {
+                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y >= _pre4.lineEnd.y) {
                                     _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
                                     _cur4.lineEnd.y = _tmpY3;
 
