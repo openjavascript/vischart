@@ -656,15 +656,10 @@ var Dount = function (_VisChartBase) {
                             for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
                                 var _pre3 = item[_i4 + 1],
                                     _cur3 = item[_i4];
-                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y <= _pre3.lineEnd.y) {
+                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y >= _pre3.lineEnd.y) {
                                     //console.log( pre.lineEnd.y, cur.lineEnd.y );
                                     _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
                                     _cur3.lineEnd.y = _tmpY2;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                    }
-                                    */
                                     _cur3.lineExpend.y = _tmpY2;
                                 }
                             }
