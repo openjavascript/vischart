@@ -84,6 +84,7 @@ var VisThree = function (_VisChartBase) {
                 this.camera.position.set(0, 0, 400);
                 this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
                 this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.setClearColor(0xffffff, .2);
                 this.box.innerHTML = '';
                 this.box.appendChild(this.renderer.domElement);
             }

@@ -50,6 +50,7 @@ var ThreeBase = function (_VisChartBase) {
             this.addDestroy(this.iconLayer);
 
             this.images = [];
+            this._images = [];
 
             if (this.data && this.data.background && this.data.background.length) {
 
@@ -118,18 +119,10 @@ var ThreeBase = function (_VisChartBase) {
         value: function initSVGBackground(paths, item, key) {
             if (!(paths && paths.length)) return;
 
-            var geometry = new _three2.default.CircleGeometry(20, 32);
-            var material = new _three2.default.MeshBasicMaterial({ color: 0xffff00 });
-            var circle = new _three2.default.Mesh(geometry, material);
-            material.wireframe = true;
-            this.scene.add(circle);
-
-            console.log('circle', circle.position);
-
             console.log(item);
 
             var group = new _three2.default.Group();
-            //group.scale.multiplyScalar( 0.1 );
+            var meshlist = [];
             group.scale.y *= -1;
             for (var i = 0; i < paths.length; i++) {
                 var path = paths[i];
@@ -143,20 +136,39 @@ var ThreeBase = function (_VisChartBase) {
                     var shape = shapes[j];
                     var geometry = new _three2.default.ShapeBufferGeometry(shape);
                     var mesh = new _three2.default.Mesh(geometry, material);
+                    meshlist.push(mesh);
 
-                    //mesh.position.y = -this.height/2 + item.height + item.offsetY;
-                    /*
-                    */
                     group.add(mesh);
                 }
             }
-            this.group = group;
-            this.scene.add(group);
 
             var box = new _three2.default.Box3().setFromObject(group);
-            console.log(box, box.size());
-            this.group.position.x = -box.size().x + item.width / 2 / 2;
-            this.group.position.y = box.size().y;
+            var size = box.getSize(new _three2.default.Vector3());
+
+            console.log(size, box.min, box.max);
+
+            var x = -box.max.x / 2 - box.min.x / 2,
+                y = -box.max.y / 2 - box.min.y / 2;
+
+            group.position.x = x;
+            group.position.y = y;
+
+            console.log(x, y);
+
+            meshlist.map(function (sitem) {
+                //console.log( sitem.position );
+                /*
+                sitem.position.x = x;
+                sitem.position.y = y;
+                */
+            });
+
+            var pivot = new _three2.default.Object3D();
+            pivot.add(group);
+
+            this.scene.add(pivot);
+
+            this._images.push({ ele: pivot, item: item, meshlist: meshlist });
 
             this.render();
 
@@ -167,10 +179,14 @@ var ThreeBase = function (_VisChartBase) {
         value: function animate() {
             var _this3 = this;
 
-            return;
+            if (this._images && this._images.length) {
+                this._images.map(function (item) {
+                    item.ele.rotation.y += 0.03;
+                });
 
-            this.group && (this.group.rotation.y += 0.03);
-            this.render();
+                this.render();
+            };
+
             requestAnimationFrame(function () {
                 _this3.animate();
             });

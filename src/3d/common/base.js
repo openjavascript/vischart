@@ -29,6 +29,7 @@ export default class ThreeBase extends VisChartBase {
         
 
         this.images = [];
+        this._images = [];
 
         if( this.data && this.data.background && this.data.background.length ){
 
@@ -117,18 +118,10 @@ export default class ThreeBase extends VisChartBase {
     initSVGBackground( paths, item, key ){
         if( !( paths && paths.length ) ) return;
 
-        var geometry = new THREE.CircleGeometry( 20, 32 );
-        var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-        var circle = new THREE.Mesh( geometry, material );
-        material.wireframe = true;
-        this.scene.add( circle );
-
-        console.log( 'circle', circle.position );
-
         console.log( item );
 
         var group = new THREE.Group();
-        //group.scale.multiplyScalar( 0.1 );
+        let meshlist = [];
         group.scale.y *= -1;
         for ( var i = 0; i < paths.length; i ++ ) {
             var path = paths[ i ];
@@ -142,20 +135,41 @@ export default class ThreeBase extends VisChartBase {
                 var shape = shapes[ j ];
                 var geometry = new THREE.ShapeBufferGeometry( shape );
                 var mesh = new THREE.Mesh( geometry, material );
+                meshlist.push( mesh );
 
-                //mesh.position.y = -this.height/2 + item.height + item.offsetY;
-                /*
-                */
                 group.add( mesh );
             }
         }
-        this.group = group;
-        this.scene.add( group );
+
 
         var box = new THREE.Box3().setFromObject( group );
-        console.log( box, box.size() );
-        this.group.position.x = -box.size().x + item.width / 2  / 2; 
-        this.group.position.y = box.size().y;
+        let size = box.getSize( new THREE.Vector3 );
+
+        console.log( size, box.min, box.max );
+
+        var x = -box.max.x / 2 - box.min.x / 2
+            , y = -box.max.y / 2 - box.min.y / 2
+            ;
+
+        group.position.x = x;
+        group.position.y = y;
+
+        console.log( x, y );
+
+        meshlist.map( sitem => {
+            //console.log( sitem.position );
+            /*
+            sitem.position.x = x;
+            sitem.position.y = y;
+            */
+        });
+        
+        var pivot = new THREE.Object3D();
+        pivot.add( group );
+
+        this.scene.add( pivot );
+
+        this._images.push( { ele: pivot, item: item, meshlist: meshlist  } );
 
         this.render();
 
@@ -163,10 +177,15 @@ export default class ThreeBase extends VisChartBase {
     }
 
     animate() {
-        return;
 
-        this.group && ( this.group.rotation.y += 0.03 );
-        this.render();
+        if( this._images && this._images.length ){
+            this._images.map( ( item ) => {
+                item.ele.rotation.y += 0.03;
+            });
+
+            this.render();
+        };
+
         requestAnimationFrame( ()=>{ this.animate() } );
     }
 
