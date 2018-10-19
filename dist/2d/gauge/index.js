@@ -65,8 +65,7 @@ var Gauge = function (_VisChartBase) {
         value: function _setSize(width, height) {
             _get(Gauge.prototype.__proto__ || Object.getPrototypeOf(Gauge.prototype), '_setSize', this).call(this, width, height);
 
-            this.totalPostfix = '次/秒';
-            this.totalPostfix = '';
+            this.totalPostfix = '次/时';
 
             this.offsetCy = 15;
 
@@ -371,27 +370,77 @@ var Gauge = function (_VisChartBase) {
             });
         }
     }, {
+        key: 'animationText',
+        value: function animationText() {
+            var _this7 = this;
+
+            if (this.isDestroy) return;
+
+            if (this.totalNumCount >= this.totalNum) return;
+            this.totalNumCount += this.totalNumStep;
+
+            if (this.totalNumCount >= this.totalNum || !this.isAnimation()) {
+                this.totalNumCount = this.totalNum;
+            };
+
+            this.totalText.text(this.totalNumCount);
+            this.totalTextPostfix.x(this.totalText.textWidth + 5);
+
+            this.totalTextGroup.x((this.width - this.totalTextPostfix.textWidth - this.totalText.textWidth - 5) / 2);
+
+            this.layoutLayer.add(this.totalTextGroup);
+
+            window.requestAnimationFrame(function () {
+                _this7.animationText();
+            });
+        }
+    }, {
         key: 'drawText',
         value: function drawText() {
 
+            this.totalTextGroup = new _konva2.default.Group();
+            this.addDestroy(this.totalTextGroup);
+
             var params = {
-                text: 0 + '',
-                x: this.cx,
-                y: this.textY,
-                fontSize: 26 * this.sizeRate,
-                fontFamily: 'HuXiaoBoKuHei',
+                text: 0 + ''
+                /*
+                , x: this.cx
+                , y: this.textY
+                */
+                , fontSize: 30 * this.sizeRate,
+                fontFamily: 'Agency FB',
                 fill: '#ffffff',
                 fontStyle: 'italic',
                 letterSpacing: 1.5
             },
                 tmp = _jsonUtilsx2.default.clone(params);
-            tmp.text = this.totalNum + this.totalPostfix;
+            tmp.text = this.totalNum;
 
             this.totalText = new _konva2.default.Text(params);
             this.addDestroy(this.totalText);
 
-            this.totalText.x(this.cx - this.totalText.textWidth / 2);
-            this.totalText.y(this.textY + 5);
+            var params1 = {
+                text: this.totalPostfix,
+                x: this.totalText.textWidth + 5,
+                fontSize: 12 * this.sizeRate,
+                fontFamily: 'MicrosoftYaHei',
+                fill: '#ffffff',
+                fontStyle: 'italic',
+                letterSpacing: 1.5
+            };
+
+            this.totalTextPostfix = new _konva2.default.Text(params1);
+            this.totalTextPostfix.y(this.totalText.textHeight - this.totalTextPostfix.textHeight - 4);
+            this.addDestroy(this.totalTextPostfix);
+
+            this.totalTextGroup.add(this.totalText);
+            this.totalTextGroup.add(this.totalTextPostfix);
+
+            //console.log( this.totalTextGroup, this.totalTextGroup.getClipWidth(), this.totalTextGroup.width(), this.totalTextGroup.size()  );
+
+            //this.totalTextGroup.x( this.cx - this.totalTextGroup.width / 2 );
+            this.totalTextGroup.y(this.textY);
+            this.totalTextGroup.x((this.width - this.totalTextPostfix.textWidth - this.totalText.textWidth - 5) / 2);
 
             this.tmpTotalText = new _konva2.default.Text(tmp);
             this.addDestroy(this.tmpTotalText);
@@ -400,12 +449,16 @@ var Gauge = function (_VisChartBase) {
         key: 'drawTextRect',
         value: function drawTextRect() {
 
-            var textWidth = this.tmpTotalText.textWidth + 30,
-                textX = 0;
+            var textWidth = this.tmpTotalText.textWidth + 30 + this.totalTextPostfix.textWidth + 5,
+                textX = 0,
+                textY = 0;
+
             if (textWidth < 170) {
                 textWidth = 170;
             }
-            textX = this.cx - textWidth / 2 + 2;
+            textX = this.cx - textWidth / 2 + 2;;
+
+            textY = this.textY - (this.textHeight - this.totalText.textHeight) / 2;
 
             this.textRect = new _konva2.default.Rect({
                 fill: '#596ea7',
@@ -415,26 +468,26 @@ var Gauge = function (_VisChartBase) {
                 width: textWidth,
                 height: this.textHeight,
                 x: textX,
-                y: this.textY
+                y: textY
             });
             this.addDestroy(this.textRect);
 
             var points = [];
-            points.push('M', [textX, this.textY + this.textLineLength].join(','));
-            points.push('L', [textX, this.textY].join(','));
-            points.push('L', [textX + this.textLineLength, this.textY].join(','));
+            points.push('M', [textX, textY + this.textLineLength].join(','));
+            points.push('L', [textX, textY].join(','));
+            points.push('L', [textX + this.textLineLength, textY].join(','));
 
-            points.push('M', [textX + textWidth - this.textLineLength, this.textY].join(','));
-            points.push('L', [textX + textWidth, this.textY].join(','));
-            points.push('L', [textX + textWidth, this.textY + this.textLineLength].join(','));
+            points.push('M', [textX + textWidth - this.textLineLength, textY].join(','));
+            points.push('L', [textX + textWidth, textY].join(','));
+            points.push('L', [textX + textWidth, textY + this.textLineLength].join(','));
 
-            points.push('M', [textX + textWidth, this.textY + this.textHeight - this.textLineLength].join(','));
-            points.push('L', [textX + textWidth, this.textY + this.textHeight].join(','));
-            points.push('L', [textX + textWidth - this.textLineLength, this.textY + this.textHeight].join(','));
+            points.push('M', [textX + textWidth, textY + this.textHeight - this.textLineLength].join(','));
+            points.push('L', [textX + textWidth, textY + this.textHeight].join(','));
+            points.push('L', [textX + textWidth - this.textLineLength, textY + this.textHeight].join(','));
 
-            points.push('M', [textX + this.textLineLength, this.textY + this.textHeight].join(','));
-            points.push('L', [textX, this.textY + this.textHeight].join(','));
-            points.push('L', [textX, this.textY + this.textHeight - this.textLineLength].join(','));
+            points.push('M', [textX + this.textLineLength, textY + this.textHeight].join(','));
+            points.push('L', [textX, textY + this.textHeight].join(','));
+            points.push('L', [textX, textY + this.textHeight - this.textLineLength].join(','));
 
             this.textLinePath = new _konva2.default.Path({
                 data: points.join(''),
@@ -445,29 +498,30 @@ var Gauge = function (_VisChartBase) {
 
             this.layoutLayer.add(this.textLinePath);
             this.layoutLayer.add(this.textRect);
-            this.layoutLayer.add(this.totalText);
+            //this.layoutLayer.add( this.totalText );
+            this.layoutLayer.add(this.totalTextGroup);
         }
     }, {
         key: 'drawArcText',
         value: function drawArcText() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (!(this.textAr && this.textAr.length)) return;
 
             this.textAr.map(function (val) {
                 var text = new _konva2.default.Text({
-                    x: val.point.x + _this7.cx,
-                    y: val.point.y + _this7.cy,
+                    x: val.point.x + _this8.cx,
+                    y: val.point.y + _this8.cy,
                     text: val.text + '',
-                    fontSize: 11 * _this7.sizeRate
+                    fontSize: 11 * _this8.sizeRate
                     //, rotation: val.angle
                     , fontFamily: 'MicrosoftYaHei',
-                    fill: _this7.lineColor
+                    fill: _this8.lineColor
                 });
-                _this7.addDestroy(text);
+                _this8.addDestroy(text);
                 text.rotation(val.angle + 90);
 
-                _this7.layoutLayer.add(text);
+                _this8.layoutLayer.add(text);
             });
         }
     }, {
@@ -659,7 +713,7 @@ var Gauge = function (_VisChartBase) {
     }, {
         key: 'animation',
         value: function animation() {
-            var _this8 = this;
+            var _this9 = this;
 
             //console.log( this.angle, this.animationAngle );
             if (this.isDestroy) return;
@@ -676,7 +730,7 @@ var Gauge = function (_VisChartBase) {
             this.stage.add(this.layer);
 
             window.requestAnimationFrame(function () {
-                _this8.animation();
+                _this9.animation();
             });
         }
     }, {
@@ -688,28 +742,6 @@ var Gauge = function (_VisChartBase) {
             this.group.rotation(this.angle + 90);
             this.group.rotation(this.angle + 90);
             this.stage.add(this.layer);
-        }
-    }, {
-        key: 'animationText',
-        value: function animationText() {
-            var _this9 = this;
-
-            if (this.isDestroy) return;
-
-            if (this.totalNumCount >= this.totalNum) return;
-            this.totalNumCount += this.totalNumStep;
-
-            if (this.totalNumCount >= this.totalNum || !this.isAnimation()) {
-                this.totalNumCount = this.totalNum;
-            };
-
-            this.totalText.text(this.totalNumCount + this.totalPostfix);
-            this.totalText.x(this.cx - this.totalText.textWidth / 2);
-            this.stage.add(this.layoutLayer);
-
-            window.requestAnimationFrame(function () {
-                _this9.animationText();
-            });
         }
     }, {
         key: 'calcDataPosition',
