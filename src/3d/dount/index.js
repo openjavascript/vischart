@@ -1,5 +1,5 @@
 
-import VisChartBase from '../common/threebase.js';
+import VisChartBase from '../common/base.js';
 import * as geometry from '../../geometry/geometry.js';
 
 import PointAt from '../../common/pointat.js';
@@ -16,6 +16,7 @@ export default class Dount extends VisChartBase  {
         this.name = 'Dount_' + Date.now();
 
         this._setSize( width, height );
+
     }
 
     _setSize( width, height ){

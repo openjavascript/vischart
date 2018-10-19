@@ -32,7 +32,7 @@ var _constant = require('./common/constant.js');
 
 var constant = _interopRequireWildcard(_constant);
 
-var _legend = require('./common/legend.js');
+var _legend = require('./2d/common/legend.js');
 
 var _legend2 = _interopRequireDefault(_legend);
 

@@ -1,11 +1,11 @@
 
-import VisChartBase from '../common/vischartbase.js';
-import * as geometry from '../geometry/geometry.js';
+import VisChartBase from '../common/base.js';
+import * as geometry from '../../geometry/geometry.js';
 
 import Konva from 'konva';
 import ju from 'json-utilsx';
 
-import * as utils from '../common/utils.js';
+import * as utils from '../../common/utils.js';
 
 
 export default class Legend extends VisChartBase  {

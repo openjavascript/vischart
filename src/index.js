@@ -9,7 +9,7 @@ import Konva from 'konva';
 import ju from 'json-utilsx';
 
 import * as constant from './common/constant.js';
-import Legend from './common/legend.js';
+import Legend from './2d/common/legend.js';
 
 import VisThree from './3d/index.js';
 

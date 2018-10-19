@@ -1,5 +1,5 @@
 
-import VisChartBase from './common/threebase.js';
+import VisChartBase from './common/base.js';
 
 import Dount from './dount/index.js';
 

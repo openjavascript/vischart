@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _konvabase = require('../common/konvabase.js');
+var _base = require('../common/base.js');
 
-var _konvabase2 = _interopRequireDefault(_konvabase);
+var _base2 = _interopRequireDefault(_base);
 
 var _geometry = require('../../geometry/geometry.js');
 
@@ -207,6 +207,6 @@ var RoundStateText = function (_VisChartBase) {
     }]);
 
     return RoundStateText;
-}(_konvabase2.default);
+}(_base2.default);
 
 exports.default = RoundStateText;
