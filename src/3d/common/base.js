@@ -115,8 +115,61 @@ export default class ThreeBase extends VisChartBase {
 
 
     initSVGBackground( paths, item, key ){
-        console.log( key, item, paths );
+        if( !( paths && paths.length ) ) return;
+
+        var geometry = new THREE.CircleGeometry( 20, 32 );
+        var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+        var circle = new THREE.Mesh( geometry, material );
+        material.wireframe = true;
+        this.scene.add( circle );
+
+        console.log( 'circle', circle.position );
+
+        console.log( item );
+
+        var group = new THREE.Group();
+        //group.scale.multiplyScalar( 0.1 );
+        group.scale.y *= -1;
+        for ( var i = 0; i < paths.length; i ++ ) {
+            var path = paths[ i ];
+            var material = new THREE.MeshBasicMaterial( {
+                color: path.color,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            } );
+            var shapes = path.toShapes( true );
+            for ( var j = 0; j < shapes.length; j ++ ) {
+                var shape = shapes[ j ];
+                var geometry = new THREE.ShapeBufferGeometry( shape );
+                var mesh = new THREE.Mesh( geometry, material );
+
+                //mesh.position.y = -this.height/2 + item.height + item.offsetY;
+                /*
+                */
+                group.add( mesh );
+            }
+        }
+        this.group = group;
+        this.scene.add( group );
+
+        var box = new THREE.Box3().setFromObject( group );
+        console.log( box, box.size() );
+        this.group.position.x = -box.size().x + item.width / 2  / 2; 
+        this.group.position.y = box.size().y;
+
+        this.render();
+
+        this.animate();
     }
+
+    animate() {
+        return;
+
+        this.group && ( this.group.rotation.y += 0.03 );
+        this.render();
+        requestAnimationFrame( ()=>{ this.animate() } );
+    }
+
 
 
 }

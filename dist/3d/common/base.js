@@ -116,7 +116,64 @@ var ThreeBase = function (_VisChartBase) {
     }, {
         key: 'initSVGBackground',
         value: function initSVGBackground(paths, item, key) {
-            console.log(key, item, paths);
+            if (!(paths && paths.length)) return;
+
+            var geometry = new _three2.default.CircleGeometry(20, 32);
+            var material = new _three2.default.MeshBasicMaterial({ color: 0xffff00 });
+            var circle = new _three2.default.Mesh(geometry, material);
+            material.wireframe = true;
+            this.scene.add(circle);
+
+            console.log('circle', circle.position);
+
+            console.log(item);
+
+            var group = new _three2.default.Group();
+            //group.scale.multiplyScalar( 0.1 );
+            group.scale.y *= -1;
+            for (var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+                var material = new _three2.default.MeshBasicMaterial({
+                    color: path.color,
+                    side: _three2.default.DoubleSide,
+                    depthWrite: false
+                });
+                var shapes = path.toShapes(true);
+                for (var j = 0; j < shapes.length; j++) {
+                    var shape = shapes[j];
+                    var geometry = new _three2.default.ShapeBufferGeometry(shape);
+                    var mesh = new _three2.default.Mesh(geometry, material);
+
+                    //mesh.position.y = -this.height/2 + item.height + item.offsetY;
+                    /*
+                    */
+                    group.add(mesh);
+                }
+            }
+            this.group = group;
+            this.scene.add(group);
+
+            var box = new _three2.default.Box3().setFromObject(group);
+            console.log(box, box.size());
+            this.group.position.x = -box.size().x + item.width / 2 / 2;
+            this.group.position.y = box.size().y;
+
+            this.render();
+
+            this.animate();
+        }
+    }, {
+        key: 'animate',
+        value: function animate() {
+            var _this3 = this;
+
+            return;
+
+            this.group && (this.group.rotation.y += 0.03);
+            this.render();
+            requestAnimationFrame(function () {
+                _this3.animate();
+            });
         }
     }]);
 

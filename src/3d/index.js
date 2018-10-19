@@ -48,8 +48,9 @@ export default class VisThree extends VisChartBase {
         if( !this.stage ){
             this.stage = this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera( 40, this.width / this.height, 1, 1000 );
-            this.camera.position.set( 0, 0, 20 )
+            this.camera.position.set( 0, 0, 400 )
             this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+            this.renderer.setPixelRatio( window.devicePixelRatio );
             this.box.innerHTML = '';
             this.box.appendChild( this.renderer.domElement );
         }
