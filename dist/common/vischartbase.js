@@ -118,8 +118,8 @@ var VisChartBase = function () {
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
             var rotation = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
             var isbase64 = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+            var opt = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : {};
 
-            //console.log( this.rateWidth, this.width );
             var rateW = this.min / this.rateWidth,
                 rateH = this.min / this.rateHeight;
             this.images.push({
@@ -129,7 +129,8 @@ var VisChartBase = function () {
                 offsetX: offsetX,
                 offsetY: offsetY,
                 rotation: rotation,
-                isbase64: isbase64
+                isbase64: isbase64,
+                opt: opt
             });
 
             return this;

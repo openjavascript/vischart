@@ -43,28 +43,22 @@ export default class VisThree extends VisChartBase {
     }
 
     init(){
-        //console.log( 'VisChartBase init', Date.now(), this.width, this.height, this.canvas );
-
         if( !this.box ) return;
 
-        /*
         if( !this.stage ){
-            this.stage = new Konva.Stage( {
-                container: this.box
-                , width: this.width
-                , height: this.height
-            });
-        }else{
-            this.stage.width( this.width );
-            this.stage.height( this.height );
+            this.stage = this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera( 40, this.width / this.height, 1, 1000 );
+            this.camera.position.set( 0, 0, 20 )
+            this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+            this.box.innerHTML = '';
+            this.box.appendChild( this.renderer.domElement );
         }
-        */
-
-        //console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
-        //console.log( this );
+        this.renderer.setSize( this.width, this.height );
 
         this.customWidth && ( this.box.style.width = this.customWidth + 'px' );
         this.customHeight && ( this.box.style.height = this.customHeight + 'px' );
+
+        this.render();
 
         return this;
     }
@@ -154,7 +148,12 @@ export default class VisThree extends VisChartBase {
                 }
                 if( ins ){
                     this.legend && ins.setLegend( this.legend );
-                    ins.setStage( this.stage );
+                    ins.setOptions( {
+                        renderer: this.renderer
+                        , scene: this.scene
+                        , camera: this.camera
+                        , stage: this.stage
+                    });
                 }
             }
 

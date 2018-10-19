@@ -13,7 +13,6 @@ import Legend from './2d/common/legend.js';
 
 import VisThree from './3d/index.js';
 
-
 export default class VisChart extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );

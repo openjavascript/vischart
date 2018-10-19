@@ -100,8 +100,7 @@ export default class VisChartBase {
     }
 
 
-    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0, isbase64 = false ){
-        //console.log( this.rateWidth, this.width );
+    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0, isbase64 = false, opt = {} ){
         let rateW = this.min / this.rateWidth
             , rateH = this.min / this.rateHeight
             ;
@@ -113,6 +112,7 @@ export default class VisChartBase {
             , offsetY: offsetY
             , rotation: rotation
             , isbase64: isbase64
+            , opt: opt
         });
 
         return this;

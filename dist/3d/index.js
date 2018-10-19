@@ -76,28 +76,22 @@ var VisThree = function (_VisChartBase) {
     }, {
         key: 'init',
         value: function init() {
-            //console.log( 'VisChartBase init', Date.now(), this.width, this.height, this.canvas );
-
             if (!this.box) return;
 
-            /*
-            if( !this.stage ){
-                this.stage = new Konva.Stage( {
-                    container: this.box
-                    , width: this.width
-                    , height: this.height
-                });
-            }else{
-                this.stage.width( this.width );
-                this.stage.height( this.height );
+            if (!this.stage) {
+                this.stage = this.scene = new _three2.default.Scene();
+                this.camera = new _three2.default.PerspectiveCamera(40, this.width / this.height, 1, 1000);
+                this.camera.position.set(0, 0, 20);
+                this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
+                this.box.innerHTML = '';
+                this.box.appendChild(this.renderer.domElement);
             }
-            */
-
-            //console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
-            //console.log( this );
+            this.renderer.setSize(this.width, this.height);
 
             this.customWidth && (this.box.style.width = this.customWidth + 'px');
             this.customHeight && (this.box.style.height = this.customHeight + 'px');
+
+            this.render();
 
             return this;
         }
@@ -184,7 +178,12 @@ var VisThree = function (_VisChartBase) {
                     }
                     if (ins) {
                         _this2.legend && ins.setLegend(_this2.legend);
-                        ins.setStage(_this2.stage);
+                        ins.setOptions({
+                            renderer: _this2.renderer,
+                            scene: _this2.scene,
+                            camera: _this2.camera,
+                            stage: _this2.stage
+                        });
                     }
                 }
 
