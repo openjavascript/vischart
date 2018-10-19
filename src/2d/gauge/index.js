@@ -24,6 +24,9 @@ export default class Gauge extends VisChartBase  {
     _setSize( width, height ){
         super._setSize( width, height );
 
+        this.totalPostfix = '次/秒';
+        this.totalPostfix = '';
+
         this.offsetCy = 15;
 
         this.cy += this.offsetCy;
@@ -319,8 +322,9 @@ export default class Gauge extends VisChartBase  {
             , fontFamily: 'HuXiaoBoKuHei'
             , fill: '#ffffff'
             , fontStyle: 'italic'
+            , letterSpacing: 1.5
         }, tmp = ju.clone( params );
-        tmp.text = this.totalNum; 
+        tmp.text = this.totalNum + this.totalPostfix; 
 
         this.totalText = new Konva.Text( params );
         this.addDestroy( this.totalText );
@@ -330,7 +334,6 @@ export default class Gauge extends VisChartBase  {
 
         this.tmpTotalText = new Konva.Text( tmp );
         this.addDestroy( this.tmpTotalText );
-        
 
     }
 
@@ -632,7 +635,7 @@ export default class Gauge extends VisChartBase  {
             this.totalNumCount = this.totalNum;
         };
 
-        this.totalText.text( this.totalNumCount );
+        this.totalText.text( this.totalNumCount + this.totalPostfix );
         this.totalText.x( this.cx - this.totalText.textWidth / 2 );
         this.stage.add( this.layoutLayer );
 

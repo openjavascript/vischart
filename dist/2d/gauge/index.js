@@ -65,6 +65,9 @@ var Gauge = function (_VisChartBase) {
         value: function _setSize(width, height) {
             _get(Gauge.prototype.__proto__ || Object.getPrototypeOf(Gauge.prototype), '_setSize', this).call(this, width, height);
 
+            this.totalPostfix = '次/秒';
+            this.totalPostfix = '';
+
             this.offsetCy = 15;
 
             this.cy += this.offsetCy;
@@ -378,10 +381,11 @@ var Gauge = function (_VisChartBase) {
                 fontSize: 26 * this.sizeRate,
                 fontFamily: 'HuXiaoBoKuHei',
                 fill: '#ffffff',
-                fontStyle: 'italic'
+                fontStyle: 'italic',
+                letterSpacing: 1.5
             },
                 tmp = _jsonUtilsx2.default.clone(params);
-            tmp.text = this.totalNum;
+            tmp.text = this.totalNum + this.totalPostfix;
 
             this.totalText = new _konva2.default.Text(params);
             this.addDestroy(this.totalText);
@@ -699,7 +703,7 @@ var Gauge = function (_VisChartBase) {
                 this.totalNumCount = this.totalNum;
             };
 
-            this.totalText.text(this.totalNumCount);
+            this.totalText.text(this.totalNumCount + this.totalPostfix);
             this.totalText.x(this.cx - this.totalText.textWidth / 2);
             this.stage.add(this.layoutLayer);
 
