@@ -177,37 +177,44 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircleLine(){
-        this.circleLineRadius = Math.ceil( this.circleLinePercent * this.min / 2 )
+        let material,  geometryItem, circle, group;
 
-        let points = [];
-            points.push( 'M' );
-        for( let i = 90; i <= 180; i++ ){
-            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
-            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
-            if( i == 90 ){
-                points.push( 'L' );
-            }
-        }
-        points.push( 'M');
-        for( let i = 270; i <= 360; i++ ){
-            let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
-            points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
-            if( i == 270 ){
-                points.push( 'L' );
-            }
-        }
-/*
-        this.circleLine = new Konva.Path( {
-            data: points.join('')
-            , x: this.fixCx()
-            , y: this.fixCy()
-            , stroke: this.lineColor
-            , strokeWidth: 2.5
-            , fill: '#ffffff00'
-        });
-        this.addDestroy( this.circleLine );
+        group = new THREE.Group();
 
-        this.layoutLayer.add( this.circleLine );*/
+        material = new THREE.LineBasicMaterial( { 
+            color: this.lineColor
+            , linewidth: 1 
+        } );
+        geometryItem = new THREE.CircleGeometry(  
+            49
+            , 128
+            , geometry.radians( 90 )
+            , geometry.radians( 90 )
+        );
+        geometryItem.vertices.shift();
+        circle = new THREE.Line( geometryItem, material );
+        circle.renderOrder = -1;
+        circle.material.depthTest=false;
+        group.add( circle );
+
+        material = new THREE.LineBasicMaterial( { 
+            color: this.lineColor
+            , linewidth: 1 
+        } );
+        geometryItem = new THREE.CircleGeometry(  
+            49
+            , 128
+            , geometry.radians( 0 )
+            , geometry.radians( -90  )
+        );
+        geometryItem.vertices.shift();
+        circle = new THREE.Line( geometryItem, material );
+        circle.renderOrder = -1;
+        circle.material.depthTest=false;
+        group.add( circle );
+
+        this.scene.add( group );
+        this.addDestroy( group );
     }
 
     initDataLayout(){

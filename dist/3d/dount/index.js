@@ -232,37 +232,37 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircleLine',
         value: function drawCircleLine() {
-            this.circleLineRadius = Math.ceil(this.circleLinePercent * this.min / 2);
+            var material = void 0,
+                geometryItem = void 0,
+                circle = void 0,
+                group = void 0;
 
-            var points = [];
-            points.push('M');
-            for (var i = 90; i <= 180; i++) {
-                var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i);
-                points.push([tmp.x, tmp.y].join(',') + ',');
-                if (i == 90) {
-                    points.push('L');
-                }
-            }
-            points.push('M');
-            for (var _i = 270; _i <= 360; _i++) {
-                var _tmp = geometry.distanceAngleToPoint(this.circleLineRadius, _i);
-                points.push([_tmp.x, _tmp.y].join(',') + ',');
-                if (_i == 270) {
-                    points.push('L');
-                }
-            }
-            /*
-                    this.circleLine = new Konva.Path( {
-                        data: points.join('')
-                        , x: this.fixCx()
-                        , y: this.fixCy()
-                        , stroke: this.lineColor
-                        , strokeWidth: 2.5
-                        , fill: '#ffffff00'
-                    });
-                    this.addDestroy( this.circleLine );
-            
-                    this.layoutLayer.add( this.circleLine );*/
+            group = new THREE.Group();
+
+            material = new THREE.LineBasicMaterial({
+                color: this.lineColor,
+                linewidth: 1
+            });
+            geometryItem = new THREE.CircleGeometry(49, 128, geometry.radians(90), geometry.radians(90));
+            geometryItem.vertices.shift();
+            circle = new THREE.Line(geometryItem, material);
+            circle.renderOrder = -1;
+            circle.material.depthTest = false;
+            group.add(circle);
+
+            material = new THREE.LineBasicMaterial({
+                color: this.lineColor,
+                linewidth: 1
+            });
+            geometryItem = new THREE.CircleGeometry(49, 128, geometry.radians(0), geometry.radians(-90));
+            geometryItem.vertices.shift();
+            circle = new THREE.Line(geometryItem, material);
+            circle.renderOrder = -1;
+            circle.material.depthTest = false;
+            group.add(circle);
+
+            this.scene.add(group);
+            this.addDestroy(group);
         }
     }, {
         key: 'initDataLayout',
@@ -529,8 +529,8 @@ var Dount = function (_VisChartBase) {
                             //val.lineEnd.x = this.lineLeft;
                             val.lineEnd.x = -(_this5.outRadius + _this5.lineSpace);
 
-                            var _tmp2 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp2 > _this5.lineCurveLength) {
+                            var _tmp = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp > _this5.lineCurveLength) {
                                 var tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
                                     tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, tmpAngle);
                                 tmpPoint = geometry.pointPlus(tmpPoint, val.lineStart);
@@ -545,8 +545,8 @@ var Dount = function (_VisChartBase) {
                     default:
                         {
                             val.lineEnd.x = _this5.outRadius + _this5.lineSpace;
-                            var _tmp3 = geometry.pointDistance(val.lineStart, val.lineEnd);
-                            if (_tmp3 > _this5.lineCurveLength) {
+                            var _tmp2 = geometry.pointDistance(val.lineStart, val.lineEnd);
+                            if (_tmp2 > _this5.lineCurveLength) {
                                 var _tmpAngle = geometry.pointAngle(val.lineStart, val.lineEnd),
                                     _tmpPoint = geometry.distanceAngleToPoint(_this5.lineCurveLength, _tmpAngle);
                                 _tmpPoint = geometry.pointPlus(_tmpPoint, val.lineStart);
@@ -579,9 +579,9 @@ var Dount = function (_VisChartBase) {
                         {
                             var tmpY = item[0].lineEnd.y;
                             //console.log( item );
-                            for (var _i2 = item.length - 2; _i2 >= 0; _i2--) {
-                                var _pre = item[_i2 + 1],
-                                    _cur = item[_i2];
+                            for (var _i = item.length - 2; _i >= 0; _i--) {
+                                var _pre = item[_i + 1],
+                                    _cur = item[_i];
                                 if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this5.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
                                     tmpY = _pre.lineEnd.y + _this5.lineHeight;
                                     _cur.lineEnd.y = tmpY;
@@ -600,9 +600,9 @@ var Dount = function (_VisChartBase) {
                     case 2:
                         {
                             var _tmpY = item[0].lineEnd.y;
-                            for (var _i3 = 1; _i3 < item.length; _i3++) {
-                                var _pre2 = item[_i3 - 1],
-                                    _cur2 = item[_i3],
+                            for (var _i2 = 1; _i2 < item.length; _i2++) {
+                                var _pre2 = item[_i2 - 1],
+                                    _cur2 = item[_i2],
                                     zero = item[0];
 
                                 if (Math.abs(_pre2.lineEnd.y + _this5.fixCy()) < _this5.lineHeight) {
@@ -628,9 +628,9 @@ var Dount = function (_VisChartBase) {
                     case 4:
                         {
                             var _tmpY2 = 0;
-                            for (var _i4 = item.length - 2; _i4 >= 0; _i4--) {
-                                var _pre3 = item[_i4 + 1],
-                                    _cur3 = item[_i4];
+                            for (var _i3 = item.length - 2; _i3 >= 0; _i3--) {
+                                var _pre3 = item[_i3 + 1],
+                                    _cur3 = item[_i3];
                                 if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y >= _pre3.lineEnd.y) {
                                     //console.log( pre.lineEnd.y, cur.lineEnd.y );
                                     _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
@@ -643,9 +643,9 @@ var Dount = function (_VisChartBase) {
                     case 8:
                         {
                             var _tmpY3 = 0;
-                            for (var _i5 = 1; _i5 < item.length; _i5++) {
-                                var _pre4 = item[_i5 - 1],
-                                    _cur4 = item[_i5];
+                            for (var _i4 = 1; _i4 < item.length; _i4++) {
+                                var _pre4 = item[_i4 - 1],
+                                    _cur4 = item[_i4];
                                 if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y >= _pre4.lineEnd.y) {
                                     _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
                                     _cur4.lineEnd.y = _tmpY3;
