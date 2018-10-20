@@ -256,7 +256,6 @@ export default class VisChartBase {
     }
 
     resize( width, height, data = null, allData = null ){
-        //console.log( 'resize', this.name, Date.now(), width, height );
 
         this.customWidth = width || this.width;
         this.customHeight = height || this.height;
@@ -266,8 +265,6 @@ export default class VisChartBase {
 
         this.width = width      || this.box.offsetWidth     || this.width;
         this.height = height    || this.box.offsetHeight    || this.height;
-
-        //console.log( this.width, this.height );
 
         this._setSize( this.width, this.height );
     }

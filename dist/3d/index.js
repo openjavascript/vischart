@@ -66,7 +66,7 @@ var VisThree = function (_VisChartBase) {
                     far: 1000
                 },
 
-                cameraPosition: { x: 0, y: 0, z: 400 }
+                cameraPosition: { x: 0, y: 0, z: 350 }
             };
 
             _get(VisThree.prototype.__proto__ || Object.getPrototypeOf(VisThree.prototype), '_setSize', this).call(this, width, height);

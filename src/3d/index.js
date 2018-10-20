@@ -27,7 +27,7 @@ export default class VisThree extends VisChartBase {
                 , far: 1000
             }
 
-            , cameraPosition: { x: 0, y: 0, z: 400 }
+            , cameraPosition: { x: 0, y: 0, z: 350 }
         };
 
         super._setSize( width, height );

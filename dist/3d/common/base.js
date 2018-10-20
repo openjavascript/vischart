@@ -55,6 +55,7 @@ var ThreeBase = function (_VisChartBase) {
 
             this.images = [];
             this._images = [];
+            this.rotationBg = [];
 
             if (this.data && this.data.background && this.data.background.length) {
 
@@ -62,8 +63,6 @@ var ThreeBase = function (_VisChartBase) {
                     _this2.addImage(val.url, val.width, val.height, val.offsetX || 0, val.offsetY || 0, val.rotation || 0, val.isbase64, val);
                 });
             }
-
-            this.rotationBg = [];
 
             this.images.map(function (item, key) {
                 item.opt = item.opt || {};
@@ -91,7 +90,6 @@ var ThreeBase = function (_VisChartBase) {
             if (!(paths && paths.length)) return;
 
             var group = new _three2.default.Group();
-            var meshlist = [];
             group.scale.y *= -1;
             for (var i = 0; i < paths.length; i++) {
                 var path = paths[i];
@@ -105,8 +103,6 @@ var ThreeBase = function (_VisChartBase) {
                     var shape = shapes[j];
                     var geometry = new _three2.default.ShapeBufferGeometry(shape);
                     var mesh = new _three2.default.Mesh(geometry, material);
-                    meshlist.push(mesh);
-
                     group.add(mesh);
                 }
             }
@@ -114,37 +110,28 @@ var ThreeBase = function (_VisChartBase) {
             var box = new _three2.default.Box3().setFromObject(group);
             var size = box.getSize(new _three2.default.Vector3());
 
-            //console.log( size, box.min, box.max );
-
             var x = -box.max.x / 2 - box.min.x / 2,
                 y = -box.max.y / 2 - box.min.y / 2;
 
             group.position.x = x;
             group.position.y = y;
 
-            //console.log( x, y );
-
-            meshlist.map(function (sitem) {
-                //console.log( sitem.position );
-                /*
-                sitem.position.x = x;
-                sitem.position.y = y;
-                */
-            });
-
             var pivot = new _three2.default.Object3D();
             pivot.add(group);
 
+            pivot.scale.set(this.sizeRate, this.sizeRate, this.sizeRate);
+
+            this.addDestroy(pivot);
+
             this.scene.add(pivot);
 
-            var data = { ele: pivot, item: item, meshlist: meshlist };
+            var data = { ele: pivot, item: item };
 
             this._images.push(data);
 
             item.rotation && this.rotationBg.push(data);
 
             this.render();
-
             this.animationBg();
         }
     }, {
@@ -169,9 +156,6 @@ var ThreeBase = function (_VisChartBase) {
             if (!this.rotationBg.length) return;
             if (!this.isAnimation()) return;
             //return;
-
-            //logic
-
             if (this._images && this._images.length) {
                 this._images.map(function (item) {
                     item.ele.rotation[_this4.getRotationAttr(item)] += _this4.getRotationStep(item);
@@ -188,23 +172,33 @@ var ThreeBase = function (_VisChartBase) {
         key: 'getRotationAttr',
         value: function getRotationAttr(item) {
             var r = 'y';
-
             if (_jsonUtilsx2.default.jsonInData(item, 'item.opt.rotationAttr')) {
                 r = item.item.opt.rotationAttr;
             }
-
             return r;
         }
     }, {
         key: 'getRotationStep',
         value: function getRotationStep(item) {
             var r = 0.03;
-
             if (_jsonUtilsx2.default.jsonInData(item, 'item.opt.rotationStep')) {
                 r = item.item.opt.rotationStep;
             }
-
             return r;
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            this.setDestroy();
+
+            this.destroyList.map(function (item) {
+                if (item) {
+                    /*
+                    item.remove();
+                    item.destroy();
+                    */
+                }
+            });
         }
     }]);
 

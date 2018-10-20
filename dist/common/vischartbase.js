@@ -291,7 +291,6 @@ var VisChartBase = function () {
             var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
             var allData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
-            //console.log( 'resize', this.name, Date.now(), width, height );
 
             this.customWidth = width || this.width;
             this.customHeight = height || this.height;
@@ -301,8 +300,6 @@ var VisChartBase = function () {
 
             this.width = width || this.box.offsetWidth || this.width;
             this.height = height || this.box.offsetHeight || this.height;
-
-            //console.log( this.width, this.height );
 
             this._setSize(this.width, this.height);
         }
