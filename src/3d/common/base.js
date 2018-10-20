@@ -90,6 +90,11 @@ export default class ThreeBase extends VisChartBase {
                 let geometry = new THREE.ShapeBufferGeometry( shape );
                 let mesh = new THREE.Mesh( geometry, material );
                 group.add( mesh );
+
+                /*
+                mesh.renderOrder = 10 + key;
+                mesh.material.depthTest=false;
+                */
             }
         }
 

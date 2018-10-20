@@ -72,6 +72,7 @@ export default class VisThree extends VisChartBase {
             this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
             this.renderer.setPixelRatio( window.devicePixelRatio );
             //this.renderer.setClearColor( 0xffffff, .2 );
+            this.renderer.sortObjects  = true;
             this.box.innerHTML = '';
             this.box.appendChild( this.renderer.domElement );
         }
@@ -95,8 +96,6 @@ export default class VisThree extends VisChartBase {
 
     updateThreeConfig( config ){
         this.setThreeConfig( config );
-
-        console.log( 'updateThreeConfig', Date.now(), this.config );
 
         this.camera.position.x = this.config.cameraPosition.x;
         this.camera.position.y = this.config.cameraPosition.y;
@@ -200,6 +199,7 @@ export default class VisThree extends VisChartBase {
                         , scene: this.scene
                         , camera: this.camera
                         , stage: this.stage
+                        , config: this.config
                     });
                 }
             }

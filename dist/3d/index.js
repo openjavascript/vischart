@@ -99,6 +99,7 @@ var VisThree = function (_VisChartBase) {
                 this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
                 this.renderer.setPixelRatio(window.devicePixelRatio);
                 //this.renderer.setClearColor( 0xffffff, .2 );
+                this.renderer.sortObjects = true;
                 this.box.innerHTML = '';
                 this.box.appendChild(this.renderer.domElement);
             }
@@ -124,8 +125,6 @@ var VisThree = function (_VisChartBase) {
         key: 'updateThreeConfig',
         value: function updateThreeConfig(config) {
             this.setThreeConfig(config);
-
-            console.log('updateThreeConfig', Date.now(), this.config);
 
             this.camera.position.x = this.config.cameraPosition.x;
             this.camera.position.y = this.config.cameraPosition.y;
@@ -225,7 +224,8 @@ var VisThree = function (_VisChartBase) {
                             renderer: _this2.renderer,
                             scene: _this2.scene,
                             camera: _this2.camera,
-                            stage: _this2.stage
+                            stage: _this2.stage,
+                            config: _this2.config
                         });
                     }
                 }

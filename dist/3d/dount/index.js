@@ -79,7 +79,7 @@ var Dount = function (_VisChartBase) {
 
             this.textOffset = 4;
 
-            this.lineColor = '#24a3ea';
+            this.lineColor = 0x24a3ea;
 
             this.lineRange = {
                 "1": [],
@@ -221,17 +221,13 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
-            /*this.circleRadius = Math.ceil( this.circlePercent * this.min / 2 )
-             this.circle = new Konva.Circle( {
-                x: this.fixCx()
-                , y: this.fixCy()
-                , radius: this.circleRadius
-                , stroke: this.lineColor
-                , strokeWidth: 2.5
-                , fill: '#ffffff00'
-            });
-            this.addDestroy( this.circle );
-            this.layoutLayer.add( this.circle );*/
+            var material = new THREE.LineBasicMaterial({ color: this.lineColor, linewidth: 1 });
+            var geometry = new THREE.CircleGeometry(47, 128);
+            geometry.vertices.shift();
+            var circle = new THREE.LineLoop(geometry, material);
+            circle.renderOrder = -1;
+            circle.material.depthTest = false;
+            this.scene.add(circle);
         }
     }, {
         key: 'drawCircleLine',
@@ -272,15 +268,8 @@ var Dount = function (_VisChartBase) {
         key: 'initDataLayout',
         value: function initDataLayout() {
 
-            /*if( !this.inited ){
-                this.layoutLayer = new Konva.Layer();
-                this.addDestroy( this.layoutLayer );
-                 this.drawCircle();
-                this.drawCircleLine();
-                 this.stage.add( this.layoutLayer );
-                 this.arcLayer = new Konva.Layer();
-                this.addDestroy( this.arcLayer );
-            }*/
+            this.drawCircle();
+            this.drawCircleLine();
 
             this.path = [];
             this.line = [];

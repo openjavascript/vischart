@@ -104,6 +104,11 @@ var ThreeBase = function (_VisChartBase) {
                     var geometry = new _three2.default.ShapeBufferGeometry(shape);
                     var mesh = new _three2.default.Mesh(geometry, material);
                     group.add(mesh);
+
+                    /*
+                    mesh.renderOrder = 10 + key;
+                    mesh.material.depthTest=false;
+                    */
                 }
             }
 
