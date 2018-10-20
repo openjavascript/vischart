@@ -84,17 +84,11 @@ export default class VisChartBase {
     }
 
     animationBg(){
-        //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
         if( this.isDestroy ) return;
         if( !this.rotationBg.length ) return;
         if( !this.isAnimation() ) return;
-
-        this.rotationBg.map( item => {
-            this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
-            item.rotation( this.rotationBgCount );
-        });
-
-        this.stage.add( this.iconLayer );
+    
+        //logic
 
         window.requestAnimationFrame( ()=>{ this.animationBg() } );
     }

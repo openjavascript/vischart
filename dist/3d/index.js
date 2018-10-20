@@ -28,6 +28,10 @@ var _three = require('../utils/three.js');
 
 var _three2 = _interopRequireDefault(_three);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -48,15 +52,22 @@ var VisThree = function (_VisChartBase) {
 
         _this.ins = [];
         _this.legend = null;
-
-        _this._setSize(width, height);
-
         return _this;
     }
 
     _createClass(VisThree, [{
         key: '_setSize',
         value: function _setSize(width, height) {
+
+            this.config = this.config || {
+                camera: {
+                    fov: 40,
+                    near: 1,
+                    far: 1000
+                },
+
+                cameraPosition: { x: 0, y: 0, z: 400 }
+            };
 
             _get(VisThree.prototype.__proto__ || Object.getPrototypeOf(VisThree.prototype), '_setSize', this).call(this, width, height);
 
@@ -80,11 +91,14 @@ var VisThree = function (_VisChartBase) {
 
             if (!this.stage) {
                 this.stage = this.scene = new _three2.default.Scene();
-                this.camera = new _three2.default.PerspectiveCamera(40, this.width / this.height, 1, 1000);
-                this.camera.position.set(0, 0, 400);
+
+                console.log(this, this.config);
+
+                this.camera = new _three2.default.PerspectiveCamera(this.config.camera.fov, this.width / this.height, this.config.camera.nera, this.config.camera.far);
+                this.camera.position.set(this.config.cameraPosition.x, this.config.cameraPosition.y, this.config.cameraPosition.z);
                 this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
                 this.renderer.setPixelRatio(window.devicePixelRatio);
-                this.renderer.setClearColor(0xffffff, .2);
+                //this.renderer.setClearColor( 0xffffff, .2 );
                 this.box.innerHTML = '';
                 this.box.appendChild(this.renderer.domElement);
             }
@@ -95,6 +109,33 @@ var VisThree = function (_VisChartBase) {
 
             this.render();
 
+            return this;
+        }
+    }, {
+        key: 'setThreeConfig',
+        value: function setThreeConfig(config) {
+            config = config || {};
+
+            this.config = _lodash2.default.merge(this.config, config);
+
+            return this;
+        }
+    }, {
+        key: 'updateThreeConfig',
+        value: function updateThreeConfig(config) {
+            this.setThreeConfig(config);
+
+            console.log('updateThreeConfig', Date.now(), this.config);
+
+            this.camera.position.x = this.config.cameraPosition.x;
+            this.camera.position.y = this.config.cameraPosition.y;
+            this.camera.position.z = this.config.cameraPosition.z;
+
+            this.camera.fov = this.config.camera.fov;
+            this.camera.near = this.config.camera.near;
+            this.camera.far = this.config.camera.far;
+
+            this.camera.updateProjectionMatrix();
             return this;
         }
     }, {

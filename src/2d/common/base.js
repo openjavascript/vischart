@@ -72,4 +72,22 @@ export default class KonvaBase extends VisChartBase {
         return this;
     }
 
+    animationBg(){
+        //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
+        if( this.isDestroy ) return;
+        if( !this.rotationBg.length ) return;
+        if( !this.isAnimation() ) return;
+
+        this.rotationBg.map( item => {
+            this.rotationBgCount =  ( this.rotationBgCount - this.rotationBgStep ) % 360;
+            item.rotation( this.rotationBgCount );
+        });
+
+        this.stage.add( this.iconLayer );
+
+        window.requestAnimationFrame( ()=>{ this.animationBg() } );
+    }
+
+
+
 }

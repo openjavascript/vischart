@@ -89,6 +89,27 @@ var KonvaBase = function (_VisChartBase) {
 
             return this;
         }
+    }, {
+        key: 'animationBg',
+        value: function animationBg() {
+            var _this3 = this;
+
+            //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
+            if (this.isDestroy) return;
+            if (!this.rotationBg.length) return;
+            if (!this.isAnimation()) return;
+
+            this.rotationBg.map(function (item) {
+                _this3.rotationBgCount = (_this3.rotationBgCount - _this3.rotationBgStep) % 360;
+                item.rotation(_this3.rotationBgCount);
+            });
+
+            this.stage.add(this.iconLayer);
+
+            window.requestAnimationFrame(function () {
+                _this3.animationBg();
+            });
+        }
     }]);
 
     return KonvaBase;

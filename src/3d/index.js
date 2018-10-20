@@ -8,19 +8,27 @@ import * as constant from '../common/constant.js';
 
 import THREE from '../utils/three.js';
 
+import ld from 'lodash';
+
 export default class VisThree extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );
 
         this.ins = [];
         this.legend = null;
-
-        this._setSize( width, height );
-
     }
 
-
     _setSize( width, height ){
+
+        this.config = this.config || {
+            camera: {
+                fov: 40
+                , near: 1
+                , far: 1000
+            }
+
+            , cameraPosition: { x: 0, y: 0, z: 400 }
+        };
 
         super._setSize( width, height );
 
@@ -47,11 +55,23 @@ export default class VisThree extends VisChartBase {
 
         if( !this.stage ){
             this.stage = this.scene = new THREE.Scene();
-            this.camera = new THREE.PerspectiveCamera( 40, this.width / this.height, 1, 1000 );
-            this.camera.position.set( 0, 0, 400 )
+
+            console.log( this, this.config );
+
+            this.camera = new THREE.PerspectiveCamera( 
+                this.config.camera.fov
+                , this.width / this.height
+                , this.config.camera.nera
+                , this.config.camera.far
+            );
+            this.camera.position.set( 
+                this.config.cameraPosition.x
+                , this.config.cameraPosition.y
+                , this.config.cameraPosition.z
+            )
             this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
             this.renderer.setPixelRatio( window.devicePixelRatio );
-            this.renderer.setClearColor( 0xffffff, .2 );
+            //this.renderer.setClearColor( 0xffffff, .2 );
             this.box.innerHTML = '';
             this.box.appendChild( this.renderer.domElement );
         }
@@ -62,6 +82,31 @@ export default class VisThree extends VisChartBase {
 
         this.render();
 
+        return this;
+    }
+
+    setThreeConfig( config ){
+        config = config || {};
+
+        this.config = ld.merge( this.config, config );
+
+        return this;
+    }
+
+    updateThreeConfig( config ){
+        this.setThreeConfig( config );
+
+        console.log( 'updateThreeConfig', Date.now(), this.config );
+
+        this.camera.position.x = this.config.cameraPosition.x;
+        this.camera.position.y = this.config.cameraPosition.y;
+        this.camera.position.z = this.config.cameraPosition.z;
+
+        this.camera.fov     = this.config.camera.fov;
+        this.camera.near    = this.config.camera.near;
+        this.camera.far     = this.config.camera.far;
+
+        this.camera.updateProjectionMatrix();
         return this;
     }
 

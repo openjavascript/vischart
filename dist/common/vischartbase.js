@@ -95,17 +95,11 @@ var VisChartBase = function () {
         value: function animationBg() {
             var _this = this;
 
-            //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
             if (this.isDestroy) return;
             if (!this.rotationBg.length) return;
             if (!this.isAnimation()) return;
 
-            this.rotationBg.map(function (item) {
-                _this.rotationBgCount = (_this.rotationBgCount - _this.rotationBgStep) % 360;
-                item.rotation(_this.rotationBgCount);
-            });
-
-            this.stage.add(this.iconLayer);
+            //logic
 
             window.requestAnimationFrame(function () {
                 _this.animationBg();
