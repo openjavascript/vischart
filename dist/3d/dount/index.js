@@ -146,7 +146,6 @@ var Dount = function (_VisChartBase) {
         value: function animationCircleLine() {
             var _this2 = this;
 
-            return;
             if (this.isDestroy) return;
             if (!this.circleLine) return;
 
@@ -154,10 +153,7 @@ var Dount = function (_VisChartBase) {
                 return;
             }
 
-            this.circleLineRotation += this.circleLineRotationStep;
-
-            this.circleLine.rotation(this.circleLineRotation);
-            this.stage.add(this.layoutLayer);
+            this.circleLine.rotation.z -= .03;
 
             window.requestAnimationFrame(function () {
                 _this2.animationCircleLine();
@@ -167,6 +163,11 @@ var Dount = function (_VisChartBase) {
         key: 'animation',
         value: function animation() {
             var _this3 = this;
+
+            var geometryx = new THREE.RingGeometry(49, 65, 256, 1, geometry.radians(0), geometry.radians(-90));
+            var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+            var mesh = new THREE.Mesh(geometryx, material);
+            this.scene.add(mesh);
 
             return;
             if (this.isDestroy) return;
@@ -193,8 +194,6 @@ var Dount = function (_VisChartBase) {
                 //for( let i = 0; i < this.path.length; i++ ){
                 //let i = 2;
                 var item = this.path[i];
-
-                //console.log( i, item, item.itemData.endAngle, item.itemData.value );
 
                 var tmpAngle = this.countAngle;
 
@@ -260,6 +259,8 @@ var Dount = function (_VisChartBase) {
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
+
+            this.circleLine = group;
 
             this.scene.add(group);
             this.addDestroy(group);

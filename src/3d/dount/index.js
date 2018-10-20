@@ -104,23 +104,32 @@ export default class Dount extends VisChartBase  {
     }
 
     animationCircleLine(){
-        return;
         if( this.isDestroy ) return;
         if( !this.circleLine ) return;
 
         if( !this.isAnimation() ){
             return;
         }
-        
-        this.circleLineRotation += this.circleLineRotationStep; 
 
-        this.circleLine.rotation( this.circleLineRotation );
-        this.stage.add( this.layoutLayer );
+        this.circleLine.rotation.z -= .03;
 
         window.requestAnimationFrame( ()=>{ this.animationCircleLine() } );
     }
 
     animation(){
+
+        var geometryx = new THREE.RingGeometry( 
+            49
+            , 65
+            , 256 
+            , 1
+            , geometry.radians( 0 )
+            , geometry.radians( -90 )
+        );
+        var material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+        var mesh = new THREE.Mesh( geometryx, material );
+        this.scene.add( mesh );
+
         return;
         if( this.isDestroy ) return;
         if( this.isDone ) return;
@@ -144,8 +153,6 @@ export default class Dount extends VisChartBase  {
         //for( let i = 0; i < this.path.length; i++ ){
             //let i = 2;
             let item = this.path[ i ];
-
-            //console.log( i, item, item.itemData.endAngle, item.itemData.value );
 
             let tmpAngle = this.countAngle;
 
@@ -212,6 +219,8 @@ export default class Dount extends VisChartBase  {
         circle.renderOrder = -1;
         circle.material.depthTest=false;
         group.add( circle );
+
+        this.circleLine = group;
 
         this.scene.add( group );
         this.addDestroy( group );
