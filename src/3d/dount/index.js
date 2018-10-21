@@ -125,7 +125,7 @@ export default class Dount extends VisChartBase  {
 
         var geometryx = new THREE.RingGeometry( 
             51
-            , 75
+            , 70
             , 256 
             , 1
             , geometry.radians( 0 )

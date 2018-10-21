@@ -173,7 +173,7 @@ var Dount = function (_VisChartBase) {
         value: function animation() {
             var _this3 = this;
 
-            var geometryx = new _three2.default.RingGeometry(51, 75, 256, 1, geometry.radians(0), geometry.radians(-90));
+            var geometryx = new _three2.default.RingGeometry(51, 70, 256, 1, geometry.radians(0), geometry.radians(-90));
             var material = new _three2.default.MeshBasicMaterial({ color: 0xffff00, side: _three2.default.DoubleSide });
             var mesh = new _three2.default.Mesh(geometryx, material);
             this.scene.add(mesh);
