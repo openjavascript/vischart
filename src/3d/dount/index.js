@@ -9,7 +9,7 @@ import ju from 'json-utilsx';
 import * as utils from '../../common/utils.js';
 
 import THREE from '../../utils/three.js';
-import MeshLine from 'three.meshline';
+import MeshLine from '../../utils/THREE.MeshLine.js';
 
 //import IconCircle from '../icon/iconcircle.js';
 
@@ -71,11 +71,13 @@ export default class Dount extends VisChartBase  {
     init(){
         this.calcLayoutPosition();
 
+
         return this;
     }
 
     update( data, allData ){
         super.update( data, allData );
+        console.log( THREE );
 
         this.data = data;
         this.allData = allData;

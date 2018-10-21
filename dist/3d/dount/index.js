@@ -32,9 +32,9 @@ var _three = require('../../utils/three.js');
 
 var _three2 = _interopRequireDefault(_three);
 
-var _three3 = require('three.meshline');
+var _THREEMeshLine = require('../../utils/THREE.MeshLine.js');
 
-var _three4 = _interopRequireDefault(_three3);
+var _THREEMeshLine2 = _interopRequireDefault(_THREEMeshLine);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -119,6 +119,7 @@ var Dount = function (_VisChartBase) {
         key: 'update',
         value: function update(data, allData) {
             _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'update', this).call(this, data, allData);
+            console.log(_three2.default);
 
             this.data = data;
             this.allData = allData;
