@@ -190,18 +190,19 @@ export default class Dount extends VisChartBase  {
             0                 // aRotation
         );
 
-        var points = curve.getPoints( 100 );
+        var points = curve.getPoints( 200 );
         var geometryy = new THREE.Geometry().setFromPoints( points );
 
         curve = new THREE.EllipseCurve(
             0,  0,            // ax, aY
             47, 47,           // xRadius, yRadius
-            0,  2 * Math.PI,  // aStartAngle, aEndAngle
+            0,  geometry.radians( 10 ),  // aStartAngle, aEndAngle
             false,            // aClockwise
             geometry.radians( .5 )                 // aRotation
         );
 
-        points = [ ...points, ...curve.getPoints( 100) ] ;
+        points = [ ...points, ...curve.getPoints(  50 ) ] ;
+
         geometryy = new THREE.Geometry().setFromPoints( points );
 
         line.setGeometry( geometryy );

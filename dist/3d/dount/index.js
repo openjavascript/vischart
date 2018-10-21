@@ -239,17 +239,18 @@ var Dount = function (_VisChartBase) {
             0 // aRotation
             );
 
-            var points = curve.getPoints(100);
+            var points = curve.getPoints(200);
             var geometryy = new _three2.default.Geometry().setFromPoints(points);
 
             curve = new _three2.default.EllipseCurve(0, 0, // ax, aY
             47, 47, // xRadius, yRadius
-            0, 2 * Math.PI, // aStartAngle, aEndAngle
+            0, geometry.radians(10), // aStartAngle, aEndAngle
             false, // aClockwise
             geometry.radians(.5) // aRotation
             );
 
-            points = [].concat(_toConsumableArray(points), _toConsumableArray(curve.getPoints(100)));
+            points = [].concat(_toConsumableArray(points), _toConsumableArray(curve.getPoints(50)));
+
             geometryy = new _three2.default.Geometry().setFromPoints(points);
 
             line.setGeometry(geometryy);
