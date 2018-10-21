@@ -379,26 +379,12 @@ export default class Dount extends VisChartBase  {
             var geometry = new THREE.CircleGeometry( 3, 32 );
             var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
             var circle = new THREE.Mesh( geometry, material );
-            circle.position.x = path.itemData.lineExpend.x;
-            circle.position.y = path.itemData.lineExpend.y;
-            this.scene.add( circle );
-
             path.lineicon = circle;
-            /*
-            path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
-            this.clearList.push( path.lineicon );
-            */
+            this.scene.add( circle );
         }
-        /*
-        //console.log( path );
-        let icon = path.lineicon;
-        icon.setOptions( {
-            stage: this.stage
-            , layer: layer
-            , cx: this.fixCx()
-            , cy: this.fixCy()
-        });
-        icon.update( path.itemData.lineExpend );*/
+
+        path.lineicon.position.x = path.itemData.lineExpend.x;
+        path.lineicon.position.y = path.itemData.lineExpend.y;
     }
 
     addText( path, layer ){
