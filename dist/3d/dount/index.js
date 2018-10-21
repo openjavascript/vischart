@@ -32,9 +32,7 @@ var _three = require('../../utils/three.js');
 
 var _three2 = _interopRequireDefault(_three);
 
-var _THREEMeshLine = require('../../utils/THREE.MeshLine.js');
-
-var _THREEMeshLine2 = _interopRequireDefault(_THREEMeshLine);
+require('../../utils/THREE.MeshLine.js');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -229,12 +227,19 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
+            var geometryx = new _three2.default.CircleGeometry(47, 128);
+            //geometryx.vertices.shift();
+
+            var line = new _three2.default.MeshLine();
+            line.setGeometry(geometryx);
+
             var material = new _three2.default.LineBasicMaterial({ color: this.lineColor, linewidth: 10 });
-            var geometry = new _three2.default.CircleGeometry(47, 128);
-            geometry.vertices.shift();
-            var circle = new _three2.default.LineLoop(geometry, material);
+
+            var circle = new _three2.default.Mesh(line.geometry, material);
+
             circle.renderOrder = -1;
             circle.material.depthTest = false;
+
             this.scene.add(circle);
         }
     }, {

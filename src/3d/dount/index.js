@@ -9,7 +9,7 @@ import ju from 'json-utilsx';
 import * as utils from '../../common/utils.js';
 
 import THREE from '../../utils/three.js';
-import MeshLine from '../../utils/THREE.MeshLine.js';
+import '../../utils/THREE.MeshLine.js';
 
 //import IconCircle from '../icon/iconcircle.js';
 
@@ -179,12 +179,19 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircle(){
+        var geometryx = new THREE.CircleGeometry(  47, 128 );
+        //geometryx.vertices.shift();
+
+        var line = new THREE.MeshLine();
+        line.setGeometry( geometryx );
+
         var material = new THREE.LineBasicMaterial( { color: this.lineColor, linewidth: 10 } );
-        var geometry = new THREE.CircleGeometry(  47, 128 );
-        geometry.vertices.shift();
-        var circle = new THREE.LineLoop( geometry, material );
+
+        var circle = new THREE.Mesh( line.geometry, material );
+
         circle.renderOrder = -1;
         circle.material.depthTest=false;
+
         this.scene.add( circle );
     }
 
