@@ -2416,6 +2416,11 @@ tar@^4:
     safe-buffer "^5.1.2"
     yallist "^3.0.2"
 
+three.meshline@^1.1.0:
+  version "1.1.0"
+  resolved "http://registry.npm.taobao.org/three.meshline/download/three.meshline-1.1.0.tgz#cf66be97b239a044d9d80b8bbf63673eb4dc09fc"
+  integrity sha1-z2a+l7I5oETZ2AuLv2NnPrTcCfw=
+
 to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "http://registry.npm.taobao.org/to-fast-properties/download/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"

@@ -28,6 +28,14 @@ var _utils = require('../../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
+var _three = require('../../utils/three.js');
+
+var _three2 = _interopRequireDefault(_three);
+
+var _three3 = require('three.meshline');
+
+var _three4 = _interopRequireDefault(_three3);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -164,9 +172,9 @@ var Dount = function (_VisChartBase) {
         value: function animation() {
             var _this3 = this;
 
-            var geometryx = new THREE.RingGeometry(49, 65, 256, 1, geometry.radians(0), geometry.radians(-90));
-            var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
-            var mesh = new THREE.Mesh(geometryx, material);
+            var geometryx = new _three2.default.RingGeometry(51, 75, 256, 1, geometry.radians(0), geometry.radians(-90));
+            var material = new _three2.default.MeshBasicMaterial({ color: 0xffff00, side: _three2.default.DoubleSide });
+            var mesh = new _three2.default.Mesh(geometryx, material);
             this.scene.add(mesh);
 
             return;
@@ -220,10 +228,10 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
-            var material = new THREE.LineBasicMaterial({ color: this.lineColor, linewidth: 1 });
-            var geometry = new THREE.CircleGeometry(47, 128);
+            var material = new _three2.default.LineBasicMaterial({ color: this.lineColor, linewidth: 10 });
+            var geometry = new _three2.default.CircleGeometry(47, 128);
             geometry.vertices.shift();
-            var circle = new THREE.LineLoop(geometry, material);
+            var circle = new _three2.default.LineLoop(geometry, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             this.scene.add(circle);
@@ -236,26 +244,26 @@ var Dount = function (_VisChartBase) {
                 circle = void 0,
                 group = void 0;
 
-            group = new THREE.Group();
+            group = new _three2.default.Group();
 
-            material = new THREE.LineBasicMaterial({
+            material = new _three2.default.LineBasicMaterial({
                 color: this.lineColor,
                 linewidth: 1
             });
-            geometryItem = new THREE.CircleGeometry(49, 128, geometry.radians(90), geometry.radians(90));
+            geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(90), geometry.radians(90));
             geometryItem.vertices.shift();
-            circle = new THREE.Line(geometryItem, material);
+            circle = new _three2.default.Line(geometryItem, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
 
-            material = new THREE.LineBasicMaterial({
+            material = new _three2.default.LineBasicMaterial({
                 color: this.lineColor,
                 linewidth: 1
             });
-            geometryItem = new THREE.CircleGeometry(49, 128, geometry.radians(0), geometry.radians(-90));
+            geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(0), geometry.radians(-90));
             geometryItem.vertices.shift();
-            circle = new THREE.Line(geometryItem, material);
+            circle = new _three2.default.Line(geometryItem, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);

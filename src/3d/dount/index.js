@@ -8,6 +8,9 @@ import ju from 'json-utilsx';
 
 import * as utils from '../../common/utils.js';
 
+import THREE from '../../utils/three.js';
+import MeshLine from 'three.meshline';
+
 //import IconCircle from '../icon/iconcircle.js';
 
 export default class Dount extends VisChartBase  {
@@ -119,8 +122,8 @@ export default class Dount extends VisChartBase  {
     animation(){
 
         var geometryx = new THREE.RingGeometry( 
-            49
-            , 65
+            51
+            , 75
             , 256 
             , 1
             , geometry.radians( 0 )
@@ -174,7 +177,7 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircle(){
-        var material = new THREE.LineBasicMaterial( { color: this.lineColor, linewidth: 1 } );
+        var material = new THREE.LineBasicMaterial( { color: this.lineColor, linewidth: 10 } );
         var geometry = new THREE.CircleGeometry(  47, 128 );
         geometry.vertices.shift();
         var circle = new THREE.LineLoop( geometry, material );
