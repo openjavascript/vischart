@@ -205,6 +205,15 @@ var ThreeBase = function (_VisChartBase) {
                 }
             });
         }
+    }, {
+        key: 'parseColor',
+        value: function parseColor(color) {
+            if (color.toString().indexOf('#') > -1) {
+                color = parseInt(color.replace('#', ''), 16);
+            }
+
+            return color;
+        }
     }]);
 
     return ThreeBase;

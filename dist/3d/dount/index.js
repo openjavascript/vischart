@@ -96,10 +96,10 @@ var Dount = function (_VisChartBase) {
                 "8": []
             };
 
-            this.lineWidth = 40;
+            this.lineWidth = 22;
             this.lineSpace = 10;
             this.lineAngle = 35;
-            this.lineHeight = 21;
+            this.lineHeight = 15;
             this.lineCurveLength = 30;
 
             this.loopSort = [4, 8, 1, 2];
@@ -112,14 +112,13 @@ var Dount = function (_VisChartBase) {
         key: 'init',
         value: function init() {
             this.calcLayoutPosition();
-
             return this;
         }
     }, {
         key: 'update',
         value: function update(data, allData) {
             _get(Dount.prototype.__proto__ || Object.getPrototypeOf(Dount.prototype), 'update', this).call(this, data, allData);
-            console.log(_three2.default);
+            //console.log( THREE );
 
             this.data = data;
             this.allData = allData;
@@ -173,12 +172,6 @@ var Dount = function (_VisChartBase) {
         value: function animation() {
             var _this3 = this;
 
-            var geometryx = new _three2.default.RingGeometry(51, 70, 256, 1, geometry.radians(0), geometry.radians(-90));
-            var material = new _three2.default.MeshBasicMaterial({ color: 0xffff00, side: _three2.default.DoubleSide });
-            var mesh = new _three2.default.Mesh(geometryx, material);
-            this.scene.add(mesh);
-
-            return;
             if (this.isDestroy) return;
             if (this.isDone) return;
 
@@ -212,9 +205,11 @@ var Dount = function (_VisChartBase) {
 
                 if (tmpAngle < item.itemData.startAngle) continue;
 
-                item.arc.angle(tmpAngle);
+                var geometryx = new _three2.default.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-tmpAngle));
+
+                item.arc.geometry.dispose();
+                item.arc.geometry = geometryx;
             }
-            this.stage.add(this.arcLayer);
 
             window.requestAnimationFrame(function () {
                 _this3.animation();
@@ -282,7 +277,7 @@ var Dount = function (_VisChartBase) {
                 color: new _three2.default.Color(this.lineColor),
                 lineWidth: 2
             });
-            geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(90), geometry.radians(90));
+            geometryItem = new _three2.default.CircleGeometry(50, 128, geometry.radians(90), geometry.radians(90));
             geometryItem.vertices.shift();
             line.setGeometry(geometryItem);
             circle = new _three2.default.Line(line.geometry, material);
@@ -295,7 +290,7 @@ var Dount = function (_VisChartBase) {
                 color: new _three2.default.Color(this.lineColor),
                 lineWidth: 2
             });
-            geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(0), geometry.radians(-90));
+            geometryItem = new _three2.default.CircleGeometry(50, 128, geometry.radians(0), geometry.radians(-90));
             geometryItem.vertices.shift();
             line.setGeometry(geometryItem);
             circle = new _three2.default.Line(line.geometry, material);
@@ -329,48 +324,38 @@ var Dount = function (_VisChartBase) {
                     //path.fill( val.itemStyle.color );
                     color = val.itemStyle.color;
                 }
-                //console.log(  ii, pathindex );
+                color = this.parseColor(color);
 
-                //console.log( this.path[pathindex], pathindex, this.path );
-                /*
-                            let params = {
-                                x: this.fixCx()
-                                , y: this.fixCy()
-                                , innerRadius: this.inRadius
-                                , outerRadius: this.outRadius
-                                , angle: this.countAngle
-                                , fill: color
-                                , stroke: color
-                                , strokeWidth: 0
-                                //, rotation: this.arcOffset
-                            };
-                            let arc = new Konva.Arc( params );
-                            this.clearList.push( arc );
-                
-                            let line = new Konva.Line({
-                              x: this.fixCx(),
-                              y: this.fixCy(),
-                              points: [ 0, 0, 0, 0 ],
-                              stroke: '#ffffff',
-                              strokeWidth: 2
-                            });
-                            this.line.push( line );
-                            this.clearList.push( line );
-                
-                            let tmp = { 
-                                arc: arc
-                                , pathData: [] 
-                                , itemData: val
-                                , line: line
-                            };
-                
-                            this.path.push( tmp );
-                
-                            this.arcLayer.add( arc );
-                            this.arcLayer.add( line );*/
+                var _geometryx = new _three2.default.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-0.1));
+                var _material = new _three2.default.MeshBasicMaterial({ color: color, side: _three2.default.DoubleSide });
+                var arc = new _three2.default.Mesh(_geometryx, _material);
+
+                this.scene.add(arc);
+
+                var line = new _three2.default.MeshLine();
+                var _material = new _three2.default.MeshLineMaterial({
+                    color: new _three2.default.Color(0xffffff),
+                    lineWidth: 2
+                });
+
+                var _geometryx = new _three2.default.Geometry();
+                line.setGeometry(_geometryx);
+
+                var mesh = new _three2.default.Mesh(line.geometry, _material);
+                this.scene.add(mesh);
+
+                this.line.push(mesh);
+
+                var tmp = {
+                    arc: arc,
+                    pathData: [],
+                    itemData: val,
+                    line: mesh,
+                    mline: line
+                };
+
+                this.path.push(tmp);
             };
-
-            /*this.stage.add( this.arcLayer );*/
 
             return this;
         }
@@ -397,18 +382,34 @@ var Dount = function (_VisChartBase) {
                 var lineExpend = path.itemData.lineExpend;
 
                 var line = this.line[i];
-                line.points([path.itemData.lineStart.x, path.itemData.lineStart.y, lineEnd.x, lineEnd.y, lineExpend.x, lineExpend.y]);
+
+                var meshline = new _three2.default.MeshLine();
+                var geometryx = new _three2.default.Geometry();
+                geometryx.vertices.push(new _three2.default.Vector3(path.itemData.lineStart.x, path.itemData.lineStart.y, 0), new _three2.default.Vector3(lineEnd.x, lineEnd.y, 0), new _three2.default.Vector3(lineExpend.x, lineExpend.y, 0));
+                meshline.setGeometry(geometryx);
+                line.geometry = meshline.geometry;
+
+                /*
+                line.points( [ 
+                    path.itemData.lineStart.x, path.itemData.lineStart.y
+                    , lineEnd.x, lineEnd.y 
+                    , lineExpend.x,lineExpend.y 
+                ] );
+                */
+                //console.log( i, line );
+
 
                 if (this.lineLengthCount >= this.lineLength) {
-                    this.addText(path, layer);
-                    this.addIcon(path, layer);
+                    /*
+                    this.addText( path, layer );
+                    this.addIcon( path, layer );
+                    */
+                    //console.log( 'line done' );
                 } else {
                     window.requestAnimationFrame(function () {
                         _this4.animationLine();
                     });
                 }
-
-                this.stage.add(layer);
             }
         }
     }, {
@@ -478,10 +479,10 @@ var Dount = function (_VisChartBase) {
         value: function calcLayoutPosition() {
             //console.log( 'calcLayoutPosition', Date.now() );
 
-            this.outRadius = Math.ceil(this.outPercent * this.min / 2);
-            this.inRadius = Math.ceil(this.inPercent * this.min / 2);
+            this.outRadius = 73;
+            this.inRadius = 53;
 
-            this.lineLength = (Math.min(this.fixWidth(), this.fixHeight()) - this.outRadius * 2) / 2 - this.lineOffset;
+            this.lineLength = 25;
             this.lineLengthCount = 1;
             this.lineLengthStep = .5;
 

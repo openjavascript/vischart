@@ -182,6 +182,12 @@ export default class ThreeBase extends VisChartBase {
         });
     }
 
+    parseColor( color ){
+        if( color.toString().indexOf( '#' ) > -1 ){
+            color = parseInt( color.replace( '#', ''), 16 );
+        }
 
+        return color;
+    }
 
 }
