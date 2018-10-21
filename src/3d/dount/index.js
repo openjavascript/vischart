@@ -179,13 +179,36 @@ export default class Dount extends VisChartBase  {
     }
 
     drawCircle(){
-        var geometryx = new THREE.CircleGeometry(  47, 128 );
-        //geometryx.vertices.shift();
 
         var line = new THREE.MeshLine();
-        line.setGeometry( geometryx );
 
-        var material = new THREE.LineBasicMaterial( { color: this.lineColor, linewidth: 10 } );
+        var curve = new THREE.EllipseCurve(
+            0,  0,            // ax, aY
+            47, 47,           // xRadius, yRadius
+            0,  2 * Math.PI,  // aStartAngle, aEndAngle
+            false,            // aClockwise
+            0                 // aRotation
+        );
+
+        var points = curve.getPoints( 100 );
+        var geometryy = new THREE.Geometry().setFromPoints( points );
+
+        curve = new THREE.EllipseCurve(
+            0,  0,            // ax, aY
+            47, 47,           // xRadius, yRadius
+            0,  2 * Math.PI,  // aStartAngle, aEndAngle
+            false,            // aClockwise
+            geometry.radians( .5 )                 // aRotation
+        );
+
+        points = [ ...points, ...curve.getPoints( 100) ] ;
+        geometryy = new THREE.Geometry().setFromPoints( points );
+
+        line.setGeometry( geometryy );
+        var material = new THREE.MeshLineMaterial( { 
+            color: new THREE.Color( this.lineColor )  
+            , lineWidth: 2
+        } );
 
         var circle = new THREE.Mesh( line.geometry, material );
 
@@ -193,16 +216,18 @@ export default class Dount extends VisChartBase  {
         circle.material.depthTest=false;
 
         this.scene.add( circle );
+
     }
 
     drawCircleLine(){
-        let material,  geometryItem, circle, group;
+        let material,  geometryItem, circle, group, line;
 
         group = new THREE.Group();
 
-        material = new THREE.LineBasicMaterial( { 
-            color: this.lineColor
-            , linewidth: 1 
+        line = new THREE.MeshLine();
+        material = new THREE.MeshLineMaterial( { 
+            color: new THREE.Color( this.lineColor )  
+            , lineWidth: 2
         } );
         geometryItem = new THREE.CircleGeometry(  
             49
@@ -211,14 +236,16 @@ export default class Dount extends VisChartBase  {
             , geometry.radians( 90 )
         );
         geometryItem.vertices.shift();
-        circle = new THREE.Line( geometryItem, material );
+        line.setGeometry( geometryItem );
+        circle = new THREE.Line( line.geometry, material );
         circle.renderOrder = -1;
         circle.material.depthTest=false;
         group.add( circle );
 
-        material = new THREE.LineBasicMaterial( { 
-            color: this.lineColor
-            , linewidth: 1 
+        line = new THREE.MeshLine();
+        material = new THREE.MeshLineMaterial( { 
+            color: new THREE.Color( this.lineColor )  
+            , lineWidth: 2
         } );
         geometryItem = new THREE.CircleGeometry(  
             49
@@ -227,7 +254,8 @@ export default class Dount extends VisChartBase  {
             , geometry.radians( -90  )
         );
         geometryItem.vertices.shift();
-        circle = new THREE.Line( geometryItem, material );
+        line.setGeometry( geometryItem );
+        circle = new THREE.Line( line.geometry, material );
         circle.renderOrder = -1;
         circle.material.depthTest=false;
         group.add( circle );

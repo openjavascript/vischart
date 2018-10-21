@@ -38,6 +38,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -227,13 +229,34 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'drawCircle',
         value: function drawCircle() {
-            var geometryx = new _three2.default.CircleGeometry(47, 128);
-            //geometryx.vertices.shift();
 
             var line = new _three2.default.MeshLine();
-            line.setGeometry(geometryx);
 
-            var material = new _three2.default.LineBasicMaterial({ color: this.lineColor, linewidth: 10 });
+            var curve = new _three2.default.EllipseCurve(0, 0, // ax, aY
+            47, 47, // xRadius, yRadius
+            0, 2 * Math.PI, // aStartAngle, aEndAngle
+            false, // aClockwise
+            0 // aRotation
+            );
+
+            var points = curve.getPoints(100);
+            var geometryy = new _three2.default.Geometry().setFromPoints(points);
+
+            curve = new _three2.default.EllipseCurve(0, 0, // ax, aY
+            47, 47, // xRadius, yRadius
+            0, 2 * Math.PI, // aStartAngle, aEndAngle
+            false, // aClockwise
+            geometry.radians(.5) // aRotation
+            );
+
+            points = [].concat(_toConsumableArray(points), _toConsumableArray(curve.getPoints(100)));
+            geometryy = new _three2.default.Geometry().setFromPoints(points);
+
+            line.setGeometry(geometryy);
+            var material = new _three2.default.MeshLineMaterial({
+                color: new _three2.default.Color(this.lineColor),
+                lineWidth: 2
+            });
 
             var circle = new _three2.default.Mesh(line.geometry, material);
 
@@ -248,28 +271,33 @@ var Dount = function (_VisChartBase) {
             var material = void 0,
                 geometryItem = void 0,
                 circle = void 0,
-                group = void 0;
+                group = void 0,
+                line = void 0;
 
             group = new _three2.default.Group();
 
-            material = new _three2.default.LineBasicMaterial({
-                color: this.lineColor,
-                linewidth: 1
+            line = new _three2.default.MeshLine();
+            material = new _three2.default.MeshLineMaterial({
+                color: new _three2.default.Color(this.lineColor),
+                lineWidth: 2
             });
             geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(90), geometry.radians(90));
             geometryItem.vertices.shift();
-            circle = new _three2.default.Line(geometryItem, material);
+            line.setGeometry(geometryItem);
+            circle = new _three2.default.Line(line.geometry, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
 
-            material = new _three2.default.LineBasicMaterial({
-                color: this.lineColor,
-                linewidth: 1
+            line = new _three2.default.MeshLine();
+            material = new _three2.default.MeshLineMaterial({
+                color: new _three2.default.Color(this.lineColor),
+                lineWidth: 2
             });
             geometryItem = new _three2.default.CircleGeometry(49, 128, geometry.radians(0), geometry.radians(-90));
             geometryItem.vertices.shift();
-            circle = new _three2.default.Line(geometryItem, material);
+            line.setGeometry(geometryItem);
+            circle = new _three2.default.Line(line.geometry, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
