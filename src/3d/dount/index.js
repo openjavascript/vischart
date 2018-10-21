@@ -363,9 +363,9 @@ export default class Dount extends VisChartBase  {
 
 
             if( this.lineLengthCount >= this.lineLength ){
+                this.addIcon( path, layer );
                 /*
                 this.addText( path, layer );
-                this.addIcon( path, layer );
                 */
                 //console.log( 'line done' );
             }else{
@@ -375,10 +375,21 @@ export default class Dount extends VisChartBase  {
     }
 
     addIcon( path, layer ){
-        /*if( !path.lineicon ){
+        if( !path.lineicon ){
+            var geometry = new THREE.CircleGeometry( 3, 32 );
+            var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+            var circle = new THREE.Mesh( geometry, material );
+            circle.position.x = path.itemData.lineExpend.x;
+            circle.position.y = path.itemData.lineExpend.y;
+            this.scene.add( circle );
+
+            path.lineicon = circle;
+            /*
             path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
             this.clearList.push( path.lineicon );
+            */
         }
+        /*
         //console.log( path );
         let icon = path.lineicon;
         icon.setOptions( {

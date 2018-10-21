@@ -400,9 +400,9 @@ var Dount = function (_VisChartBase) {
 
 
                 if (this.lineLengthCount >= this.lineLength) {
+                    this.addIcon(path, layer);
                     /*
                     this.addText( path, layer );
-                    this.addIcon( path, layer );
                     */
                     //console.log( 'line done' );
                 } else {
@@ -415,10 +415,21 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addIcon',
         value: function addIcon(path, layer) {
-            /*if( !path.lineicon ){
+            if (!path.lineicon) {
+                var geometry = new _three2.default.CircleGeometry(3, 32);
+                var material = new _three2.default.MeshBasicMaterial({ color: 0xffffff });
+                var circle = new _three2.default.Mesh(geometry, material);
+                circle.position.x = path.itemData.lineExpend.x;
+                circle.position.y = path.itemData.lineExpend.y;
+                this.scene.add(circle);
+
+                path.lineicon = circle;
+                /*
                 path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
                 this.clearList.push( path.lineicon );
+                */
             }
+            /*
             //console.log( path );
             let icon = path.lineicon;
             icon.setOptions( {
