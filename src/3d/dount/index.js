@@ -8,15 +8,13 @@ import ju from 'json-utilsx';
 
 import * as utils from '../../common/utils.js';
 
-import THREE from '../../utils/three.js';
-//import '../../utils/THREE.MeshLine.js';
-import {MeshLine, MeshLineMaterial} from 'three.meshline'
-
-THREE.MeshLine = MeshLine;
-THREE.MeshLineMaterial = MeshLineMaterial;
+const THREE = require( 'three' );
 
 import TextTexture from 'three.texttexture';
 
+import {MeshLine, MeshLineMaterial} from 'three.meshline'
+THREE.MeshLine = MeshLine;
+THREE.MeshLineMaterial = MeshLineMaterial;
 
 //import IconCircle from '../icon/iconcircle.js';
 

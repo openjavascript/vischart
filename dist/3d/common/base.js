@@ -10,10 +10,6 @@ var _vischartbase = require('../../common/vischartbase.js');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
 
-var _three = require('../../utils/three.js');
-
-var _three2 = _interopRequireDefault(_three);
-
 var _jsonUtilsx = require('json-utilsx');
 
 var _jsonUtilsx2 = _interopRequireDefault(_jsonUtilsx);
@@ -25,6 +21,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var THREE = require('three');
 
 var ThreeBase = function (_VisChartBase) {
     _inherits(ThreeBase, _VisChartBase);
@@ -78,8 +76,8 @@ var ThreeBase = function (_VisChartBase) {
     }, {
         key: 'svgLoader',
         value: function svgLoader() {
-            if (!this._svgloader && _three2.default.SVGLoader) {
-                this._svgloader = new _three2.default.SVGLoader();
+            if (!this._svgloader && THREE.SVGLoader) {
+                this._svgloader = new THREE.SVGLoader();
             }
 
             return this._svgloader;
@@ -89,20 +87,20 @@ var ThreeBase = function (_VisChartBase) {
         value: function initSVGBackground(paths, item, key) {
             if (!(paths && paths.length)) return;
 
-            var group = new _three2.default.Group();
+            var group = new THREE.Group();
             group.scale.y *= -1;
             for (var i = 0; i < paths.length; i++) {
                 var path = paths[i];
-                var material = new _three2.default.MeshBasicMaterial({
+                var material = new THREE.MeshBasicMaterial({
                     color: path.color,
-                    side: _three2.default.DoubleSide,
+                    side: THREE.DoubleSide,
                     depthWrite: false
                 });
                 var shapes = path.toShapes(true);
                 for (var j = 0; j < shapes.length; j++) {
                     var shape = shapes[j];
-                    var geometry = new _three2.default.ShapeBufferGeometry(shape);
-                    var mesh = new _three2.default.Mesh(geometry, material);
+                    var geometry = new THREE.ShapeBufferGeometry(shape);
+                    var mesh = new THREE.Mesh(geometry, material);
                     group.add(mesh);
 
                     /*
@@ -112,8 +110,8 @@ var ThreeBase = function (_VisChartBase) {
                 }
             }
 
-            var box = new _three2.default.Box3().setFromObject(group);
-            var size = box.getSize(new _three2.default.Vector3());
+            var box = new THREE.Box3().setFromObject(group);
+            var size = box.getSize(new THREE.Vector3());
 
             var x = -box.max.x / 2 - box.min.x / 2,
                 y = -box.max.y / 2 - box.min.y / 2;
@@ -121,7 +119,7 @@ var ThreeBase = function (_VisChartBase) {
             group.position.x = x;
             group.position.y = y;
 
-            var pivot = new _three2.default.Object3D();
+            var pivot = new THREE.Object3D();
             pivot.add(group);
 
             pivot.scale.set(this.sizeRate, this.sizeRate, this.sizeRate);

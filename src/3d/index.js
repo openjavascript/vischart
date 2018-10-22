@@ -6,7 +6,7 @@ import Dount from './dount/index.js';
 import ju from 'json-utilsx';
 import * as constant from '../common/constant.js';
 
-import THREE from '../utils/three.js';
+const THREE = require( 'three' );
 
 import ld from 'lodash';
 

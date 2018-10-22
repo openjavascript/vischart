@@ -1,7 +1,7 @@
 
 import VisChartBase from '../../common/vischartbase.js';
 
-import THREE from '../../utils/three.js';
+const THREE = require( 'three' );
 
 import ju from 'json-utilsx';
 

@@ -24,10 +24,6 @@ var _constant = require('../common/constant.js');
 
 var constant = _interopRequireWildcard(_constant);
 
-var _three = require('../utils/three.js');
-
-var _three2 = _interopRequireDefault(_three);
-
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -41,6 +37,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var THREE = require('three');
 
 var VisThree = function (_VisChartBase) {
     _inherits(VisThree, _VisChartBase);
@@ -90,13 +88,13 @@ var VisThree = function (_VisChartBase) {
             if (!this.box) return;
 
             if (!this.stage) {
-                this.stage = this.scene = new _three2.default.Scene();
+                this.stage = this.scene = new THREE.Scene();
 
                 console.log(this, this.config);
 
-                this.camera = new _three2.default.PerspectiveCamera(this.config.camera.fov, this.width / this.height, this.config.camera.nera, this.config.camera.far);
+                this.camera = new THREE.PerspectiveCamera(this.config.camera.fov, this.width / this.height, this.config.camera.nera, this.config.camera.far);
                 this.camera.position.set(this.config.cameraPosition.x, this.config.cameraPosition.y, this.config.cameraPosition.z);
-                this.renderer = new _three2.default.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 this.renderer.setPixelRatio(window.devicePixelRatio);
                 //this.renderer.setClearColor( 0xffffff, .2 );
                 this.renderer.sortObjects = true;

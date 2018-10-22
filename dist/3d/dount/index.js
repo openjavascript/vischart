@@ -28,15 +28,11 @@ var _utils = require('../../common/utils.js');
 
 var utils = _interopRequireWildcard(_utils);
 
-var _three = require('../../utils/three.js');
+var _three = require('three.texttexture');
 
 var _three2 = _interopRequireDefault(_three);
 
 var _three3 = require('three.meshline');
-
-var _three4 = require('three.texttexture');
-
-var _three5 = _interopRequireDefault(_three4);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -49,11 +45,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-//import '../../utils/THREE.MeshLine.js';
 
+var THREE = require('three');
 
-_three2.default.MeshLine = _three3.MeshLine;
-_three2.default.MeshLineMaterial = _three3.MeshLineMaterial;
+THREE.MeshLine = _three3.MeshLine;
+THREE.MeshLineMaterial = _three3.MeshLineMaterial;
 
 //import IconCircle from '../icon/iconcircle.js';
 
@@ -214,7 +210,7 @@ var Dount = function (_VisChartBase) {
 
                 if (tmpAngle < item.itemData.startAngle) continue;
 
-                var geometryx = new _three2.default.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-tmpAngle));
+                var geometryx = new THREE.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-tmpAngle));
 
                 item.arc.geometry.dispose();
                 item.arc.geometry = geometryx;
@@ -226,14 +222,14 @@ var Dount = function (_VisChartBase) {
 
             if (this.isDone) {
 
-                var texture = new _three5.default({
+                var texture = new _three2.default({
                     text: 'Carpe Diem 中文',
                     fontFamily: '"Times New Roman", Times, serif',
                     fontSize: 32,
                     fontStyle: 'normal'
                 });
-                var material = new _three2.default.SpriteMaterial({ map: texture, color: 0xffffbb });
-                var sprite = new _three2.default.Sprite(material);
+                var material = new THREE.SpriteMaterial({ map: texture, color: 0xffffbb });
+                var sprite = new THREE.Sprite(material);
                 sprite.scale.setX(texture.imageAspect).multiplyScalar(20);
                 this.scene.add(sprite);
 
@@ -259,9 +255,9 @@ var Dount = function (_VisChartBase) {
         key: 'drawCircle',
         value: function drawCircle() {
 
-            var line = new _three2.default.MeshLine();
+            var line = new THREE.MeshLine();
 
-            var curve = new _three2.default.EllipseCurve(0, 0, // ax, aY
+            var curve = new THREE.EllipseCurve(0, 0, // ax, aY
             47, 47, // xRadius, yRadius
             0, 2 * Math.PI, // aStartAngle, aEndAngle
             false, // aClockwise
@@ -269,9 +265,9 @@ var Dount = function (_VisChartBase) {
             );
 
             var points = curve.getPoints(200);
-            var geometryy = new _three2.default.Geometry().setFromPoints(points);
+            var geometryy = new THREE.Geometry().setFromPoints(points);
 
-            curve = new _three2.default.EllipseCurve(0, 0, // ax, aY
+            curve = new THREE.EllipseCurve(0, 0, // ax, aY
             47, 47, // xRadius, yRadius
             0, geometry.radians(10), // aStartAngle, aEndAngle
             false, // aClockwise
@@ -280,15 +276,15 @@ var Dount = function (_VisChartBase) {
 
             points = [].concat(_toConsumableArray(points), _toConsumableArray(curve.getPoints(50)));
 
-            geometryy = new _three2.default.Geometry().setFromPoints(points);
+            geometryy = new THREE.Geometry().setFromPoints(points);
 
             line.setGeometry(geometryy);
-            var material = new _three2.default.MeshLineMaterial({
-                color: new _three2.default.Color(this.lineColor),
+            var material = new THREE.MeshLineMaterial({
+                color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
 
-            var circle = new _three2.default.Mesh(line.geometry, material);
+            var circle = new THREE.Mesh(line.geometry, material);
 
             circle.renderOrder = -1;
             circle.material.depthTest = false;
@@ -304,30 +300,30 @@ var Dount = function (_VisChartBase) {
                 group = void 0,
                 line = void 0;
 
-            group = new _three2.default.Group();
+            group = new THREE.Group();
 
-            line = new _three2.default.MeshLine();
-            material = new _three2.default.MeshLineMaterial({
-                color: new _three2.default.Color(this.lineColor),
+            line = new THREE.MeshLine();
+            material = new THREE.MeshLineMaterial({
+                color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
-            geometryItem = new _three2.default.CircleGeometry(50, 128, geometry.radians(90), geometry.radians(90));
+            geometryItem = new THREE.CircleGeometry(50, 128, geometry.radians(90), geometry.radians(90));
             geometryItem.vertices.shift();
             line.setGeometry(geometryItem);
-            circle = new _three2.default.Line(line.geometry, material);
+            circle = new THREE.Line(line.geometry, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
 
-            line = new _three2.default.MeshLine();
-            material = new _three2.default.MeshLineMaterial({
-                color: new _three2.default.Color(this.lineColor),
+            line = new THREE.MeshLine();
+            material = new THREE.MeshLineMaterial({
+                color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
-            geometryItem = new _three2.default.CircleGeometry(50, 128, geometry.radians(0), geometry.radians(-90));
+            geometryItem = new THREE.CircleGeometry(50, 128, geometry.radians(0), geometry.radians(-90));
             geometryItem.vertices.shift();
             line.setGeometry(geometryItem);
-            circle = new _three2.default.Line(line.geometry, material);
+            circle = new THREE.Line(line.geometry, material);
             circle.renderOrder = -1;
             circle.material.depthTest = false;
             group.add(circle);
@@ -360,22 +356,22 @@ var Dount = function (_VisChartBase) {
                 }
                 color = this.parseColor(color);
 
-                var _geometryx = new _three2.default.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-0.1));
-                var _material = new _three2.default.MeshBasicMaterial({ color: color, side: _three2.default.DoubleSide });
-                var arc = new _three2.default.Mesh(_geometryx, _material);
+                var _geometryx = new THREE.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-0.1));
+                var _material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+                var arc = new THREE.Mesh(_geometryx, _material);
 
                 this.scene.add(arc);
 
-                var line = new _three2.default.MeshLine();
-                var _material = new _three2.default.MeshLineMaterial({
-                    color: new _three2.default.Color(0xffffff),
+                var line = new THREE.MeshLine();
+                var _material = new THREE.MeshLineMaterial({
+                    color: new THREE.Color(0xffffff),
                     lineWidth: 2
                 });
 
-                var _geometryx = new _three2.default.Geometry();
+                var _geometryx = new THREE.Geometry();
                 line.setGeometry(_geometryx);
 
-                var mesh = new _three2.default.Mesh(line.geometry, _material);
+                var mesh = new THREE.Mesh(line.geometry, _material);
                 this.scene.add(mesh);
 
                 this.line.push(mesh);
@@ -417,9 +413,9 @@ var Dount = function (_VisChartBase) {
 
                 var line = this.line[i];
 
-                var meshline = new _three2.default.MeshLine();
-                var geometryx = new _three2.default.Geometry();
-                geometryx.vertices.push(new _three2.default.Vector3(path.itemData.lineStart.x, path.itemData.lineStart.y, 0), new _three2.default.Vector3(lineEnd.x, lineEnd.y, 0), new _three2.default.Vector3(lineExpend.x, lineExpend.y, 0));
+                var meshline = new THREE.MeshLine();
+                var geometryx = new THREE.Geometry();
+                geometryx.vertices.push(new THREE.Vector3(path.itemData.lineStart.x, path.itemData.lineStart.y, 0), new THREE.Vector3(lineEnd.x, lineEnd.y, 0), new THREE.Vector3(lineExpend.x, lineExpend.y, 0));
                 meshline.setGeometry(geometryx);
                 line.geometry = meshline.geometry;
 
@@ -450,9 +446,9 @@ var Dount = function (_VisChartBase) {
         key: 'addIcon',
         value: function addIcon(path, layer) {
             if (!path.lineicon) {
-                var geometry = new _three2.default.CircleGeometry(3, 32);
-                var material = new _three2.default.MeshBasicMaterial({ color: 0xffffff });
-                var circle = new _three2.default.Mesh(geometry, material);
+                var geometry = new THREE.CircleGeometry(3, 32);
+                var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                var circle = new THREE.Mesh(geometry, material);
                 path.lineicon = circle;
                 this.scene.add(circle);
             }
