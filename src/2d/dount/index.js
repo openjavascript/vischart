@@ -2,7 +2,7 @@
 import VisChartBase from '../common/base.js';
 import * as geometry from '../../geometry/geometry.js';
 
-import PointAt from '../../common/pointat.js';
+import PointAt from '../common/pointat.js';
 
 import Konva from 'konva';
 import ju from 'json-utilsx';

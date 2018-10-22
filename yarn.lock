@@ -2095,6 +2095,13 @@ three.meshline@^1.1.0:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/three.meshline/download/three.meshline-1.1.0.tgz#cf66be97b239a044d9d80b8bbf63673eb4dc09fc"
 
+three.textsprite@^18.8.6:
+  version "18.8.6"
+  resolved "http://registry.npm.taobao.org/three.textsprite/download/three.textsprite-18.8.6.tgz#d1e7ad60eeda002f3fc71818de34ab59741a3291"
+  dependencies:
+    three "^0.95.0"
+    three.texttexture "^18.8.6"
+
 three.texttexture@^18.8.6:
   version "18.8.6"
   resolved "http://registry.npm.taobao.org/three.texttexture/download/three.texttexture-18.8.6.tgz#af46107fc6378626bda42e8779585a0a49703cb1"

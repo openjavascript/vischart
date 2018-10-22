@@ -2,7 +2,7 @@
 import VisChartBase from '../common/base.js';
 import * as geometry from '../../geometry/geometry.js';
 
-import PointAt from '../../common/pointat.js';
+import PointAt from '../common/pointat.js';
 
 import ju from 'json-utilsx';
 
@@ -11,12 +11,9 @@ import * as utils from '../../common/utils.js';
 const THREE = require( 'three' );
 
 import TextTexture from 'three.texttexture';
+import TextSprite from 'three.textsprite';
 
 import {MeshLine, MeshLineMaterial} from 'three.meshline'
-THREE.MeshLine = MeshLine;
-THREE.MeshLineMaterial = MeshLineMaterial;
-
-//import IconCircle from '../icon/iconcircle.js';
 
 export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
@@ -131,14 +128,14 @@ export default class Dount extends VisChartBase  {
 
         let tmp, tmppoint, step = this.angleStep;
 
-        this.countAngle += this.animationStep;
+        this.countAngle -= this.animationStep;
 
         if( !this.isSeriesAnimation() ){
-            this.countAngle = this.totalAngle;
+            this.countAngle = -this.totalAngle;
         }
 
-        if( this.countAngle >= this.totalAngle || !this.isAnimation() ){
-            this.countAngle = this.totalAngle;
+        if( this.countAngle <= -360 || !this.isAnimation() ){
+            this.countAngle = -360;
             this.isDone = 1;
         }
 
@@ -151,11 +148,11 @@ export default class Dount extends VisChartBase  {
 
             let tmpAngle = this.countAngle;
 
-            if( tmpAngle >= item.itemData.endAngle ){
+            if( tmpAngle <= item.itemData.endAngle ){
                 tmpAngle = item.itemData.endAngle;
             }
 
-            if( tmpAngle < item.itemData.startAngle ) continue;
+            if( tmpAngle > item.itemData.startAngle ) continue;
 
             let geometryx = new THREE.RingGeometry( 
                 this.inRadius
@@ -163,7 +160,7 @@ export default class Dount extends VisChartBase  {
                 , 256 
                 , 1
                 , geometry.radians( 0 )
-                , geometry.radians( -tmpAngle )
+                , geometry.radians( tmpAngle )
             );
 
             item.arc.geometry.dispose();
@@ -174,16 +171,34 @@ export default class Dount extends VisChartBase  {
 
         if( this.isDone ){
 
+            /*
+            let sprite = new TextSprite({
+              textSize: 12,
+              redrawInterval: 250,
+              texture: {
+                text: '50%',
+                fontFamily: 'MicrosoftYaHei, Arial, Helvetica, sans-serif'
+              },
+              material: {
+                color: 0xffffff
+              }
+            });
+            this.scene.add(sprite);
+            */
+
+            /*
             let texture = new TextTexture({
-              text: 'Carpe Diem 中文',
-              fontFamily: '"Times New Roman", Times, serif',
-              fontSize: 32,
+              text: '50%',
+              fontFamily: 'MicrosoftYaHei',
+              fontSize: 28,
               fontStyle: 'normal',
             });
-            let material = new THREE.SpriteMaterial({map: texture, color: 0xffffbb});
+            let material = new THREE.SpriteMaterial({map: texture, color: 0xffffff });
             let sprite = new THREE.Sprite(material);
-            sprite.scale.setX(texture.imageAspect).multiplyScalar(20);
+            sprite.scale.setX(texture.imageAspect).multiplyScalar(12);
+            //sprite.position.x = -50;
             this.scene.add(sprite);
+            */
 
                 /*
             let font = new THREE.Font( window.fontjson );
@@ -207,7 +222,7 @@ export default class Dount extends VisChartBase  {
 
     drawCircle(){
 
-        var line = new THREE.MeshLine();
+        var line = new MeshLine();
 
         var curve = new THREE.EllipseCurve(
             0,  0,            // ax, aY
@@ -233,7 +248,7 @@ export default class Dount extends VisChartBase  {
         geometryy = new THREE.Geometry().setFromPoints( points );
 
         line.setGeometry( geometryy );
-        var material = new THREE.MeshLineMaterial( { 
+        var material = new MeshLineMaterial( { 
             color: new THREE.Color( this.lineColor )  
             , lineWidth: 2
         } );
@@ -252,8 +267,8 @@ export default class Dount extends VisChartBase  {
 
         group = new THREE.Group();
 
-        line = new THREE.MeshLine();
-        material = new THREE.MeshLineMaterial( { 
+        line = new MeshLine();
+        material = new MeshLineMaterial( { 
             color: new THREE.Color( this.lineColor )  
             , lineWidth: 2
         } );
@@ -270,8 +285,8 @@ export default class Dount extends VisChartBase  {
         circle.material.depthTest=false;
         group.add( circle );
 
-        line = new THREE.MeshLine();
-        material = new THREE.MeshLineMaterial( { 
+        line = new MeshLine();
+        material = new MeshLineMaterial( { 
             color: new THREE.Color( this.lineColor )  
             , lineWidth: 2
         } );
@@ -327,8 +342,8 @@ export default class Dount extends VisChartBase  {
 
             this.scene.add( arc );
 
-            var line = new THREE.MeshLine();
-            var material = new THREE.MeshLineMaterial({
+            var line = new MeshLine();
+            var material = new MeshLineMaterial({
                 color: new THREE.Color( 0xffffff )
                 , lineWidth: 2
             });
@@ -375,7 +390,7 @@ export default class Dount extends VisChartBase  {
 
             let line = this.line[ i ];
 
-            var meshline = new THREE.MeshLine();
+            var meshline = new MeshLine();
             let geometryx = new THREE.Geometry();
                 geometryx.vertices.push( 
                     new THREE.Vector3( path.itemData.lineStart.x, path.itemData.lineStart.y, 0)
@@ -397,8 +412,8 @@ export default class Dount extends VisChartBase  {
 
             if( this.lineLengthCount >= this.lineLength ){
                 this.addIcon( path, layer );
-                /*
                 this.addText( path, layer );
+                /*
                 */
                 //console.log( 'line done' );
             }else{
@@ -422,25 +437,29 @@ export default class Dount extends VisChartBase  {
 
     addText( path, layer ){
         if( !path.text ){
-            /*let tmp = path.text = new Konva.Text( {
-                x: 0
-                , y: 0
-                , text: `${path.itemData.percent}%`
-                , fill: '#a3a7f3'
-                , fontFamily: 'MicrosoftYaHei'
-                , fontSize: 16
-                , fontStyle: 'italic'
+            let sprite = path.text = new TextSprite({
+              textSize: 12,
+              redrawInterval: 250,
+              texture: {
+                text: `${path.itemData.percent}%`,
+                fontFamily: 'MicrosoftYaHei, Arial, Helvetica, sans-serif'
+              },
+              material: {
+                color: 0xffffff
+              }
             });
-            this.clearList.push( tmp );*/
+            this.scene.add(sprite);
+            this.clearList.push( sprite );
         }
-        /*let text = path.text;
+        let text = path.text;
 
         let textPoint = path.itemData.textPoint
             , angleDirect = path.itemData.pointDirection.autoAngle()
             ;
 
         textPoint = ju.clone( path.itemData.lineEnd );
-        textPoint.y -= text.textHeight + 1;
+        //console.log( 'addText', text );
+        /*
 
         switch( angleDirect ){
             case 1: {
@@ -458,15 +477,14 @@ export default class Dount extends VisChartBase  {
                 break;
             }
         }
+        */
 
-        let textX =  this.fixCx() + textPoint.x
-            , textY =  this.fixCy() + textPoint.y
+        let textX =  textPoint.x
+            , textY =  textPoint.y
             , direct = path.itemData.pointDirection.auto()
             ;
-
-        text.x( textX );
-        text.y( textY );
-        layer.add( text );*/
+        text.position.x = textX;
+        text.position.y = textY;
     }
 
     calcLayoutPosition() {
@@ -516,7 +534,8 @@ export default class Dount extends VisChartBase  {
 
             val.percent = parseInt( val._percent * 100 );
 
-            val.endAngle = this.totalAngle * val._totalPercent;
+            val.endAngle = -this.totalAngle * val._totalPercent;
+
         });
 
         //修正浮点数精确度
@@ -527,7 +546,7 @@ export default class Dount extends VisChartBase  {
             item._percent = 1 - tmp;
             item.percent = parseInt( item._percent * 100 );
             item._totalPercent = 1;
-            item.endAngle = this.totalAngle;
+            item.endAngle = -this.totalAngle;
         }
 
         this.lineRange = {
@@ -544,7 +563,6 @@ export default class Dount extends VisChartBase  {
                 val.startAngle = this.data.data[ key - 1].endAngle;
             }
 
-
             val.midAngle = val.startAngle + ( val.endAngle - val.startAngle ) / 2;
 
             val.lineStart = geometry.distanceAngleToPoint( this.outRadius, val.midAngle );
@@ -555,6 +573,8 @@ export default class Dount extends VisChartBase  {
             val.pointDirection = new PointAt( this.fixWidth(), this.fixHeight(), geometry.pointPlus( val.textPoint, this.cpoint) );
             let lineAngle = val.pointDirection.autoAngle();
             val.lineExpend = ju.clone( val.lineEnd )
+
+            //console.log( 'lineAngle', lineAngle,  val.midAngle );
 
             switch( lineAngle ){
                 case 1:
@@ -607,7 +627,8 @@ export default class Dount extends VisChartBase  {
                     break;
                 }
             }
-            switch( key ){
+            console.log( 'key', key );
+            /*switch( key ){
                 case 1: {
                     let tmpY = item[ 0 ].lineEnd.y;
                     //console.log( item );
@@ -616,13 +637,6 @@ export default class Dount extends VisChartBase  {
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y <= pre.lineEnd.y ){
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
-
-                            /*
-                            if( cur.lineEnd.y < cur.lineStart.y ){
-                                //tmpY = cur.lineStart.y + this.lineHeight;
-                                //cur.lineEnd.y = tmpY;
-                            }
-                            */
                             cur.lineExpend.y = tmpY;
                         }
                     }
@@ -640,13 +654,6 @@ export default class Dount extends VisChartBase  {
 
                             tmpY = pre.lineEnd.y + this.lineHeight;
                             cur.lineEnd.y = tmpY;
-
-                            /*
-                            if( cur.lineEnd.y < cur.lineStart.y ){
-                                //tmpY = cur.lineStart.y + this.lineHeight;
-                                //cur.lineEnd.y = tmpY;
-                            }
-                            */
                             cur.lineExpend.y = tmpY;
                         }
                     }
@@ -673,19 +680,13 @@ export default class Dount extends VisChartBase  {
                         if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight  || cur.lineEnd.y >= pre.lineEnd.y ){
                             tmpY = pre.lineEnd.y - this.lineHeight;
                             cur.lineEnd.y = tmpY;
-
-                            /*
-                            if( cur.lineEnd.y < cur.lineStart.y ){
-                                //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
-                            }
-                            */
                             cur.lineExpend.y = cur.lineEnd.y;
                         }
                     }
 
                     break;
                 }
-            }
+            }*/
         });
     }
 

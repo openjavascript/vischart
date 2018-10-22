@@ -14,7 +14,7 @@ var _jsonUtilsx = require('json-utilsx');
 
 var _jsonUtilsx2 = _interopRequireDefault(_jsonUtilsx);
 
-var _geometry = require('../geometry/geometry.js');
+var _geometry = require('../../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
 

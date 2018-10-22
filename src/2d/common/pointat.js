@@ -1,7 +1,7 @@
 
 import Konva from 'konva';
 import ju from 'json-utilsx';
-import * as geometry from '../geometry/geometry.js';
+import * as geometry from '../../geometry/geometry.js';
 
 export default class PointAt {
     constructor( width, height, point ){
@@ -135,6 +135,7 @@ export default class PointAt {
 
     autoAngle() {
         let angle  = geometry.pointAngle( this.cpoint, this.point ), r = '';
+
 
         if( angle >= 0 && angle <= 90 ){
             r = PointAt.DIRE_NAME.rightBottom;

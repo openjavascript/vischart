@@ -90,7 +90,7 @@ var VisThree = function (_VisChartBase) {
             if (!this.stage) {
                 this.stage = this.scene = new THREE.Scene();
 
-                console.log(this, this.config);
+                //console.log( this, this.config );
 
                 this.camera = new THREE.PerspectiveCamera(this.config.camera.fov, this.width / this.height, this.config.camera.nera, this.config.camera.far);
                 this.camera.position.set(this.config.cameraPosition.x, this.config.cameraPosition.y, this.config.cameraPosition.z);

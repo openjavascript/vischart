@@ -16,7 +16,7 @@ var _geometry = require('../../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
 
-var _pointat = require('../../common/pointat.js');
+var _pointat = require('../common/pointat.js');
 
 var _pointat2 = _interopRequireDefault(_pointat);
 

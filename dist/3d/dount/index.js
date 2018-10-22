@@ -16,7 +16,7 @@ var _geometry = require('../../geometry/geometry.js');
 
 var geometry = _interopRequireWildcard(_geometry);
 
-var _pointat = require('../../common/pointat.js');
+var _pointat = require('../common/pointat.js');
 
 var _pointat2 = _interopRequireDefault(_pointat);
 
@@ -32,7 +32,11 @@ var _three = require('three.texttexture');
 
 var _three2 = _interopRequireDefault(_three);
 
-var _three3 = require('three.meshline');
+var _three3 = require('three.textsprite');
+
+var _three4 = _interopRequireDefault(_three3);
+
+var _three5 = require('three.meshline');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -47,11 +51,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var THREE = require('three');
-
-THREE.MeshLine = _three3.MeshLine;
-THREE.MeshLineMaterial = _three3.MeshLineMaterial;
-
-//import IconCircle from '../icon/iconcircle.js';
 
 var Dount = function (_VisChartBase) {
     _inherits(Dount, _VisChartBase);
@@ -184,14 +183,14 @@ var Dount = function (_VisChartBase) {
                 tmppoint = void 0,
                 step = this.angleStep;
 
-            this.countAngle += this.animationStep;
+            this.countAngle -= this.animationStep;
 
             if (!this.isSeriesAnimation()) {
-                this.countAngle = this.totalAngle;
+                this.countAngle = -this.totalAngle;
             }
 
-            if (this.countAngle >= this.totalAngle || !this.isAnimation()) {
-                this.countAngle = this.totalAngle;
+            if (this.countAngle <= -360 || !this.isAnimation()) {
+                this.countAngle = -360;
                 this.isDone = 1;
             }
 
@@ -204,13 +203,13 @@ var Dount = function (_VisChartBase) {
 
                 var tmpAngle = this.countAngle;
 
-                if (tmpAngle >= item.itemData.endAngle) {
+                if (tmpAngle <= item.itemData.endAngle) {
                     tmpAngle = item.itemData.endAngle;
                 }
 
-                if (tmpAngle < item.itemData.startAngle) continue;
+                if (tmpAngle > item.itemData.startAngle) continue;
 
-                var geometryx = new THREE.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(-tmpAngle));
+                var geometryx = new THREE.RingGeometry(this.inRadius, this.outRadius, 256, 1, geometry.radians(0), geometry.radians(tmpAngle));
 
                 item.arc.geometry.dispose();
                 item.arc.geometry = geometryx;
@@ -222,16 +221,34 @@ var Dount = function (_VisChartBase) {
 
             if (this.isDone) {
 
-                var texture = new _three2.default({
-                    text: 'Carpe Diem 中文',
-                    fontFamily: '"Times New Roman", Times, serif',
-                    fontSize: 32,
-                    fontStyle: 'normal'
+                /*
+                let sprite = new TextSprite({
+                  textSize: 12,
+                  redrawInterval: 250,
+                  texture: {
+                    text: '50%',
+                    fontFamily: 'MicrosoftYaHei, Arial, Helvetica, sans-serif'
+                  },
+                  material: {
+                    color: 0xffffff
+                  }
                 });
-                var material = new THREE.SpriteMaterial({ map: texture, color: 0xffffbb });
-                var sprite = new THREE.Sprite(material);
-                sprite.scale.setX(texture.imageAspect).multiplyScalar(20);
                 this.scene.add(sprite);
+                */
+
+                /*
+                let texture = new TextTexture({
+                  text: '50%',
+                  fontFamily: 'MicrosoftYaHei',
+                  fontSize: 28,
+                  fontStyle: 'normal',
+                });
+                let material = new THREE.SpriteMaterial({map: texture, color: 0xffffff });
+                let sprite = new THREE.Sprite(material);
+                sprite.scale.setX(texture.imageAspect).multiplyScalar(12);
+                //sprite.position.x = -50;
+                this.scene.add(sprite);
+                */
 
                 /*
                 let font = new THREE.Font( window.fontjson );
@@ -255,7 +272,7 @@ var Dount = function (_VisChartBase) {
         key: 'drawCircle',
         value: function drawCircle() {
 
-            var line = new THREE.MeshLine();
+            var line = new _three5.MeshLine();
 
             var curve = new THREE.EllipseCurve(0, 0, // ax, aY
             47, 47, // xRadius, yRadius
@@ -279,7 +296,7 @@ var Dount = function (_VisChartBase) {
             geometryy = new THREE.Geometry().setFromPoints(points);
 
             line.setGeometry(geometryy);
-            var material = new THREE.MeshLineMaterial({
+            var material = new _three5.MeshLineMaterial({
                 color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
@@ -302,8 +319,8 @@ var Dount = function (_VisChartBase) {
 
             group = new THREE.Group();
 
-            line = new THREE.MeshLine();
-            material = new THREE.MeshLineMaterial({
+            line = new _three5.MeshLine();
+            material = new _three5.MeshLineMaterial({
                 color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
@@ -315,8 +332,8 @@ var Dount = function (_VisChartBase) {
             circle.material.depthTest = false;
             group.add(circle);
 
-            line = new THREE.MeshLine();
-            material = new THREE.MeshLineMaterial({
+            line = new _three5.MeshLine();
+            material = new _three5.MeshLineMaterial({
                 color: new THREE.Color(this.lineColor),
                 lineWidth: 2
             });
@@ -362,8 +379,8 @@ var Dount = function (_VisChartBase) {
 
                 this.scene.add(arc);
 
-                var line = new THREE.MeshLine();
-                var _material = new THREE.MeshLineMaterial({
+                var line = new _three5.MeshLine();
+                var _material = new _three5.MeshLineMaterial({
                     color: new THREE.Color(0xffffff),
                     lineWidth: 2
                 });
@@ -413,7 +430,7 @@ var Dount = function (_VisChartBase) {
 
                 var line = this.line[i];
 
-                var meshline = new THREE.MeshLine();
+                var meshline = new _three5.MeshLine();
                 var geometryx = new THREE.Geometry();
                 geometryx.vertices.push(new THREE.Vector3(path.itemData.lineStart.x, path.itemData.lineStart.y, 0), new THREE.Vector3(lineEnd.x, lineEnd.y, 0), new THREE.Vector3(lineExpend.x, lineExpend.y, 0));
                 meshline.setGeometry(geometryx);
@@ -431,8 +448,8 @@ var Dount = function (_VisChartBase) {
 
                 if (this.lineLengthCount >= this.lineLength) {
                     this.addIcon(path, layer);
+                    this.addText(path, layer);
                     /*
-                    this.addText( path, layer );
                     */
                     //console.log( 'line done' );
                 } else {
@@ -459,24 +476,29 @@ var Dount = function (_VisChartBase) {
     }, {
         key: 'addText',
         value: function addText(path, layer) {
-            if (!path.text) {}
-            /*let tmp = path.text = new Konva.Text( {
-                x: 0
-                , y: 0
-                , text: `${path.itemData.percent}%`
-                , fill: '#a3a7f3'
-                , fontFamily: 'MicrosoftYaHei'
-                , fontSize: 16
-                , fontStyle: 'italic'
-            });
-            this.clearList.push( tmp );*/
+            if (!path.text) {
+                var sprite = path.text = new _three4.default({
+                    textSize: 12,
+                    redrawInterval: 250,
+                    texture: {
+                        text: path.itemData.percent + '%',
+                        fontFamily: 'MicrosoftYaHei, Arial, Helvetica, sans-serif'
+                    },
+                    material: {
+                        color: 0xffffff
+                    }
+                });
+                this.scene.add(sprite);
+                this.clearList.push(sprite);
+            }
+            var text = path.text;
 
-            /*let text = path.text;
-             let textPoint = path.itemData.textPoint
-                , angleDirect = path.itemData.pointDirection.autoAngle()
-                ;
-             textPoint = ju.clone( path.itemData.lineEnd );
-            textPoint.y -= text.textHeight + 1;
+            var textPoint = path.itemData.textPoint,
+                angleDirect = path.itemData.pointDirection.autoAngle();
+
+            textPoint = _jsonUtilsx2.default.clone(path.itemData.lineEnd);
+            //console.log( 'addText', text );
+            /*
              switch( angleDirect ){
                 case 1: {
                     textPoint.x -= text.textWidth
@@ -493,13 +515,13 @@ var Dount = function (_VisChartBase) {
                     break;
                 }
             }
-             let textX =  this.fixCx() + textPoint.x
-                , textY =  this.fixCy() + textPoint.y
-                , direct = path.itemData.pointDirection.auto()
-                ;
-             text.x( textX );
-            text.y( textY );
-            layer.add( text );*/
+            */
+
+            var textX = textPoint.x,
+                textY = textPoint.y,
+                direct = path.itemData.pointDirection.auto();
+            text.position.x = textX;
+            text.position.y = textY;
         }
     }, {
         key: 'calcLayoutPosition',
@@ -556,7 +578,7 @@ var Dount = function (_VisChartBase) {
 
                 val.percent = parseInt(val._percent * 100);
 
-                val.endAngle = _this5.totalAngle * val._totalPercent;
+                val.endAngle = -_this5.totalAngle * val._totalPercent;
             });
 
             //修正浮点数精确度
@@ -567,7 +589,7 @@ var Dount = function (_VisChartBase) {
                 item._percent = 1 - tmp;
                 item.percent = parseInt(item._percent * 100);
                 item._totalPercent = 1;
-                item.endAngle = this.totalAngle;
+                item.endAngle = -this.totalAngle;
             }
 
             this.lineRange = {
@@ -593,6 +615,8 @@ var Dount = function (_VisChartBase) {
                 val.pointDirection = new _pointat2.default(_this5.fixWidth(), _this5.fixHeight(), geometry.pointPlus(val.textPoint, _this5.cpoint));
                 var lineAngle = val.pointDirection.autoAngle();
                 val.lineExpend = _jsonUtilsx2.default.clone(val.lineEnd);
+
+                //console.log( 'lineAngle', lineAngle,  val.midAngle );
 
                 switch (lineAngle) {
                     case 1:
@@ -646,94 +670,62 @@ var Dount = function (_VisChartBase) {
                         break;
                     }
                 }
-                switch (key) {
-                    case 1:
-                        {
-                            var tmpY = item[0].lineEnd.y;
-                            //console.log( item );
-                            for (var _i = item.length - 2; _i >= 0; _i--) {
-                                var _pre = item[_i + 1],
-                                    _cur = item[_i];
-                                if (Math.abs(_pre.lineEnd.y - _cur.lineEnd.y) < _this5.lineHeight || _cur.lineEnd.y <= _pre.lineEnd.y) {
-                                    tmpY = _pre.lineEnd.y + _this5.lineHeight;
-                                    _cur.lineEnd.y = tmpY;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //tmpY = cur.lineStart.y + this.lineHeight;
-                                        //cur.lineEnd.y = tmpY;
-                                    }
-                                    */
-                                    _cur.lineExpend.y = tmpY;
-                                }
+                console.log('key', key);
+                /*switch( key ){
+                    case 1: {
+                        let tmpY = item[ 0 ].lineEnd.y;
+                        //console.log( item );
+                        for( let i = item.length - 2; i >= 0; i-- ){
+                            let pre = item[ i + 1], cur = item[ i ];
+                            if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y <= pre.lineEnd.y ){
+                                tmpY = pre.lineEnd.y + this.lineHeight;
+                                cur.lineEnd.y = tmpY;
+                                cur.lineExpend.y = tmpY;
                             }
-                            break;
                         }
-                    case 2:
-                        {
-                            var _tmpY = item[0].lineEnd.y;
-                            for (var _i2 = 1; _i2 < item.length; _i2++) {
-                                var _pre2 = item[_i2 - 1],
-                                    _cur2 = item[_i2],
-                                    zero = item[0];
-
-                                if (Math.abs(_pre2.lineEnd.y + _this5.fixCy()) < _this5.lineHeight) {
-                                    _pre2.lineExpend.y = _pre2.lineEnd.y = _pre2.lineExpend.y + _this5.lineHeight;
-                                }
-                                if (Math.abs(_pre2.lineEnd.y - _cur2.lineEnd.y) < _this5.lineHeight || _cur2.lineEnd.y <= _pre2.lineEnd.y) {
-
-                                    _tmpY = _pre2.lineEnd.y + _this5.lineHeight;
-                                    _cur2.lineEnd.y = _tmpY;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //tmpY = cur.lineStart.y + this.lineHeight;
-                                        //cur.lineEnd.y = tmpY;
-                                    }
-                                    */
-                                    _cur2.lineExpend.y = _tmpY;
-                                }
+                        break;
+                    }
+                    case 2: {
+                        let tmpY = item[ 0 ].lineEnd.y;
+                        for( let i = 1; i < item.length; i++ ){
+                            let pre = item[ i - 1], cur = item[ i ], zero = item[0];
+                             if( Math.abs( pre.lineEnd.y + this.fixCy() ) < this.lineHeight ){
+                                pre.lineExpend.y = pre.lineEnd.y =  pre.lineExpend.y + this.lineHeight;
                             }
-
-                            break;
-                        }
-                    case 4:
-                        {
-                            var _tmpY2 = 0;
-                            for (var _i3 = item.length - 2; _i3 >= 0; _i3--) {
-                                var _pre3 = item[_i3 + 1],
-                                    _cur3 = item[_i3];
-                                if (Math.abs(_pre3.lineEnd.y - _cur3.lineEnd.y) < _this5.lineHeight || _cur3.lineEnd.y >= _pre3.lineEnd.y) {
-                                    //console.log( pre.lineEnd.y, cur.lineEnd.y );
-                                    _tmpY2 = _pre3.lineEnd.y - _this5.lineHeight;
-                                    _cur3.lineEnd.y = _tmpY2;
-                                    _cur3.lineExpend.y = _tmpY2;
-                                }
+                            if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight   || cur.lineEnd.y <= pre.lineEnd.y  ){
+                                 tmpY = pre.lineEnd.y + this.lineHeight;
+                                cur.lineEnd.y = tmpY;
+                                cur.lineExpend.y = tmpY;
                             }
-                            break;
                         }
-                    case 8:
-                        {
-                            var _tmpY3 = 0;
-                            for (var _i4 = 1; _i4 < item.length; _i4++) {
-                                var _pre4 = item[_i4 - 1],
-                                    _cur4 = item[_i4];
-                                if (Math.abs(_pre4.lineEnd.y - _cur4.lineEnd.y) < _this5.lineHeight || _cur4.lineEnd.y >= _pre4.lineEnd.y) {
-                                    _tmpY3 = _pre4.lineEnd.y - _this5.lineHeight;
-                                    _cur4.lineEnd.y = _tmpY3;
-
-                                    /*
-                                    if( cur.lineEnd.y < cur.lineStart.y ){
-                                        //cur.lineEnd.y = cur.lineStart.y + this.lineHeight;
-                                    }
-                                    */
-                                    _cur4.lineExpend.y = _cur4.lineEnd.y;
-                                }
+                         break;
+                    }
+                    case 4: {
+                        let tmpY = 0;
+                        for( let i = item.length - 2; i >= 0 ; i-- ){
+                            let pre = item[ i + 1], cur = item[ i ];
+                            if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight || cur.lineEnd.y >= pre.lineEnd.y ){
+                                //console.log( pre.lineEnd.y, cur.lineEnd.y );
+                                tmpY = pre.lineEnd.y - this.lineHeight;
+                                cur.lineEnd.y = tmpY;
+                                cur.lineExpend.y = tmpY;
                             }
-
-                            break;
                         }
-                }
+                        break;
+                    }
+                    case 8: {
+                        let tmpY = 0;
+                        for( let i = 1; i < item.length ; i++ ){
+                            let pre = item[ i - 1], cur = item[ i ];
+                            if( Math.abs( pre.lineEnd.y - cur.lineEnd.y ) < this.lineHeight  || cur.lineEnd.y >= pre.lineEnd.y ){
+                                tmpY = pre.lineEnd.y - this.lineHeight;
+                                cur.lineEnd.y = tmpY;
+                                cur.lineExpend.y = cur.lineEnd.y;
+                            }
+                        }
+                         break;
+                    }
+                }*/
             });
         }
     }]);
