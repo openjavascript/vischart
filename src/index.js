@@ -1,29 +1,34 @@
 
+import VisChartBase from './3d/common/base.js';
 
-import VisChartBase from './common/vischartbase.js';
+import Dount from './3d/dount/index.js';
 
-import Dount from './2d/dount/index.js';
-import Gauge from './2d/gauge/index.js';
-
-import Konva from 'konva';
 import ju from 'json-utilsx';
-
 import * as constant from './common/constant.js';
-import Legend from './2d/common/legend.js';
 
-import VisThree from './3d/index.js';
+const THREE = require( 'three' );
 
-export default class VisChart extends VisChartBase {
+import ld from 'lodash';
+
+export default class VisThree extends VisChartBase {
     constructor( box, width, height ){
         super( box, width, height );
 
         this.ins = [];
         this.legend = null;
-
-        this._setSize( width, height );
     }
 
     _setSize( width, height ){
+
+        this.config = this.config || {
+            camera: {
+                fov: 40
+                , near: 1
+                , far: 1000
+            }
+
+            , cameraPosition: { x: 0, y: 0, z: 350 }
+        };
 
         super._setSize( width, height );
 
@@ -46,27 +51,61 @@ export default class VisChart extends VisChartBase {
     }
 
     init(){
-        //console.log( 'VisChartBase init', Date.now(), this.width, this.height, this.canvas );
-
         if( !this.box ) return;
 
         if( !this.stage ){
-            this.stage = new Konva.Stage( {
-                container: this.box
-                , width: this.width
-                , height: this.height
-            });
-        }else{
-            this.stage.width( this.width );
-            this.stage.height( this.height );
-        }
+            this.stage = this.scene = new THREE.Scene();
 
-        //console.log( this.width, this.height, this.box.offsetWidth, this.box.offsetHeight );
-        //console.log( this );
+            //console.log( this, this.config );
+
+            this.camera = new THREE.PerspectiveCamera( 
+                this.config.camera.fov
+                , this.width / this.height
+                , this.config.camera.nera
+                , this.config.camera.far
+            );
+            this.camera.position.set( 
+                this.config.cameraPosition.x
+                , this.config.cameraPosition.y
+                , this.config.cameraPosition.z
+            )
+            this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+            this.renderer.setPixelRatio( window.devicePixelRatio );
+            //this.renderer.setClearColor( 0xffffff, .2 );
+            this.renderer.sortObjects  = true;
+            this.box.innerHTML = '';
+            this.box.appendChild( this.renderer.domElement );
+        }
+        this.renderer.setSize( this.width, this.height );
 
         this.customWidth && ( this.box.style.width = this.customWidth + 'px' );
         this.customHeight && ( this.box.style.height = this.customHeight + 'px' );
 
+        this.render();
+
+        return this;
+    }
+
+    setThreeConfig( config ){
+        config = config || {};
+
+        this.config = ld.merge( this.config, config );
+
+        return this;
+    }
+
+    updateThreeConfig( config ){
+        this.setThreeConfig( config );
+
+        this.camera.position.x = this.config.cameraPosition.x;
+        this.camera.position.y = this.config.cameraPosition.y;
+        this.camera.position.z = this.config.cameraPosition.z;
+
+        this.camera.fov     = this.config.camera.fov;
+        this.camera.near    = this.config.camera.near;
+        this.camera.far     = this.config.camera.far;
+
+        this.camera.updateProjectionMatrix();
         return this;
     }
 
@@ -104,7 +143,7 @@ export default class VisChart extends VisChartBase {
 
         //console.log( 'update data', data );
 
-        if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length ){
+        /*if( ju.jsonInData( this.data, 'legend.data' ) &&  this.data.legend.data.length ){
             if( this.legend && ignoreLegend ){
                 this.emptyblock = 'kao';
             }else{
@@ -118,7 +157,7 @@ export default class VisChart extends VisChartBase {
                 });
                 this.legend.update( this.data.legend );
             }
-        }
+        }*/
         this.initChart();
         return this;
     }
@@ -148,14 +187,20 @@ export default class VisChart extends VisChartBase {
                         ins = new Dount( this.box, this.width, this.height );
                         break;
                     }
-                    case constant.CHART_TYPE.gauge: {
+                    /*case constant.CHART_TYPE.gauge: {
                         ins = new Gauge( this.box, this.width, this.height );
                         break;
-                    }
+                    }*/
                 }
                 if( ins ){
                     this.legend && ins.setLegend( this.legend );
-                    ins.setStage( this.stage );
+                    ins.setOptions( {
+                        renderer: this.renderer
+                        , scene: this.scene
+                        , camera: this.camera
+                        , stage: this.stage
+                        , config: this.config
+                    });
                 }
             }
 
@@ -204,6 +249,121 @@ export default class VisChart extends VisChartBase {
     clearUpdate(){
         this.legend && !this.ignoreLegend && this.legend.destroy();
     }
+
+
+    
+    //update( data, ignoreLegend, redraw = true ){
+
+        //this.scene = new THREE.Scene();
+
+        //this.camera = new THREE.PerspectiveCamera( 40, this.width / this.height, 1, 1000 );
+        //this.camera.position.set( 0, 0, 20 )
+
+
+        //let renderer = this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+        ////let renderer = this.renderer = new THREE.SVGRenderer( );
+        ////renderer.setPixelRatio( window.devicePixelRatio );
+        //renderer.setSize( this.width - 2, this.height - 2 );
+
+
+        //var loader = new THREE.SVGLoader();
+
+        //var options = {
+            //depth: 1
+            //, bevelThickness: 1
+            //, bevelSize: .5
+            //, bevelSegments: 1
+            //, bevelEnabled: true
+            //, curveSegments: 12
+            //, steps: 1
+        //};
+
+        ////loader.load( './img/dount-in.svg', ( paths ) => {
+        ////loader.load( './img/dount-big-all.svg', ( paths ) => {
+        ////loader.load( './img/dount-mid.svg', ( paths ) => {
+        ////loader.load( './img/tiger.svg', ( paths ) => {
+            //var paths = loader.parse( data.background[0].url );
+            //console.log( 'paths', paths );
+
+            //var group = new THREE.Group();
+            //group.scale.multiplyScalar( 0.1 );
+            //group.scale.y *= -1;
+            //for ( var i = 0; i < paths.length; i ++ ) {
+                //var path = paths[ i ];
+                //var material = new THREE.MeshBasicMaterial( {
+                    //color: path.color,
+                    //side: THREE.DoubleSide,
+                    //depthWrite: false
+                //} );
+                //var shapes = path.toShapes( true );
+                //for ( var j = 0; j < shapes.length; j ++ ) {
+                    //var shape = shapes[ j ];
+                    //var geometry = new THREE.ShapeBufferGeometry( shape );
+                    ////var geometry = new THREE.ExtrudeGeometry( shape, options);
+                    //var mesh = new THREE.Mesh( geometry, material );
+
+                    ////viewbox 118, 117 - dount-in.svg
+                    //mesh.position.x = -118/2;
+                    //mesh.position.y = -117/2;
+
+                    //[>
+                    ////viewbox 250 248 - dount-big-all.svg
+                    //mesh.position.x = -250/2;
+                    //mesh.position.y = -248/2;
+                    //*/
+
+                    //[>
+                    ////viewbox 107, 106 - dount-mid.svg
+                    //mesh.position.x = -107/2;
+                    //mesh.position.y = -106/2;
+                    //*/
+
+                    //[>
+                    ////viewbox tiger.svg
+                    //mesh.position.x = -46.5;
+                    //mesh.position.y = -( 54.5 + 55 / 2 );
+                    //*/
+
+                    //group.add( mesh );
+                //}
+            //}
+            //this.group = group;
+            //this.scene.add( group );
+
+            //console.log( 'group', this.group  );
+
+            //this.render();
+        ////} );
+
+
+        //[>
+        //var geometry = new THREE.SphereGeometry( 30, 32, 32 );
+        //var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        //material.wireframe = true;
+        //this.sphere = new THREE.Mesh( geometry, material );
+        //console.log( this.sphere, material, geometry );
+        //this.scene.add( this.sphere );
+        //*/
+
+        //this.render();
+
+        //this.box.appendChild( renderer.domElement );
+
+        //this.animate();
+    //}
+
+    //animate() {
+
+        //this.group && ( this.group.rotation.y += 0.03 );
+        //this.sphere && ( this.sphere.rotation.y += 0.01 );
+
+        //this.render();
+
+        //requestAnimationFrame( ()=>{ this.animate() } );
+    //}
+
+    //render() {
+        //this.renderer.render( this.scene, this.camera );
+    /*}*/
 }
 
-VisChart.three = VisThree;

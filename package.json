@@ -1,5 +1,5 @@
 {
-  "name": "vischart",
+  "name": "vis3chart",
   "version": "1.0.15",
   "description": "",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openjavascript/vischart.git"
+    "url": "git+https://github.com/openjavascript/vis3chart.git"
   },
   "author": "suches<908292921@qq.com>",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "three.texttexture": "^18.8.6"
   },
   "bugs": {
-    "url": "https://github.com/openjavascript/vischart/issues"
+    "url": "https://github.com/openjavascript/vis3chart/issues"
   },
-  "homepage": "https://github.com/openjavascript/vischart#readme"
+  "homepage": "https://github.com/openjavascript/vis3chart#readme"
 }
