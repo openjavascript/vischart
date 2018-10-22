@@ -56,7 +56,7 @@ export default class VisThree extends VisChartBase {
         if( !this.stage ){
             this.stage = this.scene = new THREE.Scene();
 
-            console.log( this, this.config );
+            //console.log( this, this.config );
 
             this.camera = new THREE.PerspectiveCamera( 
                 this.config.camera.fov
