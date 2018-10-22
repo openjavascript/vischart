@@ -32,13 +32,9 @@ var _constant = require('./common/constant.js');
 
 var constant = _interopRequireWildcard(_constant);
 
-var _legend = require('./common/legend.js');
+var _legend = require('./2d/common/legend.js');
 
 var _legend2 = _interopRequireDefault(_legend);
-
-var _index5 = require('./3d/index.js');
-
-var _index6 = _interopRequireDefault(_index5);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -254,6 +250,3 @@ var VisChart = function (_VisChartBase) {
 }(_vischartbase2.default);
 
 exports.default = VisChart;
-
-
-VisChart.three = _index6.default;
