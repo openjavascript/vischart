@@ -32,7 +32,11 @@ var _three = require('../../utils/three.js');
 
 var _three2 = _interopRequireDefault(_three);
 
-require('../../utils/THREE.MeshLine.js');
+var _three3 = require('three.meshline');
+
+var _three4 = require('three.texttexture');
+
+var _three5 = _interopRequireDefault(_three4);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -45,6 +49,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//import '../../utils/THREE.MeshLine.js';
+
+
+_three2.default.MeshLine = _three3.MeshLine;
+_three2.default.MeshLineMaterial = _three3.MeshLineMaterial;
 
 //import IconCircle from '../icon/iconcircle.js';
 
@@ -216,27 +225,29 @@ var Dount = function (_VisChartBase) {
             });
 
             if (this.isDone) {
+
+                var texture = new _three5.default({
+                    text: 'Carpe Diem 中文',
+                    fontFamily: '"Times New Roman", Times, serif',
+                    fontSize: 32,
+                    fontStyle: 'normal'
+                });
+                var material = new _three2.default.SpriteMaterial({ map: texture, color: 0xffffbb });
+                var sprite = new _three2.default.Sprite(material);
+                sprite.scale.setX(texture.imageAspect).multiplyScalar(20);
+                this.scene.add(sprite);
+
                 /*
-                // create a canvas element
-                var canvas1 = document.createElement('canvas');
-                var context1 = canvas1.getContext('2d');
-                context1.font = "Bold 40px Arial";
-                context1.fillStyle = "rgba(255,255,255,1)";
-                context1.fillText('Hello, world!', 0, 25);
-                
-                // canvas contents will be used for a texture
-                var texture1 = new THREE.Texture(canvas1) 
-                texture1.needsUpdate = true;
-                  
-                var material1 = new THREE.MeshBasicMaterial( {map: texture1, side:THREE.DoubleSide } );
-                material1.transparent = true;
-                 console.log( canvas1.width, canvas1.height );
-                 var mesh1 = new THREE.Mesh(
-                    new THREE.PlaneGeometry(canvas1.width, canvas1.height),
-                    material1
-                  );
-                mesh1.position.set(0,0,0);
-                this.scene.add( mesh1 );
+                let font = new THREE.Font( window.fontjson );
+                var textShapes = font.generateShapes( 'hello中文', 8 );
+                var text = new THREE.ShapeGeometry( textShapes );
+                var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) ;
+                textMesh.geometry = text;
+                textMesh.geometry.needsUpdate = true;
+                var box= new THREE.Box3().setFromObject( textMesh );
+                console.log( textMesh, box.min, box.max, box.getSize( new THREE.Vector3() ) );
+                textMesh.position.x = -box.max.x / 2;
+                this.scene.add( textMesh );
                 */
 
                 window.requestAnimationFrame(function () {

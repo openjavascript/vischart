@@ -22,7 +22,8 @@
     "json-utilsx": "1.0.7",
     "konva": "2.4.0",
     "lodash": "^4.17.11",
-    "three.meshline": "^1.1.0"
+    "three.meshline": "^1.1.0",
+    "three.texttexture": "^18.8.6"
   },
   "bugs": {
     "url": "https://github.com/openjavascript/vischart/issues"

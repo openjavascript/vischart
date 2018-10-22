@@ -9,7 +9,14 @@ import ju from 'json-utilsx';
 import * as utils from '../../common/utils.js';
 
 import THREE from '../../utils/three.js';
-import '../../utils/THREE.MeshLine.js';
+//import '../../utils/THREE.MeshLine.js';
+import {MeshLine, MeshLineMaterial} from 'three.meshline'
+
+THREE.MeshLine = MeshLine;
+THREE.MeshLineMaterial = MeshLineMaterial;
+
+import TextTexture from 'three.texttexture';
+
 
 //import IconCircle from '../icon/iconcircle.js';
 
@@ -168,29 +175,32 @@ export default class Dount extends VisChartBase  {
         window.requestAnimationFrame( ()=>{ this.animation() } );
 
         if( this.isDone ){
-            /*
-            // create a canvas element
-            var canvas1 = document.createElement('canvas');
-            var context1 = canvas1.getContext('2d');
-            context1.font = "Bold 40px Arial";
-            context1.fillStyle = "rgba(255,255,255,1)";
-            context1.fillText('Hello, world!', 0, 25);
-            
-            // canvas contents will be used for a texture
-            var texture1 = new THREE.Texture(canvas1) 
-            texture1.needsUpdate = true;
-              
-            var material1 = new THREE.MeshBasicMaterial( {map: texture1, side:THREE.DoubleSide } );
-            material1.transparent = true;
 
-            console.log( canvas1.width, canvas1.height );
+            let texture = new TextTexture({
+              text: 'Carpe Diem 中文',
+              fontFamily: '"Times New Roman", Times, serif',
+              fontSize: 32,
+              fontStyle: 'normal',
+            });
+            let material = new THREE.SpriteMaterial({map: texture, color: 0xffffbb});
+            let sprite = new THREE.Sprite(material);
+            sprite.scale.setX(texture.imageAspect).multiplyScalar(20);
+            this.scene.add(sprite);
 
-            var mesh1 = new THREE.Mesh(
-                new THREE.PlaneGeometry(canvas1.width, canvas1.height),
-                material1
-              );
-            mesh1.position.set(0,0,0);
-            this.scene.add( mesh1 );
+                /*
+            let font = new THREE.Font( window.fontjson );
+            var textShapes = font.generateShapes( 'hello中文', 8 );
+            var text = new THREE.ShapeGeometry( textShapes );
+            var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) ;
+            textMesh.geometry = text;
+            textMesh.geometry.needsUpdate = true;
+
+            var box= new THREE.Box3().setFromObject( textMesh );
+
+            console.log( textMesh, box.min, box.max, box.getSize( new THREE.Vector3() ) );
+            textMesh.position.x = -box.max.x / 2;
+
+            this.scene.add( textMesh );
             */
 
             window.requestAnimationFrame( ()=>{ this.animationLine() } );
