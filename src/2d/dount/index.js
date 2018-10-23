@@ -158,9 +158,9 @@ export default class Dount extends VisChartBase  {
         }
         this.stage.add( this.arcLayer );
 
-        this.animation();
+        //this.animation();
 
-        // window.requestAnimationFrame( ()=>{ this.animation() } );
+        window.requestAnimationFrame( ()=>{ this.animation() } );
 
         if( this.isDone ){
             // window.requestAnimationFrame( ()=>{ this.animationLine() } );
@@ -275,7 +275,7 @@ export default class Dount extends VisChartBase  {
             let arc = new Konva.Arc( params );
 
             this.clearList.push( arc );
-            this.drawTooltipMove( arc,val );
+            //this.drawTooltipMove( arc,val );
 
             let line = new Konva.Line({
               x: this.fixCx(),
