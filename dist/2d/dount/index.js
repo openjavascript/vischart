@@ -209,7 +209,6 @@ var Dount = function (_VisChartBase) {
                 item.arc.angle(tmpAngle);
             }
             this.stage.add(this.arcLayer);
-            this.arcLayer.setZIndex(8);
 
             this.animation();
 
@@ -243,6 +242,7 @@ var Dount = function (_VisChartBase) {
 
             var points = [];
             points.push('M');
+
             for (var i = 90; i <= 180; i++) {
                 var tmp = geometry.distanceAngleToPoint(this.circleLineRadius, i);
                 points.push([tmp.x, tmp.y].join(',') + ',');
@@ -282,7 +282,7 @@ var Dount = function (_VisChartBase) {
                 this.drawCircleLine();
 
                 this.stage.add(this.layoutLayer);
-                this.layoutLayer.setZIndex(2);
+                this.layoutLayer.moveToBottom();
 
                 this.arcLayer = new _konva2.default.Layer();
                 this.addDestroy(this.arcLayer);
@@ -290,10 +290,10 @@ var Dount = function (_VisChartBase) {
                 this.tooltipLayer = new _konva2.default.Layer();
                 this.addDestroy(this.tooltipLayer);
 
-                // this.group = new Konva.Group({
-                //     visible: false
-                // });
-                // this.addDestroy( this.group );
+                this.group = new _konva2.default.Group({
+                    visible: false
+                });
+                this.addDestroy(this.group);
             }
 
             this.path = [];
@@ -356,7 +356,6 @@ var Dount = function (_VisChartBase) {
             };
 
             this.stage.add(this.arcLayer);
-            this.arcLayer.setZIndex(8);
 
             return this;
         }
@@ -370,27 +369,23 @@ var Dount = function (_VisChartBase) {
                 fontSize: 12,
                 textFill: "#fff",
                 fill: "#fff",
-                alpha: 0.75,
                 visible: false
             });
-            tooltip.lineHeight(1.5);
             var tooltipBg = new _konva2.default.Tag({
                 width: 200,
                 height: 45,
-                fill: '#ccc',
+                fill: '#000',
+                opacity: 0.5,
                 lineJoin: 'round',
                 cornerRadius: 5,
-                opacity: 0.2,
                 visible: false
             });
+            tooltip.lineHeight(1.5);
 
-            this.tooltipLayer.add(tooltipBg);
-            this.tooltipLayer.add(tooltip);
+            this.tooltipLayer.add(tooltipBg, tooltip);
 
             // this.tooltipLayer.add(this.group);
-            this.tooltipLayer.moveToTop();
             this.stage.add(this.tooltipLayer);
-            this.tooltipLayer.setZIndex(10);
 
             var tooltipCon = {
                 tooltip: tooltip,
@@ -409,25 +404,32 @@ var Dount = function (_VisChartBase) {
             //添加鼠标事件
             arc.on('mousemove', function () {
                 var mousePos = self.stage.getPointerPosition();
-                tooltip.position({
-                    x: mousePos.x + 5,
-                    y: mousePos.y + 5
-                });
+                tooltip.setZIndex(9);
+                tooltipBg.setZIndex(8);
                 tooltipBg.position({
                     x: mousePos.x,
                     y: mousePos.y
                 });
+                tooltip.position({
+                    x: mousePos.x + 5,
+                    y: mousePos.y + 5
+                });
                 var textLabel = '\u8BBF\u95EE\u6765\u6E90\n ' + val.name + ': ' + val.value + '(' + val.percent + '%)';
                 tooltip.text(textLabel);
                 // self.group.show();
-                tooltip.show();
                 tooltipBg.show();
+                tooltip.show();
+
+                self.tooltipLayer.setZIndex(10);
                 self.tooltipLayer.batchDraw();
             });
             arc.on('mouseout', function () {
+                tooltip.setZIndex(9);
+                tooltipBg.setZIndex(8);
                 // self.group.hide();
-                tooltip.hide();
                 tooltipBg.hide();
+                tooltip.hide();
+                self.tooltipLayer.setZIndex(10);
                 self.tooltipLayer.draw();
             });
         }

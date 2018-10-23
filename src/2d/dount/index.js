@@ -157,7 +157,6 @@ export default class Dount extends VisChartBase  {
             item.arc.angle( tmpAngle );
         }
         this.stage.add( this.arcLayer );
-        this.arcLayer.setZIndex(8);
 
         this.animation();
 
@@ -190,6 +189,7 @@ export default class Dount extends VisChartBase  {
 
         let points = [];
             points.push( 'M' );
+       
         for( let i = 90; i <= 180; i++ ){
             let tmp = geometry.distanceAngleToPoint( this.circleLineRadius, i );
             points.push( [ tmp.x, tmp.y ] .join(',') + ','  );
@@ -228,7 +228,7 @@ export default class Dount extends VisChartBase  {
             this.drawCircleLine();
 
             this.stage.add( this.layoutLayer );
-            this.layoutLayer.setZIndex(2);
+            this.layoutLayer.moveToBottom();
 
             this.arcLayer = new Konva.Layer();
             this.addDestroy( this.arcLayer );
@@ -236,10 +236,10 @@ export default class Dount extends VisChartBase  {
             this.tooltipLayer = new Konva.Layer();
             this.addDestroy( this.tooltipLayer );
 
-            // this.group = new Konva.Group({
-            //     visible: false
-            // });
-            // this.addDestroy( this.group );
+            this.group = new Konva.Group({
+                visible: false
+            });
+            this.addDestroy( this.group );
 
         }
 
@@ -303,7 +303,6 @@ export default class Dount extends VisChartBase  {
         };
         
         this.stage.add( this.arcLayer );
-        this.arcLayer.setZIndex(8);
 
         return this;
     }
@@ -314,27 +313,23 @@ export default class Dount extends VisChartBase  {
             fontSize: 12,
             textFill: "#fff",
             fill: "#fff",
-            alpha: 0.75,
-            visible: false,
+            visible: false
         });
-        tooltip.lineHeight(1.5);
         let tooltipBg = new Konva.Tag({
             width: 200,     
             height: 45,
-            fill: '#ccc',
+            fill: '#000',
+            opacity: 0.5,
             lineJoin: 'round',
             cornerRadius: 5,
-            opacity: 0.2,
-            visible: false,
+            visible: false
         });
+        tooltip.lineHeight(1.5);
 
-        this.tooltipLayer.add( tooltipBg );
-        this.tooltipLayer.add( tooltip );
+        this.tooltipLayer.add( tooltipBg, tooltip );
 
         // this.tooltipLayer.add(this.group);
-        this.tooltipLayer.moveToTop();
         this.stage.add( this.tooltipLayer );
-        this.tooltipLayer.setZIndex(10);
 
         let tooltipCon = {
             tooltip: tooltip,
@@ -350,25 +345,32 @@ export default class Dount extends VisChartBase  {
         //添加鼠标事件
         arc.on('mousemove', function() {
             let mousePos = self.stage.getPointerPosition();
-            tooltip.position({
-                x : mousePos.x + 5,
-                y : mousePos.y + 5
-            });
+            tooltip.setZIndex(9);
+            tooltipBg.setZIndex(8);
             tooltipBg.position({
                 x : mousePos.x,
                 y : mousePos.y
             });
+            tooltip.position({
+                x : mousePos.x + 5,
+                y : mousePos.y + 5
+            });
             let textLabel = `访问来源\n ${val.name}: ${val.value}(${val.percent}%)`;
             tooltip.text(textLabel);
             // self.group.show();
-            tooltip.show();
             tooltipBg.show();
+            tooltip.show();
+            
+            self.tooltipLayer.setZIndex(10);
             self.tooltipLayer.batchDraw();
         });
         arc.on('mouseout', function() {
+            tooltip.setZIndex(9);
+            tooltipBg.setZIndex(8);
             // self.group.hide();
-            tooltip.hide();
             tooltipBg.hide();
+            tooltip.hide();
+            self.tooltipLayer.setZIndex(10);
             self.tooltipLayer.draw();
         });
     }
