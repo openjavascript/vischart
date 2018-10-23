@@ -95,6 +95,7 @@ export default class VisChartBase {
         });
 
         this.stage.add( this.iconLayer );
+        this.iconLayer.moveToBottom();
 
         window.requestAnimationFrame( ()=>{ this.animationBg() } );
     }

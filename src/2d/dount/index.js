@@ -115,6 +115,7 @@ export default class Dount extends VisChartBase  {
 
         this.circleLine.rotation( this.circleLineRotation );
         this.stage.add( this.layoutLayer );
+        this.layoutLayer.moveToBottom();
 
         window.requestAnimationFrame( ()=>{ this.animationCircleLine() } );
     }
@@ -137,7 +138,7 @@ export default class Dount extends VisChartBase  {
         }
 
         this.reset();
-
+       
         for( let i = this.path.length - 1; i >= 0; i-- ){
         //for( let i = 0; i < this.path.length; i++ ){
             //let i = 2;
@@ -156,11 +157,15 @@ export default class Dount extends VisChartBase  {
             item.arc.angle( tmpAngle );
         }
         this.stage.add( this.arcLayer );
+        this.arcLayer.setZIndex(8);
 
-        window.requestAnimationFrame( ()=>{ this.animation() } );
+        this.animation();
+
+        // window.requestAnimationFrame( ()=>{ this.animation() } );
 
         if( this.isDone ){
-            window.requestAnimationFrame( ()=>{ this.animationLine() } );
+            // window.requestAnimationFrame( ()=>{ this.animationLine() } );
+            this.animationLine();
         }
     }
 
@@ -177,6 +182,7 @@ export default class Dount extends VisChartBase  {
         });
         this.addDestroy( this.circle );
         this.layoutLayer.add( this.circle );
+
     }
 
     drawCircleLine(){
@@ -214,7 +220,6 @@ export default class Dount extends VisChartBase  {
     }
 
     initDataLayout(){
- 
         if( !this.inited ){
             this.layoutLayer = new Konva.Layer();
             this.addDestroy( this.layoutLayer );
@@ -223,9 +228,19 @@ export default class Dount extends VisChartBase  {
             this.drawCircleLine();
 
             this.stage.add( this.layoutLayer );
+            this.layoutLayer.setZIndex(2);
 
             this.arcLayer = new Konva.Layer();
             this.addDestroy( this.arcLayer );
+
+            this.tooltipLayer = new Konva.Layer();
+            this.addDestroy( this.tooltipLayer );
+
+            // this.group = new Konva.Group({
+            //     visible: false
+            // });
+            // this.addDestroy( this.group );
+
         }
 
         this.path = [];
@@ -253,11 +268,14 @@ export default class Dount extends VisChartBase  {
                 , angle: this.countAngle
                 , fill: color
                 , stroke: color
-                , strokeWidth: 0
+                , strokeWidth: 0,
                 //, rotation: this.arcOffset
             };
+
             let arc = new Konva.Arc( params );
+
             this.clearList.push( arc );
+            this.drawTooltipMove( arc,val );
 
             let line = new Konva.Line({
               x: this.fixCx(),
@@ -266,6 +284,7 @@ export default class Dount extends VisChartBase  {
               stroke: '#ffffff',
               strokeWidth: 2
             });
+
             this.line.push( line );
             this.clearList.push( line );
 
@@ -278,15 +297,82 @@ export default class Dount extends VisChartBase  {
 
             this.path.push( tmp );
 
-            this.arcLayer.add( arc );
             this.arcLayer.add( line );
+            this.arcLayer.add( arc );
+
         };
-
+        
         this.stage.add( this.arcLayer );
-
+        this.arcLayer.setZIndex(8);
 
         return this;
     }
+    //创建tooltip层
+    drawTooltip(){
+        let tooltip = new Konva.Text({
+            fontFamily: "Calibri",
+            fontSize: 12,
+            textFill: "#fff",
+            fill: "#fff",
+            alpha: 0.75,
+            visible: false,
+        });
+        tooltip.lineHeight(1.5);
+        let tooltipBg = new Konva.Tag({
+            width: 200,     
+            height: 45,
+            fill: '#ccc',
+            lineJoin: 'round',
+            cornerRadius: 5,
+            opacity: 0.2,
+            visible: false,
+        });
+
+        this.tooltipLayer.add( tooltipBg );
+        this.tooltipLayer.add( tooltip );
+
+        // this.tooltipLayer.add(this.group);
+        this.tooltipLayer.moveToTop();
+        this.stage.add( this.tooltipLayer );
+        this.tooltipLayer.setZIndex(10);
+
+        let tooltipCon = {
+            tooltip: tooltip,
+            tooltipBg: tooltipBg
+        }
+        return tooltipCon
+    }
+    //创建tooltip移动层动画
+    drawTooltipMove(arc,val){
+        let tooltip = this.drawTooltip().tooltip;
+        let tooltipBg = this.drawTooltip().tooltipBg;
+        let self = this;
+        //添加鼠标事件
+        arc.on('mousemove', function() {
+            let mousePos = self.stage.getPointerPosition();
+            tooltip.position({
+                x : mousePos.x + 5,
+                y : mousePos.y + 5
+            });
+            tooltipBg.position({
+                x : mousePos.x,
+                y : mousePos.y
+            });
+            let textLabel = `访问来源\n ${val.name}: ${val.value}(${val.percent}%)`;
+            tooltip.text(textLabel);
+            // self.group.show();
+            tooltip.show();
+            tooltipBg.show();
+            self.tooltipLayer.batchDraw();
+        });
+        arc.on('mouseout', function() {
+            // self.group.hide();
+            tooltip.hide();
+            tooltipBg.hide();
+            self.tooltipLayer.draw();
+        });
+    }
+
     animationLine(){
 
         if( this.lineLengthCount >= this.lineLength ){
@@ -320,7 +406,7 @@ export default class Dount extends VisChartBase  {
             }else{
                 window.requestAnimationFrame( ()=>{ this.animationLine() } );
             }
-
+            
             this.stage.add( layer );
         }
     }
@@ -352,6 +438,7 @@ export default class Dount extends VisChartBase  {
                 , fontSize: 16
                 , fontStyle: 'italic'
             });
+
             this.clearList.push( tmp );
         }
         let text = path.text;
@@ -609,6 +696,5 @@ export default class Dount extends VisChartBase  {
             }
         });
     }
-
 
 }

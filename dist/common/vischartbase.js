@@ -106,6 +106,7 @@ var VisChartBase = function () {
             });
 
             this.stage.add(this.iconLayer);
+            this.iconLayer.moveToBottom();
 
             window.requestAnimationFrame(function () {
                 _this.animationBg();
