@@ -275,7 +275,7 @@ export default class Dount extends VisChartBase  {
             let arc = new Konva.Arc( params );
 
             this.clearList.push( arc );
-            //this.drawTooltipMove( arc,val );
+            this.drawTooltipMove( arc,val );
 
             let line = new Konva.Line({
               x: this.fixCx(),
