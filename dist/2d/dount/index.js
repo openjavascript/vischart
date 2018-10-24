@@ -225,8 +225,10 @@ var Dount = function (_VisChartBase) {
             });
 
             if (this.isDone) {
-                // window.requestAnimationFrame( ()=>{ this.animationLine() } );
-                this.animationLine();
+                window.requestAnimationFrame(function () {
+                    _this3.animationLine();
+                });
+                // this.animationLine();
             }
         }
     }, {

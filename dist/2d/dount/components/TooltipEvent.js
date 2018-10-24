@@ -104,21 +104,21 @@ var TooltipEvent = function (_VisChartBase) {
                     clearTimeout(this.timer);
                 }
                 this.isAction = true;
+                self.tooltipLayer.setZIndex(100);
                 tooltip.setZIndex(10);
                 var mousePos = self.stage.getPointerPosition();
                 tooltipBg.position({
-                    x: mousePos.x,
+                    x: mousePos.x + 10,
                     y: mousePos.y
                 });
                 tooltip.position({
-                    x: mousePos.x + 5,
+                    x: mousePos.x + 15,
                     y: mousePos.y + 5
                 });
                 var textLabel = '\u8BBF\u95EE\u6765\u6E90\n ' + self.val.name + ': ' + self.val.value + '(' + self.val.percent + '%)';
                 tooltip.text(textLabel);
                 tooltipBg.show();
                 tooltip.show();
-                self.tooltipLayer.setZIndex(100);
                 self.tooltipLayer.batchDraw();
             });
             this.arc.on('mouseout', function () {

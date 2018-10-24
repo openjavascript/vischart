@@ -167,8 +167,8 @@ export default class Dount extends VisChartBase  {
         window.requestAnimationFrame( ()=>{ this.animation() } );
 
         if( this.isDone ){
-            // window.requestAnimationFrame( ()=>{ this.animationLine() } );
-            this.animationLine();
+            window.requestAnimationFrame( ()=>{ this.animationLine() } );
+            // this.animationLine();
         }
     }
 

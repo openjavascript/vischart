@@ -70,21 +70,21 @@ export default class TooltipEvent extends VisChartBase {
                 clearTimeout(this.timer);
             }
             this.isAction = true;
+            self.tooltipLayer.setZIndex(100);
             tooltip.setZIndex(10);
             let mousePos = self.stage.getPointerPosition();
             tooltipBg.position({
-                x : mousePos.x,
+                x : mousePos.x + 10,
                 y : mousePos.y
             });
             tooltip.position({
-                x : mousePos.x + 5,
+                x : mousePos.x + 15,
                 y : mousePos.y + 5
             });
             let textLabel = `访问来源\n ${self.val.name}: ${self.val.value}(${self.val.percent}%)`;
             tooltip.text(textLabel);
             tooltipBg.show();
             tooltip.show();
-            self.tooltipLayer.setZIndex(100);
             self.tooltipLayer.batchDraw();
         })
         this.arc.on('mouseout', function() {
