@@ -104,6 +104,7 @@ var TooltipEvent = function (_VisChartBase) {
                     clearTimeout(this.timer);
                 }
                 this.isAction = true;
+                tooltip.setZIndex(10);
                 var mousePos = self.stage.getPointerPosition();
                 tooltipBg.position({
                     x: mousePos.x,

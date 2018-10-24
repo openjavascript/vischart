@@ -70,6 +70,7 @@ export default class TooltipEvent extends VisChartBase {
                 clearTimeout(this.timer);
             }
             this.isAction = true;
+            tooltip.setZIndex(10);
             let mousePos = self.stage.getPointerPosition();
             tooltipBg.position({
                 x : mousePos.x,
