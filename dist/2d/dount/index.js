@@ -333,7 +333,7 @@ var Dount = function (_VisChartBase) {
                 var arc = new _konva2.default.Arc(params);
 
                 this.clearList.push(arc);
-                this.drawTooltipMove(arc, val);
+                //this.drawTooltipMove( arc,val );
 
                 var line = new _konva2.default.Line({
                     x: this.fixCx(),
