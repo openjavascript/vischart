@@ -4,6 +4,8 @@ import * as geometry from '../../geometry/geometry.js';
 
 import PointAt from '../../common/pointat.js';
 
+import TooltipEvent from './components/TooltipEvent.js';
+
 import Konva from 'konva';
 import ju from 'json-utilsx';
 
@@ -15,6 +17,8 @@ export default class Dount extends VisChartBase  {
     constructor( box, width, height ){
         super( box, width, height );
         this.name = 'Dount_' + Date.now();
+
+        this.tooltip = null;
 
         this._setSize( width, height );
     }
@@ -233,14 +237,6 @@ export default class Dount extends VisChartBase  {
             this.arcLayer = new Konva.Layer();
             this.addDestroy( this.arcLayer );
 
-            this.tooltipLayer = new Konva.Layer();
-            this.addDestroy( this.tooltipLayer );
-
-            this.group = new Konva.Group({
-                visible: false
-            });
-            this.addDestroy( this.group );
-
         }
 
         this.path = [];
@@ -275,7 +271,10 @@ export default class Dount extends VisChartBase  {
             let arc = new Konva.Arc( params );
 
             this.clearList.push( arc );
-            this.drawTooltipMove( arc,val );
+
+            this.tooltip = new TooltipEvent( arc, val );
+            this.tooltip.setStage( this.stage );
+            this.tooltip.drawTooltipMove( );
 
             let line = new Konva.Line({
               x: this.fixCx(),
@@ -305,74 +304,6 @@ export default class Dount extends VisChartBase  {
         this.stage.add( this.arcLayer );
 
         return this;
-    }
-    //创建tooltip层
-    drawTooltip(){
-        let tooltip = new Konva.Text({
-            fontFamily: "Calibri",
-            fontSize: 12,
-            textFill: "#fff",
-            fill: "#fff",
-            visible: false
-        });
-        let tooltipBg = new Konva.Tag({
-            width: 200,     
-            height: 45,
-            fill: '#000',
-            opacity: 0.5,
-            lineJoin: 'round',
-            cornerRadius: 5,
-            visible: false
-        });
-        tooltip.lineHeight(1.5);
-
-        this.tooltipLayer.add( tooltipBg, tooltip );
-
-        // this.tooltipLayer.add(this.group);
-        this.stage.add( this.tooltipLayer );
-
-        let tooltipCon = {
-            tooltip: tooltip,
-            tooltipBg: tooltipBg
-        }
-        return tooltipCon
-    }
-    //创建tooltip移动层动画
-    drawTooltipMove(arc,val){
-        let tooltip = this.drawTooltip().tooltip;
-        let tooltipBg = this.drawTooltip().tooltipBg;
-        let self = this;
-        //添加鼠标事件
-        arc.on('mousemove', function() {
-            let mousePos = self.stage.getPointerPosition();
-            tooltip.setZIndex(9);
-            tooltipBg.setZIndex(8);
-            tooltipBg.position({
-                x : mousePos.x,
-                y : mousePos.y
-            });
-            tooltip.position({
-                x : mousePos.x + 5,
-                y : mousePos.y + 5
-            });
-            let textLabel = `访问来源\n ${val.name}: ${val.value}(${val.percent}%)`;
-            tooltip.text(textLabel);
-            // self.group.show();
-            tooltipBg.show();
-            tooltip.show();
-            
-            self.tooltipLayer.setZIndex(10);
-            self.tooltipLayer.batchDraw();
-        });
-        arc.on('mouseout', function() {
-            tooltip.setZIndex(9);
-            tooltipBg.setZIndex(8);
-            // self.group.hide();
-            tooltipBg.hide();
-            tooltip.hide();
-            self.tooltipLayer.setZIndex(10);
-            self.tooltipLayer.draw();
-        });
     }
 
     animationLine(){

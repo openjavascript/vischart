@@ -20,6 +20,10 @@ var _pointat = require('../../common/pointat.js');
 
 var _pointat2 = _interopRequireDefault(_pointat);
 
+var _TooltipEvent = require('./components/TooltipEvent.js');
+
+var _TooltipEvent2 = _interopRequireDefault(_TooltipEvent);
+
 var _konva = require('konva');
 
 var _konva2 = _interopRequireDefault(_konva);
@@ -55,6 +59,8 @@ var Dount = function (_VisChartBase) {
         var _this = _possibleConstructorReturn(this, (Dount.__proto__ || Object.getPrototypeOf(Dount)).call(this, box, width, height));
 
         _this.name = 'Dount_' + Date.now();
+
+        _this.tooltip = null;
 
         _this._setSize(width, height);
         return _this;
@@ -290,14 +296,6 @@ var Dount = function (_VisChartBase) {
 
                 this.arcLayer = new _konva2.default.Layer();
                 this.addDestroy(this.arcLayer);
-
-                this.tooltipLayer = new _konva2.default.Layer();
-                this.addDestroy(this.tooltipLayer);
-
-                this.group = new _konva2.default.Group({
-                    visible: false
-                });
-                this.addDestroy(this.group);
             }
 
             this.path = [];
@@ -333,7 +331,10 @@ var Dount = function (_VisChartBase) {
                 var arc = new _konva2.default.Arc(params);
 
                 this.clearList.push(arc);
-                this.drawTooltipMove(arc, val);
+
+                this.tooltip = new _TooltipEvent2.default(arc, val);
+                this.tooltip.setStage(this.stage);
+                this.tooltip.drawTooltipMove();
 
                 var line = new _konva2.default.Line({
                     x: this.fixCx(),
@@ -362,80 +363,6 @@ var Dount = function (_VisChartBase) {
             this.stage.add(this.arcLayer);
 
             return this;
-        }
-        //创建tooltip层
-
-    }, {
-        key: 'drawTooltip',
-        value: function drawTooltip() {
-            var tooltip = new _konva2.default.Text({
-                fontFamily: "Calibri",
-                fontSize: 12,
-                textFill: "#fff",
-                fill: "#fff",
-                visible: false
-            });
-            var tooltipBg = new _konva2.default.Tag({
-                width: 200,
-                height: 45,
-                fill: '#000',
-                opacity: 0.5,
-                lineJoin: 'round',
-                cornerRadius: 5,
-                visible: false
-            });
-            tooltip.lineHeight(1.5);
-
-            this.tooltipLayer.add(tooltipBg, tooltip);
-
-            // this.tooltipLayer.add(this.group);
-            this.stage.add(this.tooltipLayer);
-
-            var tooltipCon = {
-                tooltip: tooltip,
-                tooltipBg: tooltipBg
-            };
-            return tooltipCon;
-        }
-        //创建tooltip移动层动画
-
-    }, {
-        key: 'drawTooltipMove',
-        value: function drawTooltipMove(arc, val) {
-            var tooltip = this.drawTooltip().tooltip;
-            var tooltipBg = this.drawTooltip().tooltipBg;
-            var self = this;
-            //添加鼠标事件
-            arc.on('mousemove', function () {
-                var mousePos = self.stage.getPointerPosition();
-                tooltip.setZIndex(9);
-                tooltipBg.setZIndex(8);
-                tooltipBg.position({
-                    x: mousePos.x,
-                    y: mousePos.y
-                });
-                tooltip.position({
-                    x: mousePos.x + 5,
-                    y: mousePos.y + 5
-                });
-                var textLabel = '\u8BBF\u95EE\u6765\u6E90\n ' + val.name + ': ' + val.value + '(' + val.percent + '%)';
-                tooltip.text(textLabel);
-                // self.group.show();
-                tooltipBg.show();
-                tooltip.show();
-
-                self.tooltipLayer.setZIndex(10);
-                self.tooltipLayer.batchDraw();
-            });
-            arc.on('mouseout', function () {
-                tooltip.setZIndex(9);
-                tooltipBg.setZIndex(8);
-                // self.group.hide();
-                tooltipBg.hide();
-                tooltip.hide();
-                self.tooltipLayer.setZIndex(10);
-                self.tooltipLayer.draw();
-            });
         }
     }, {
         key: 'animationLine',
