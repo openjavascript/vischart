@@ -573,8 +573,6 @@ var Dount = function (_VisChartBase) {
 
             this.textar = [];
 
-            this.realLineWidth = this.lineWidth;
-
             this.data.data.map(function (val, key) {
                 var tmp = new _konva2.default.Text({
                     x: 0,
@@ -587,9 +585,6 @@ var Dount = function (_VisChartBase) {
                 });
                 _this5.clearList.push(tmp);
                 _this5.textar.push(tmp);
-                if (tmp.width() > _this5.realLineWidth) {
-                    _this5.realLineWidth = tmp.width() + 5;
-                }
             });
         }
     }, {
@@ -656,8 +651,6 @@ var Dount = function (_VisChartBase) {
                 if (text.width() >= textWidth) {
                     textWidth = text.width() + 5;
                 }
-                //textWidth = this.realLineWidth;
-                //console.log( text.width(), val.percent * 10000 / 100 );
 
                 val.midAngle = val.startAngle + (val.endAngle - val.startAngle) / 2;
 

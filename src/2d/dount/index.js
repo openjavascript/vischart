@@ -500,8 +500,6 @@ export default class Dount extends VisChartBase  {
     initText(){
         this.textar = [];
 
-        this.realLineWidth = this.lineWidth;
-
         this.data.data.map( ( val, key ) => {
             let tmp = new Konva.Text( {
                 x: 0
@@ -514,9 +512,6 @@ export default class Dount extends VisChartBase  {
             });
             this.clearList.push( tmp );
             this.textar.push( tmp );
-            if( tmp.width() > this.realLineWidth ){
-                this.realLineWidth = tmp.width() + 5;
-            }
         });
     }
 
@@ -579,8 +574,6 @@ export default class Dount extends VisChartBase  {
             if( text.width() >= textWidth ){
                 textWidth = text.width() + 5;
             }
-            //textWidth = this.realLineWidth;
-            //console.log( text.width(), val.percent * 10000 / 100 );
 
             val.midAngle = val.startAngle + ( val.endAngle - val.startAngle ) / 2;
 
