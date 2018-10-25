@@ -520,11 +520,11 @@ export default class Dount extends VisChartBase  {
         this.total = total;
 
         this.data.data.map( ( val ) => {
-            val._percent =  utils.parseFinance( val.value / total );
+            val._percent =  utils.parseFinance( val.value / total, 8 );
             tmp = utils.parseFinance( tmp + val._percent );
             val._totalPercent = tmp;
 
-            val.percent = parseInt( val._percent * 100 );
+            val.percent = parseInt( val._percent * 100 * this.getPrecision( val ) ) / this.getPrecision( val );
 
             val.endAngle = this.totalAngle * val._totalPercent;
         });
@@ -535,7 +535,7 @@ export default class Dount extends VisChartBase  {
             tmp = tmp - item._percent;
 
             item._percent = 1 - tmp;
-            item.percent = parseInt( item._percent * 100 );
+            item.percent = parseInt( item._percent * 100 * this.getPrecision( item ) ) / this.getPrecision( item );
             item._totalPercent = 1;
             item.endAngle = this.totalAngle;
         }

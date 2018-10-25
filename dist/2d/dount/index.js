@@ -593,11 +593,11 @@ var Dount = function (_VisChartBase) {
             this.total = total;
 
             this.data.data.map(function (val) {
-                val._percent = utils.parseFinance(val.value / total);
+                val._percent = utils.parseFinance(val.value / total, 8);
                 tmp = utils.parseFinance(tmp + val._percent);
                 val._totalPercent = tmp;
 
-                val.percent = parseInt(val._percent * 100);
+                val.percent = parseInt(val._percent * 100 * _this5.getPrecision(val)) / _this5.getPrecision(val);
 
                 val.endAngle = _this5.totalAngle * val._totalPercent;
             });
@@ -608,7 +608,7 @@ var Dount = function (_VisChartBase) {
                 tmp = tmp - item._percent;
 
                 item._percent = 1 - tmp;
-                item.percent = parseInt(item._percent * 100);
+                item.percent = parseInt(item._percent * 100 * this.getPrecision(item)) / this.getPrecision(item);
                 item._totalPercent = 1;
                 item.endAngle = this.totalAngle;
             }

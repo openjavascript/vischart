@@ -6,6 +6,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _jsonUtilsx = require('json-utilsx');
+
+var _jsonUtilsx2 = _interopRequireDefault(_jsonUtilsx);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var VisChartBase = function () {
@@ -111,6 +117,27 @@ var VisChartBase = function () {
             window.requestAnimationFrame(function () {
                 _this.animationBg();
             });
+        }
+    }, {
+        key: 'getPrecision',
+        value: function getPrecision(item) {
+            var r = 0;
+
+            if (this.allData && 'precision' in this.allData) {
+                r = this.allData.precision;
+            }
+
+            if (this.data && 'precision' in this.data) {
+                r = this.data.precision;
+            }
+
+            if (item && 'precision' in item) {
+                r = item.precision;
+            }
+
+            r = Math.pow(10, r);
+
+            return r;
         }
     }, {
         key: 'addImage',
