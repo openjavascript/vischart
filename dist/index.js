@@ -70,8 +70,13 @@ var VisChart = function (_VisChartBase) {
             this.init();
 
             if (this.legend && this.data && this.data.legend) {
-                this.legend.resize(this.width, this.height);
-                this.legend.update(this.data.legend);
+                if (this.ignoreLegend) {
+                    this.legend.resize(this.width, this.height);
+                    this.legend.update(this.data.legend);
+                } else {
+                    this.legend.destroy();
+                    this.legend = null;
+                }
             }
 
             if (this.data) {
@@ -141,6 +146,7 @@ var VisChart = function (_VisChartBase) {
                 if (this.legend && ignoreLegend) {
                     this.emptyblock = 'kao';
                 } else {
+                    this.legend && this.legend.destroy();
                     this.legend = new _legend2.default(this.box, this.width, this.height);
                     this.legend.setStage(this.stage);
                     this.legend.setOptions({

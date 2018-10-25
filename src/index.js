@@ -32,8 +32,13 @@ export default class VisChart extends VisChartBase {
             && this.data 
             && this.data.legend 
         ){
-            this.legend.resize( this.width, this.height );
-            this.legend.update( this.data.legend );
+            if( this.ignoreLegend ){
+                this.legend.resize( this.width, this.height );
+                this.legend.update( this.data.legend );
+            }else{
+                this.legend.destroy();
+                this.legend = null;
+            }
         }
 
         if( this.data ){
@@ -106,6 +111,7 @@ export default class VisChart extends VisChartBase {
             if( this.legend && ignoreLegend ){
                 this.emptyblock = 'kao';
             }else{
+                this.legend && this.legend.destroy();
                 this.legend = new Legend( this.box, this.width, this.height );
                 this.legend.setStage( this.stage );
                 this.legend.setOptions( {

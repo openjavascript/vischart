@@ -223,7 +223,7 @@ export default class Legend extends VisChartBase  {
 
     destroy(){
         super.destroy();
-        //console.log( this.name, 'destroy' );
+        console.log( this.name, 'destroy', Date.now() );
 
         this.group 
             && this.group.length 

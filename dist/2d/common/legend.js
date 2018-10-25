@@ -274,7 +274,7 @@ var Legend = function (_VisChartBase) {
         key: 'destroy',
         value: function destroy() {
             _get(Legend.prototype.__proto__ || Object.getPrototypeOf(Legend.prototype), 'destroy', this).call(this);
-            //console.log( this.name, 'destroy' );
+            console.log(this.name, 'destroy', Date.now());
 
             this.group && this.group.length && this.group.map(function (item) {
                 //if( !item.ele ) return;
