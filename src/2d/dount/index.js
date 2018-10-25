@@ -84,6 +84,8 @@ export default class Dount extends VisChartBase  {
         if( !ju.jsonInData( this.data, 'data' ) ) return;
 
         this.clearItems();
+        this.calcVal();
+        this.initText();
         this.calcDataPosition();
         this.initDataLayout();
 
@@ -248,7 +250,6 @@ export default class Dount extends VisChartBase  {
 
         for( let ii = this.data.data.length - 1; ii >= 0; ii-- ){
             let val = this.data.data[ii], key = ii;
-            let pathindex = this.data.data.length - 1 - ii;
 
             let color = this.colors[ key % this.colors.length];
 
@@ -256,9 +257,6 @@ export default class Dount extends VisChartBase  {
                 //path.fill( val.itemStyle.color );
                 color = val.itemStyle.color;
             }
-            //console.log(  ii, pathindex );
-
-            //console.log( this.path[pathindex], pathindex, this.path );
 
             let params = {
                 x: this.fixCx()
@@ -293,13 +291,13 @@ export default class Dount extends VisChartBase  {
                 , pathData: [] 
                 , itemData: val
                 , line: line
+                , realIndex: ii
             };
 
             this.path.push( tmp );
 
             this.arcLayer.add( line );
             this.arcLayer.add( arc );
-
         };
         
         this.stage.add( this.arcLayer );
@@ -400,10 +398,11 @@ export default class Dount extends VisChartBase  {
                 , lineEnd.x, lineEnd.y 
                 , lineExpend.x,lineExpend.y 
             ] );
+            this.arcLayer.add( line );
 
             if( this.lineLengthCount >= this.lineLength ){
-                this.addText( path, layer );
-                this.addIcon( path, layer );
+                this.addText( path, layer, path.realIndex );
+                this.addIcon( path, layer, path.realIndex );
 
             }else{
                 window.requestAnimationFrame( ()=>{ this.animationLine() } );
@@ -413,7 +412,7 @@ export default class Dount extends VisChartBase  {
         }
     }
 
-    addIcon( path, layer ){
+    addIcon( path, layer, key ){
         if( !path.lineicon ){
             path.lineicon = new IconCircle( this.box, this.fixWidth(), this.fixHeight() );
             this.clearList.push( path.lineicon );
@@ -429,19 +428,9 @@ export default class Dount extends VisChartBase  {
         icon.update( path.itemData.lineExpend );
     }
 
-    addText( path, layer ){
+    addText( path, layer, key ){
         if( !path.text ){
-            let tmp = path.text = new Konva.Text( {
-                x: 0
-                , y: 0
-                , text: `${path.itemData.percent}%`
-                , fill: '#a3a7f3'
-                , fontFamily: 'MicrosoftYaHei'
-                , fontSize: 16
-                , fontStyle: 'italic'
-            });
-
-            this.clearList.push( tmp );
+            path.text = this.textar[key];
         }
         let text = path.text;
 
@@ -450,7 +439,7 @@ export default class Dount extends VisChartBase  {
             ;
 
         textPoint = ju.clone( path.itemData.lineEnd );
-        textPoint.y -= text.textHeight + 1;
+        textPoint.y -= text.textHeight + 2;
 
         switch( angleDirect ){
             case 1: {
@@ -508,7 +497,30 @@ export default class Dount extends VisChartBase  {
         this.clearList = [];
     }
 
-    calcDataPosition() {
+    initText(){
+        this.textar = [];
+
+        this.realLineWidth = this.lineWidth;
+
+        this.data.data.map( ( val, key ) => {
+            let tmp = new Konva.Text( {
+                x: 0
+                , y: 0
+                , text: `${val.percent}%`
+                , fill: '#a3a7f3'
+                , fontFamily: 'MicrosoftYaHei'
+                , fontSize: 16
+                , fontStyle: 'italic'
+            });
+            this.clearList.push( tmp );
+            this.textar.push( tmp );
+            if( tmp.width() > this.realLineWidth ){
+                this.realLineWidth = tmp.width() + 5;
+            }
+        });
+    }
+
+    calcVal(){
         if( !this.data ) return;
 
         let total = 0, tmp = 0;
@@ -540,12 +552,19 @@ export default class Dount extends VisChartBase  {
             item.endAngle = this.totalAngle;
         }
 
+    }
+
+
+    calcDataPosition() {
+        if( !this.data ) return;
+
         this.lineRange = {
             "1": []
             , "2": []
             , "4": []
             , "8": []
         }
+        //console.log( '' );
         //计算开始角度, 计算指示线的2端
         this.data.data.map( ( val, key ) => {
             if( !key ) {
@@ -554,6 +573,14 @@ export default class Dount extends VisChartBase  {
                 val.startAngle = this.data.data[ key - 1].endAngle;
             }
 
+            let text = this.textar[ key ];
+            let textWidth = this.lineWidth;
+
+            if( text.width() >= textWidth ){
+                textWidth = text.width() + 5;
+            }
+            //textWidth = this.realLineWidth;
+            //console.log( text.width(), val.percent * 10000 / 100 );
 
             val.midAngle = val.startAngle + ( val.endAngle - val.startAngle ) / 2;
 
@@ -582,7 +609,7 @@ export default class Dount extends VisChartBase  {
                         val.lineEnd.x = tmpPoint.x;
                     }
 
-                    val.lineExpend.x = val.lineEnd.x - this.lineWidth
+                    val.lineExpend.x = val.lineEnd.x - textWidth;
 
                     break;
                 }
@@ -598,7 +625,7 @@ export default class Dount extends VisChartBase  {
                         val.lineEnd.x = tmpPoint.x;
                     }
 
-                    val.lineExpend.x = val.lineEnd.x + this.lineWidth
+                    val.lineExpend.x = val.lineEnd.x + textWidth;
                     break;
                 }
             }
