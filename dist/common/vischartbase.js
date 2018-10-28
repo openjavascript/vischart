@@ -341,11 +341,14 @@ var VisChartBase = function () {
         }
     }, {
         key: 'remove',
-        value: function remove() {}
+        value: function remove() {
+            return this;
+        }
     }, {
         key: 'setDestroy',
         value: function setDestroy() {
             this.isDestroy = 1;
+            return this;
         }
     }, {
         key: 'destroy',
@@ -359,6 +362,7 @@ var VisChartBase = function () {
                     item.destroy();
                 }
             });
+            return this;
         }
     }, {
         key: 'addDestroy',
@@ -372,6 +376,13 @@ var VisChartBase = function () {
             item && item.length && item.map(function (val) {
                 _this2.destroyList.push(val);
             });
+            return this;
+        }
+    }, {
+        key: 'dispose',
+        value: function dispose() {
+            this.destroy();
+            return this;
         }
     }]);
 
