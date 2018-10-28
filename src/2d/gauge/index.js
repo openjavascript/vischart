@@ -285,6 +285,7 @@ export default class Gauge extends VisChartBase  {
         }
         if( this.totalNum ){
             this.totalNumStep = Math.floor( this.totalNum / this.animationStep );
+            this.totalNumStep < 1 && ( this.totalNumStep = 1 );
             this.totalNumCount = 0;
             this.animationText();
         }
