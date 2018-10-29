@@ -194,7 +194,7 @@ export default class Gauge extends VisChartBase  {
             this.arcOutlinePartAr.push( [ end.x, end.y ].join(',') );
             
             if( !(i * this.partNum % 100) || i === 0 ){
-                let angleOffset = 8, lengthOffset = 0;
+                let angleOffset = 8, lengthOffset = 0, rotationOffset = 0;
 
                 if( i === 0 ){
                     angleOffset = 1;
@@ -202,6 +202,7 @@ export default class Gauge extends VisChartBase  {
 
                 if( i >= 19 ){
                     angleOffset = 14;
+                    rotationOffset = 9;
                 }
                 if( i >= 21 ){
                     angleOffset = 18;
@@ -210,6 +211,7 @@ export default class Gauge extends VisChartBase  {
                     text: i * this.partNum
                     , angle: angle - angleOffset
                     , point: geometry.distanceAngleToPoint( this.arcLineRaidus + this.arcTextLength + lengthOffset, angle - angleOffset )
+                    , rotationOffset: rotationOffset
                 };
                 text.textPoint = new PointAt( this.width, this.height, geometry.pointPlus( text.point, this.cpoint) );
 
@@ -452,7 +454,8 @@ export default class Gauge extends VisChartBase  {
                 , fill: this.lineColor
             });
             this.addDestroy( text );
-            text.rotation( val.angle + 90  );
+
+            text.rotation( val.angle + 90 + ( val.rotationOffset || 0 ) );
 
             this.layoutLayer.add( text );
         });

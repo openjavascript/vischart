@@ -242,7 +242,8 @@ var Gauge = function (_VisChartBase) {
 
                 if (!(i * this.partNum % 100) || i === 0) {
                     var angleOffset = 8,
-                        lengthOffset = 0;
+                        lengthOffset = 0,
+                        rotationOffset = 0;
 
                     if (i === 0) {
                         angleOffset = 1;
@@ -250,6 +251,7 @@ var Gauge = function (_VisChartBase) {
 
                     if (i >= 19) {
                         angleOffset = 14;
+                        rotationOffset = 9;
                     }
                     if (i >= 21) {
                         angleOffset = 18;
@@ -257,7 +259,8 @@ var Gauge = function (_VisChartBase) {
                     var text = {
                         text: i * this.partNum,
                         angle: angle - angleOffset,
-                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength + lengthOffset, angle - angleOffset)
+                        point: geometry.distanceAngleToPoint(this.arcLineRaidus + this.arcTextLength + lengthOffset, angle - angleOffset),
+                        rotationOffset: rotationOffset
                     };
                     text.textPoint = new _pointat2.default(this.width, this.height, geometry.pointPlus(text.point, this.cpoint));
 
@@ -520,7 +523,8 @@ var Gauge = function (_VisChartBase) {
                     fill: _this8.lineColor
                 });
                 _this8.addDestroy(text);
-                text.rotation(val.angle + 90);
+
+                text.rotation(val.angle + 90 + (val.rotationOffset || 0));
 
                 _this8.layoutLayer.add(text);
             });
