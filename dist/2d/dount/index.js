@@ -618,13 +618,13 @@ var Dount = function (_VisChartBase) {
 
             //修正浮点数精确度
             if (this.data.data.length) {
-                var item = this.data.data[this.data.data.length - 1];
-                item._totalPercent = 1;
-                item._percent = 1 - (tmp - item._percent);
+                var val = this.data.data[this.data.data.length - 1];
+                val._totalPercent = 1;
+                val._percent = 1 - (tmp - val._percent);
 
-                var precision = this.getPrecision(item) * 10;
-                item.percent = parseInt(item._percent * 100 * precision) / precision;
-                item.endAngle = this.totalAngle;
+                var precision = this.getPrecision(val) * 10;
+                val.percent = Math.round(Math.floor(val._percent * 100 * precision) / 10) / this.getPrecision(val);
+                val.endAngle = this.totalAngle;
             }
         }
     }, {
