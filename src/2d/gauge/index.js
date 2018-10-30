@@ -290,6 +290,10 @@ export default class Gauge extends VisChartBase  {
             this.totalNumStep < 1 && ( this.totalNumStep = 1 );
             this.totalNumCount = 0;
             this.animationText();
+        }else{
+            this.totalText.text( this.totalNum + '' );
+            this.totalTextPostfix.x( this.totalText.textWidth + 5 );
+            this.totalTextGroup.x(  ( this.width - this.totalTextPostfix.textWidth -  this.totalText.textWidth - 5 ) / 2 );
         }
 
         !this.inited && this.animationCircleLine();
@@ -317,7 +321,9 @@ export default class Gauge extends VisChartBase  {
     animationText(){
         if( this.isDestroy ) return;
 
-        if( this.totalNumCount >= this.totalNum ) return;
+        if( this.totalNumCount >= this.totalNum ) {
+            return;
+        }
         this.totalNumCount += this.totalNumStep;
 
         if( this.totalNumCount >= this.totalNum || !this.isAnimation() ) {
