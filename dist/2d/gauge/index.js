@@ -340,7 +340,7 @@ var Gauge = function (_VisChartBase) {
                 this.rateStep = Math.floor(this.curRate / (this.animationStep * 2));
                 !this.inited && this.animation();
             }
-            if (this.totalNum) {
+            if (parseInt(this.totalNum)) {
                 this.totalNumStep = Math.floor(this.totalNum / this.animationStep);
                 this.totalNumStep < 1 && (this.totalNumStep = 1);
                 this.totalNumCount = 0;

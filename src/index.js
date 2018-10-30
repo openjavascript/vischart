@@ -78,6 +78,8 @@ export default class VisChart extends VisChartBase {
         this.ignoreLegend = ignoreLegend;
         this.redraw = redraw;
 
+        //console.log( 'vischart update', data );
+
         if( !ju.jsonInData( this.data, 'series' ) ) return;
 
         this.data

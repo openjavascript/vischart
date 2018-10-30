@@ -258,6 +258,7 @@ export default class Gauge extends VisChartBase  {
         this.stage.removeChildren();
         super.update( data, allData );
 
+
         //console.log( 123, data );
 
         if( (data && data.data && data.data.length) ){
@@ -285,7 +286,7 @@ export default class Gauge extends VisChartBase  {
             this.rateStep = Math.floor( this.curRate / ( this.animationStep * 2 ) )
             !this.inited && this.animation();
         }
-        if( this.totalNum ){
+        if( parseInt( this.totalNum ) ){
             this.totalNumStep = Math.floor( this.totalNum / this.animationStep );
             this.totalNumStep < 1 && ( this.totalNumStep = 1 );
             this.totalNumCount = 0;

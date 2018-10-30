@@ -122,6 +122,8 @@ var VisChart = function (_VisChartBase) {
             this.ignoreLegend = ignoreLegend;
             this.redraw = redraw;
 
+            //console.log( 'vischart update', data );
+
             if (!_jsonUtilsx2.default.jsonInData(this.data, 'series')) return;
 
             this.data && this.data.legend && this.data.legend.data && this.data.legend.data.legend && this.data.legend.data.map(function (item, key) {
