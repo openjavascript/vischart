@@ -105,6 +105,8 @@ export default class VisChartBase {
     getPrecision( item ){
         let r = 0;
 
+        //return Math.pow( 10, 0 );
+
         if( this.allData && 'precision' in this.allData ){
             r = this.allData.precision;
         }

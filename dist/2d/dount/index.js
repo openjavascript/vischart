@@ -604,11 +604,14 @@ var Dount = function (_VisChartBase) {
             this.total = total;
 
             this.data.data.map(function (val) {
-                val._percent = utils.parseFinance(val.value / total, 8);
-                tmp = utils.parseFinance(tmp + val._percent);
-                val._totalPercent = tmp;
+                val._percent = val.value / total;
 
-                val.percent = parseInt(val._percent * 100 * _this6.getPrecision(val)) / _this6.getPrecision(val);
+                var precision = _this6.getPrecision(val) * 10;
+                val.percent = Math.round(Math.floor(val._percent * 100 * precision) / 10) / _this6.getPrecision(val);
+
+                val._percent = val.percent / 100;
+                tmp = tmp + val._percent;
+                val._totalPercent = tmp;
 
                 val.endAngle = _this6.totalAngle * val._totalPercent;
             });
@@ -616,11 +619,11 @@ var Dount = function (_VisChartBase) {
             //修正浮点数精确度
             if (this.data.data.length) {
                 var item = this.data.data[this.data.data.length - 1];
-                tmp = tmp - item._percent;
-
-                item._percent = 1 - tmp;
-                item.percent = parseInt(item._percent * 100 * this.getPrecision(item)) / this.getPrecision(item);
                 item._totalPercent = 1;
+                item._percent = 1 - (tmp - item._percent);
+
+                var precision = this.getPrecision(item) * 10;
+                item.percent = parseInt(item._percent * 100 * precision) / precision;
                 item.endAngle = this.totalAngle;
             }
         }

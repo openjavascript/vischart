@@ -123,6 +123,8 @@ var VisChartBase = function () {
         value: function getPrecision(item) {
             var r = 0;
 
+            //return Math.pow( 10, 0 );
+
             if (this.allData && 'precision' in this.allData) {
                 r = this.allData.precision;
             }

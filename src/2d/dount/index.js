@@ -527,11 +527,14 @@ export default class Dount extends VisChartBase  {
         this.total = total;
 
         this.data.data.map( ( val ) => {
-            val._percent =  utils.parseFinance( val.value / total, 8 );
-            tmp = utils.parseFinance( tmp + val._percent );
-            val._totalPercent = tmp;
+            val._percent =  val.value / total;
 
-            val.percent = parseInt( val._percent * 100 * this.getPrecision( val ) ) / this.getPrecision( val );
+            let precision = this.getPrecision( val ) * 10 ; 
+            val.percent = Math.round( Math.floor( val._percent * 100 * precision ) / 10 ) / this.getPrecision( val ) ;
+
+            val._percent =  val.percent / 100;
+            tmp = tmp + val._percent;
+            val._totalPercent = tmp;
 
             val.endAngle = this.totalAngle * val._totalPercent;
         });
@@ -539,11 +542,11 @@ export default class Dount extends VisChartBase  {
         //修正浮点数精确度
         if( this.data.data.length ){
             let item = this.data.data[ this.data.data.length - 1];
-            tmp = tmp - item._percent;
-
-            item._percent = 1 - tmp;
-            item.percent = parseInt( item._percent * 100 * this.getPrecision( item ) ) / this.getPrecision( item );
             item._totalPercent = 1;
+            item._percent = 1 - ( tmp - item._percent );
+
+            let precision = this.getPrecision( item ) * 10 ; 
+            item.percent = parseInt( item._percent * 100 * precision ) / precision;
             item.endAngle = this.totalAngle;
         }
 
