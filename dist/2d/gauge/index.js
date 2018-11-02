@@ -222,7 +222,8 @@ var Gauge = function (_VisChartBase) {
                     angle = void 0;
                 angle = i * this.partAngle + this.arcOffset;
 
-                if (i && i < this.part) {
+                //if( i && i < this.part ){
+                if (true) {
                     start = geometry.distanceAngleToPoint(this.arcInRadius, angle);
                     end = geometry.distanceAngleToPoint(this.arcOutRadius, angle);
 
@@ -563,8 +564,9 @@ var Gauge = function (_VisChartBase) {
                 data: this.arcPartLineAr.join(''),
                 x: this.cx,
                 y: this.cy,
-                stroke: '#00000088',
-                strokeWidth: 1,
+                stroke: '#00000088'
+                //, stroke: this.lineColor
+                , strokeWidth: 1,
                 fill: '#ffffff00'
             });
             this.addDestroy(this.arcPartLine);
@@ -643,23 +645,6 @@ var Gauge = function (_VisChartBase) {
             this.percentText.text(this.getAttackText());
             this.percentText.x(this.cx - this.percentText.textWidth / 2 + this.textOffsetX);
             this.percentText.y(this.cy - this.percentText.textHeight / 2 + this.textOffsetY);
-
-            /*
-            this.percentSymbolText = new Konva.Text( {
-                x: this.cx
-                , y: this.cy
-                , text: '%'
-                , fontSize: 17
-                , fontFamily: 'Agency FB'
-                , fill: '#c7d6ff'
-                , fontStyle: 'italic'
-            });
-            this.addDestroy( this.percentSymbolText );
-            this.percentSymbolText.x( this.percentText.attrs.x  + this.percentText.textWidth );
-            this.percentSymbolText.y( this.percentText.attrs.y  + this.percentText.textHeight -  this.percentSymbolText.textHeight - 2 );
-            */
-
-            //console.log( this.percentText );
 
             if (!this.inited) {
                 var wedge = new _konva2.default.Wedge({
