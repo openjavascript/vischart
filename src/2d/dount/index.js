@@ -1,5 +1,5 @@
 
-import VisChartBase from '../common/konvabase.js';
+import VisChartBase from '../common/base.js';
 import * as geometry from '../../geometry/geometry.js';
 
 import PointAt from '../../common/pointat.js';
@@ -501,10 +501,11 @@ export default class Dount extends VisChartBase  {
         this.textar = [];
 
         this.data.data.map( ( val, key ) => {
+            //console.log( key, val );
             let tmp = new Konva.Text( {
                 x: 0
                 , y: 0
-                , text: `${val.percent}%`
+                , text: this.getLabel( val, key )
                 , fill: '#a3a7f3'
                 , fontFamily: 'MicrosoftYaHei'
                 , fontSize: 16

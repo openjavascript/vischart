@@ -27,7 +27,35 @@ var VisChartBase = function () {
         this._setSize(width, height);
     }
 
+    /*
+    字符串模板 模板变量有：
+     {a}：系列名。
+    {b}：数据名。
+    {c}：数据值。
+    {d}：百分比。
+    {@xxx}：数据中名为'xxx'的维度的值，如{@product}表示名为'product'` 的维度的值。
+    {@[n]}：数据中维度n的值，如{@[3]}` 表示维度 3 的值，从 0 开始计数。
+    */
+
+
     _createClass(VisChartBase, [{
+        key: 'getLabel',
+        value: function getLabel(item, key) {
+            var r = item.percent + '%';
+
+            if (_jsonUtilsx2.default.jsonInData(this, 'data.label.formatter')) {
+                //console.log( 'formatter', key, this.data.label.formatter );
+                r = this.data.label.formatter;
+
+                r = r.replace(/\{a\}/g, this.data.name || '');
+                r = r.replace(/\{b\}/g, item.name || '');
+                r = r.replace(/\{c\}/g, item.value || 0);
+                r = r.replace(/\{d\}/g, item.percent);
+            }
+
+            return r;
+        }
+    }, {
         key: '_setSize',
         value: function _setSize(width, height) {
 

@@ -1,5 +1,5 @@
 
-import VisChartBase from '../../common/vischartbase.js';
+import VisChartBase from './base.js';
 import * as geometry from '../../geometry/geometry.js';
 
 import Konva from 'konva';
