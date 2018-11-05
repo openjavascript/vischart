@@ -2,8 +2,9 @@
 import ju from 'json-utilsx';
 
 export default class VisChartBase {
-    constructor( box, width, height ){
+    constructor( box, width, height, camera ){
         this.box = box;
+        camera && ( this.camera = camera );
 
         this.name = 'VisChartBase_' + Date.now();
 
@@ -112,7 +113,6 @@ export default class VisChartBase {
     }
 
     animationBg(){
-        //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
         if( this.isDestroy ) return;
         if( !this.rotationBg.length ) return;
         if( !this.isAnimation() ) return;
@@ -131,8 +131,6 @@ export default class VisChartBase {
     getPrecision( item ){
         let r = 0;
 
-        //return Math.pow( 10, 0 );
-
         if( this.allData && 'precision' in this.allData ){
             r = this.allData.precision;
         }
@@ -150,8 +148,7 @@ export default class VisChartBase {
         return r;
     }
 
-    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0, isbase64 = false ){
-        //console.log( this.rateWidth, this.width );
+    addImage( imgUrl, width, height, offsetX = 0, offsetY = 0, rotation = 0, isbase64 = false, opt = {} ){
         let rateW = this.min / this.rateWidth
             , rateH = this.min / this.rateHeight
             ;
@@ -163,6 +160,7 @@ export default class VisChartBase {
             , offsetY: offsetY
             , rotation: rotation
             , isbase64: isbase64
+            , opt: opt
         });
 
         return this;
@@ -310,7 +308,6 @@ export default class VisChartBase {
     }
 
     resize( width, height, data = null, allData = null ){
-        //console.log( 'resize', this.name, Date.now(), width, height );
 
         this.customWidth = width || this.width;
         this.customHeight = height || this.height;
@@ -320,8 +317,6 @@ export default class VisChartBase {
 
         this.width = width      || this.box.offsetWidth     || this.width;
         this.height = height    || this.box.offsetHeight    || this.height;
-
-        //console.log( this.width, this.height );
 
         this._setSize( this.width, this.height );
     }
@@ -359,6 +354,5 @@ export default class VisChartBase {
         this.destroy();
         return this;
     }
-
 }
 

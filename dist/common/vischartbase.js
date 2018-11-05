@@ -15,10 +15,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var VisChartBase = function () {
-    function VisChartBase(box, width, height) {
+    function VisChartBase(box, width, height, camera) {
         _classCallCheck(this, VisChartBase);
 
         this.box = box;
+        camera && (this.camera = camera);
 
         this.name = 'VisChartBase_' + Date.now();
 
@@ -129,7 +130,6 @@ var VisChartBase = function () {
         value: function animationBg() {
             var _this = this;
 
-            //console.log( 'animationBg', Date.now(), this.isDestroy, this.rotationBg.length, this.rotationBgCount );
             if (this.isDestroy) return;
             if (!this.rotationBg.length) return;
             if (!this.isAnimation()) return;
@@ -150,8 +150,6 @@ var VisChartBase = function () {
         key: 'getPrecision',
         value: function getPrecision(item) {
             var r = 0;
-
-            //return Math.pow( 10, 0 );
 
             if (this.allData && 'precision' in this.allData) {
                 r = this.allData.precision;
@@ -176,8 +174,8 @@ var VisChartBase = function () {
             var offsetY = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
             var rotation = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
             var isbase64 = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+            var opt = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : {};
 
-            //console.log( this.rateWidth, this.width );
             var rateW = this.min / this.rateWidth,
                 rateH = this.min / this.rateHeight;
             this.images.push({
@@ -187,7 +185,8 @@ var VisChartBase = function () {
                 offsetX: offsetX,
                 offsetY: offsetY,
                 rotation: rotation,
-                isbase64: isbase64
+                isbase64: isbase64,
+                opt: opt
             });
 
             return this;
@@ -354,7 +353,6 @@ var VisChartBase = function () {
             var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
             var allData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
-            //console.log( 'resize', this.name, Date.now(), width, height );
 
             this.customWidth = width || this.width;
             this.customHeight = height || this.height;
@@ -364,8 +362,6 @@ var VisChartBase = function () {
 
             this.width = width || this.box.offsetWidth || this.width;
             this.height = height || this.box.offsetHeight || this.height;
-
-            //console.log( this.width, this.height );
 
             this._setSize(this.width, this.height);
         }
