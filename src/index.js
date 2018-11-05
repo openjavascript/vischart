@@ -1,6 +1,6 @@
 
 
-import VisChartBase from './common/vischartbase.js';
+import VisChartBase from 'vischartbase';
 
 import Dount from './2d/dount/index.js';
 import Gauge from './2d/gauge/index.js';

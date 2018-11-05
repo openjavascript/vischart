@@ -10,7 +10,7 @@ var _konva = require('konva');
 
 var _konva2 = _interopRequireDefault(_konva);
 
-var _vischartbase = require('../../common/vischartbase.js');
+var _vischartbase = require('vischartbase');
 
 var _vischartbase2 = _interopRequireDefault(_vischartbase);
 
