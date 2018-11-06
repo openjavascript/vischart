@@ -205,7 +205,9 @@ var VisChart = function (_VisChartBase) {
                 }
 
                 if (ins) {
-                    _this3.options && ins.setOptions(_this3.options);
+                    _this3.options = _this3.options || {};
+                    _this3.options.srcData = val;
+                    ins.setOptions(_this3.options);
                     ins.update(_this3.getLegendData(val), _jsonUtilsx2.default.clone(_this3.data));
 
                     if (!_this3.ins[key]) {

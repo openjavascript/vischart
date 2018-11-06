@@ -20,7 +20,7 @@
     "babel-preset-es2015": "^6.24.1",
     "json-utilsx": "1.0.7",
     "konva": "2.4.0",
-    "vischartbase": "^1.0.1"
+    "vischartbase": "^1.0.2"
   },
   "bugs": {
     "url": "https://github.com/openjavascript/vischart/issues"

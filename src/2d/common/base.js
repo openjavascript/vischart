@@ -1,6 +1,7 @@
 
 import Konva from 'konva';
 import VisChartBase from 'vischartbase';
+//import VisChartBase from '../../../../vischartbase/dist/index.js';
 
 
 export default class KonvaBase extends VisChartBase {

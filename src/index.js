@@ -166,7 +166,9 @@ export default class VisChart extends VisChartBase {
             }
 
             if( ins ){
-                this.options && ( ins.setOptions( this.options ) );
+                this.options = this.options || {};
+                this.options.srcData = val;
+                ins.setOptions( this.options );
                 ins.update( this.getLegendData( val ), ju.clone( this.data ) );
 
                 if( !this.ins[key]  ){
